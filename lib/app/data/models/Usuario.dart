@@ -5,43 +5,44 @@ import 'package:flutter/widgets.dart';
 
 import 'package:cuidaagente/app/data/models/ocorrencia.dart';
 
-class Usuario {
-  final String loginUsuario;
-  final String senhaUsuario;
-  final int usuarioId;
-  final String nome;
-  final String email;
-  final String cpf;
-  final bool primeiroAcesso;
-  final DateTime dataCadastro;
-  final bool ativo;
-  final String token;
-  final int idRoles;
-  final String? matricula;
+import 'dart:convert';
 
-  final List<Ocorrencia> ocorrencia;
-  final List<OrgaoSetorUsuario> orgaoSetorUsuario;
-  final Roles roles;
+class Usuario {
+  final String? loginUsuario;
+  final String? senhaUsuario;
+  final int? usuarioId;
+  final String? nome;
+  final String? email;
+  final String? cpf;
+  final bool? primeiroAcesso;
+  final DateTime? dataCadastro;
+  final bool? ativo;
+  final String? token;
+  final int? idRoles;
+  final String? matricula;
+  final List<Ocorrencia>? ocorrencia;
+  final List<OrgaoSetorUsuario>? orgaoSetorUsuario;
+  final Roles? roles;
+
   Usuario({
-    required this.loginUsuario,
-    required this.senhaUsuario,
-    required this.usuarioId,
-    required this.nome,
-    required this.email,
-    required this.cpf,
-    required this.primeiroAcesso,
-    required this.dataCadastro,
-    required this.ativo,
-    required this.token,
-    required this.idRoles,
+    this.loginUsuario,
+    this.senhaUsuario,
+    this.usuarioId,
+    this.nome,
+    this.email,
+    this.cpf,
+    this.primeiroAcesso,
+    this.dataCadastro,
+    this.ativo,
+    this.token,
+    this.idRoles,
     this.matricula,
-    required this.ocorrencia,
-    required this.orgaoSetorUsuario,
-    required this.roles,
+    this.ocorrencia,
+    this.orgaoSetorUsuario,
+    this.roles,
   });
 
- 
-
+  // Método copyWith para criar uma nova instância com valores modificados
   Usuario copyWith({
     String? loginUsuario,
     String? senhaUsuario,
@@ -54,7 +55,7 @@ class Usuario {
     bool? ativo,
     String? token,
     int? idRoles,
-    ValueGetter<String?>? matricula,
+    String? matricula,
     List<Ocorrencia>? ocorrencia,
     List<OrgaoSetorUsuario>? orgaoSetorUsuario,
     Roles? roles,
@@ -71,55 +72,65 @@ class Usuario {
       ativo: ativo ?? this.ativo,
       token: token ?? this.token,
       idRoles: idRoles ?? this.idRoles,
-      matricula: matricula != null ? matricula() : this.matricula,
+      matricula: matricula ?? this.matricula,
       ocorrencia: ocorrencia ?? this.ocorrencia,
       orgaoSetorUsuario: orgaoSetorUsuario ?? this.orgaoSetorUsuario,
       roles: roles ?? this.roles,
     );
   }
 
+  // Converter a classe para Map (para JSON)
   Map<String, dynamic> toMap() {
     return {
-      'loginUsuario': loginUsuario,
-      'senhaUsuario': senhaUsuario,
-      'usuarioId': usuarioId,
+      'login_usuario': loginUsuario,
+      'senha_usuario': senhaUsuario,
+      'usuario_id': usuarioId,
       'nome': nome,
       'email': email,
       'cpf': cpf,
-      'primeiroAcesso': primeiroAcesso,
-      'dataCadastro': dataCadastro.millisecondsSinceEpoch,
+      'primeiro_acesso': primeiroAcesso,
+      'data_cadastro': dataCadastro?.toIso8601String(),
       'ativo': ativo,
       'token': token,
-      'idRoles': idRoles,
+      'idroles': idRoles,
       'matricula': matricula,
-      'ocorrencia': ocorrencia.map((x) => x.toMap()).toList(),
-      'orgaoSetorUsuario': orgaoSetorUsuario.map((x) => x.toMap()).toList(),
-      'roles': roles.toMap(),
+      'ocorrencia': ocorrencia?.map((x) => x.toMap()).toList(),
+      'orgao_setor_usuario': orgaoSetorUsuario?.map((x) => x.toMap()).toList(),
+      'roles': roles?.toMap(),
     };
   }
 
+  // Criar uma instância de Usuario a partir de um Map (de JSON)
   factory Usuario.fromMap(Map<String, dynamic> map) {
     return Usuario(
-      loginUsuario: map['loginUsuario'] ?? '',
-      senhaUsuario: map['senhaUsuario'] ?? '',
-      usuarioId: map['usuarioId']?.toInt() ?? 0,
-      nome: map['nome'] ?? '',
-      email: map['email'] ?? '',
-      cpf: map['cpf'] ?? '',
-      primeiroAcesso: map['primeiroAcesso'] ?? false,
-      dataCadastro: DateTime.fromMillisecondsSinceEpoch(map['dataCadastro']),
-      ativo: map['ativo'] ?? false,
-      token: map['token'] ?? '',
-      idRoles: map['idRoles']?.toInt() ?? 0,
+      loginUsuario: map['login_usuario'],
+      senhaUsuario: map['senha_usuario'],
+      usuarioId: map['usuario_id']?.toInt(),
+      nome: map['nome'],
+      email: map['email'],
+      cpf: map['cpf'],
+      primeiroAcesso: map['primeiro_acesso'],
+      dataCadastro: map['data_cadastro'] != null
+          ? DateTime.parse(map['data_cadastro'])
+          : null,
+      ativo: map['ativo'],
+      token: map['token'],
+      idRoles: map['idroles']?.toInt(),
       matricula: map['matricula'],
-      ocorrencia: List<Ocorrencia>.from(map['ocorrencia']?.map((x) => Ocorrencia.fromMap(x))),
-      orgaoSetorUsuario: List<OrgaoSetorUsuario>.from(map['orgaoSetorUsuario']?.map((x) => OrgaoSetorUsuario.fromMap(x))),
-      roles: Roles.fromMap(map['roles']),
+      ocorrencia: map['ocorrencia'] != null
+          ? List<Ocorrencia>.from(map['ocorrencia']?.map((x) => Ocorrencia.fromMap(x)))
+          : null,
+      orgaoSetorUsuario: map['orgao_setor_usuario'] != null
+          ? List<OrgaoSetorUsuario>.from(map['orgao_setor_usuario']?.map((x) => OrgaoSetorUsuario.fromMap(x)))
+          : null,
+      roles: map['roles'] != null ? Roles.fromMap(map['roles']) : null,
     );
   }
 
+  // Serializar para JSON
   String toJson() => json.encode(toMap());
 
+  // Deserializar de JSON
   factory Usuario.fromJson(String source) => Usuario.fromMap(json.decode(source));
 
   @override
@@ -130,42 +141,42 @@ class Usuario {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is Usuario &&
-      other.loginUsuario == loginUsuario &&
-      other.senhaUsuario == senhaUsuario &&
-      other.usuarioId == usuarioId &&
-      other.nome == nome &&
-      other.email == email &&
-      other.cpf == cpf &&
-      other.primeiroAcesso == primeiroAcesso &&
-      other.dataCadastro == dataCadastro &&
-      other.ativo == ativo &&
-      other.token == token &&
-      other.idRoles == idRoles &&
-      other.matricula == matricula &&
-      listEquals(other.ocorrencia, ocorrencia) &&
-      listEquals(other.orgaoSetorUsuario, orgaoSetorUsuario) &&
-      other.roles == roles;
+        other.loginUsuario == loginUsuario &&
+        other.senhaUsuario == senhaUsuario &&
+        other.usuarioId == usuarioId &&
+        other.nome == nome &&
+        other.email == email &&
+        other.cpf == cpf &&
+        other.primeiroAcesso == primeiroAcesso &&
+        other.dataCadastro == dataCadastro &&
+        other.ativo == ativo &&
+        other.token == token &&
+        other.idRoles == idRoles &&
+        other.matricula == matricula &&
+        listEquals(other.ocorrencia, ocorrencia) &&
+        listEquals(other.orgaoSetorUsuario, orgaoSetorUsuario) &&
+        other.roles == roles;
   }
 
   @override
   int get hashCode {
     return loginUsuario.hashCode ^
-      senhaUsuario.hashCode ^
-      usuarioId.hashCode ^
-      nome.hashCode ^
-      email.hashCode ^
-      cpf.hashCode ^
-      primeiroAcesso.hashCode ^
-      dataCadastro.hashCode ^
-      ativo.hashCode ^
-      token.hashCode ^
-      idRoles.hashCode ^
-      matricula.hashCode ^
-      ocorrencia.hashCode ^
-      orgaoSetorUsuario.hashCode ^
-      roles.hashCode;
+        senhaUsuario.hashCode ^
+        usuarioId.hashCode ^
+        nome.hashCode ^
+        email.hashCode ^
+        cpf.hashCode ^
+        primeiroAcesso.hashCode ^
+        dataCadastro.hashCode ^
+        ativo.hashCode ^
+        token.hashCode ^
+        idRoles.hashCode ^
+        matricula.hashCode ^
+        ocorrencia.hashCode ^
+        orgaoSetorUsuario.hashCode ^
+        roles.hashCode;
   }
 }
 

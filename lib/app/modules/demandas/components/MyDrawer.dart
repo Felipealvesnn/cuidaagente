@@ -14,8 +14,8 @@ class MyDrawer extends StatelessWidget {
         children: [
           // Cabeçalho com Avatar
           UserAccountsDrawerHeader(
-            accountName: Text(usuario.loginUsuario),
-            accountEmail: Text(usuario.email),
+            accountName: Text(usuario.loginUsuario!),
+            accountEmail: Text(usuario.email!),
             currentAccountPicture: CircleAvatar(
               child: ClipOval(
                 child: Image.network(
