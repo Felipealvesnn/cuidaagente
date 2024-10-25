@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../modules/LOGIN/bindings/login_binding.dart';
+import '../modules/LOGIN/views/login_view.dart';
 import '../modules/WELCOME/bindings/welcome_binding.dart';
 import '../modules/WELCOME/views/welcome_view.dart';
 import '../modules/demandas/bindings/demandas_binding.dart';
@@ -29,6 +31,11 @@ class AppPages {
       name: _Paths.WELCOME,
       page: () => const WelcomeView(),
       binding: WelcomeBinding(),
+    ),
+    GetPage(
+      name: _Paths.LOGIN,
+      page: () => const LoginView(),
+      binding: LoginBinding(),
     ),
   ];
 }

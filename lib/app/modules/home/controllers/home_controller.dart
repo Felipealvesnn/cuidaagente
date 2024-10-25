@@ -24,7 +24,7 @@ class HomeController extends GetxController {
 
       return Get.offAllNamed(Routes.DEMANDAS);
     } else {
-      //await Get.offAllNamed(Routes.LOGIN);
+      await Get.offAllNamed(Routes.LOGIN);
 
       //return const WelcomeView();
     }
