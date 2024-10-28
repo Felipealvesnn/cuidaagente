@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:cuidaagente/app/data/global/constants.dart';
+import 'package:cuidaagente/app/utils/getstorages.dart';
 import 'package:get/get_connect/connect.dart';
 
 class DemandasProvider extends GetConnect {
@@ -10,8 +11,8 @@ class DemandasProvider extends GetConnect {
       "Accept": "application/json",
       "Authorization": "sdfsdf" // Ajuste o token conforme necessário
     };
-
-    List<int> parametros = [13, 3]; // IDs enviados no corpo da requisição
+     var parametros =  await Storagers.boxUserLogado.read('boxOrgaoIds');
+   // List<int> parametros = [13, 3]; // IDs enviados no corpo da requisição
 
     // URL com parâmetros de paginação
     var url =

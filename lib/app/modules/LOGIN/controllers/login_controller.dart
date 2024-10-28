@@ -1,4 +1,3 @@
-
 import 'package:cuidaagente/app/data/repository/usuario_repository.dart';
 import 'package:cuidaagente/app/routes/app_pages.dart';
 import 'package:cuidaagente/app/utils/getstorages.dart';
@@ -25,6 +24,11 @@ class LoginPageController extends GetxController {
         Storagers.boxUserLogado.write("user", user);
         Storagers.boxCpf.write('boxCpf', user.cpf.toString());
         Storagers.boxToken.write('boxToken', user.token.toString());
+        // Extrai todos os orgaoId e salva como uma lista
+        final orgaoIds =
+            user.orgaoSetorUsuario?.map((orgao) => orgao.orgaoId).toList() ??
+                [];
+        Storagers.boxUserLogado.write('boxOrgaoIds', orgaoIds);
         print(user.token);
 
         Get.offAllNamed(Routes.HOME, arguments: [
@@ -48,7 +52,6 @@ class LoginPageController extends GetxController {
       loading.value = false;
     }
   }
-
 
   Future<void> authenticateWithBiometrics() async {
     final LocalAuthentication localAuth = LocalAuthentication();
@@ -83,7 +86,6 @@ class LoginPageController extends GetxController {
       print("Erro na autenticação biométrica: $e");
     }
   }
-
 
   final count = 0.obs;
   @override

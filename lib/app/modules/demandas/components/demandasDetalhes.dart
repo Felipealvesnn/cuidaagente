@@ -112,7 +112,7 @@ class DemandasDetalhes extends StatelessWidget {
                             color: Colors.grey.withOpacity(0.5), width: 1),
                       ),
                       title: Text(
-                          'Data da Ocorrência: ${demanda.ocorrencia?.dataAberturaOcorrencia?.toLocal().toString() ?? "N/A"}'),
+                          'Data da Ocorrência: ${demanda.ocorrencia?.dataAberturaOcorrencia != null ? DateFormat('dd/MM/yyyy HH:mm').format(demanda.ocorrencia!.dataAberturaOcorrencia!) : "N/A"}'),
                       subtitle: Text(
                           'Horário Informado: ${demanda.ocorrencia?.horaInformadaOcorrencia ?? "N/A"}'),
                     ),

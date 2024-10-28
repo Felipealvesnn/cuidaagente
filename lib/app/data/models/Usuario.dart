@@ -216,9 +216,9 @@ class OrgaoSetorUsuario {
 
   factory OrgaoSetorUsuario.fromMap(Map<String, dynamic> map) {
     return OrgaoSetorUsuario(
-      orgaoId: map['orgaoId']?.toInt() ?? 0,
-      usuarioId: map['usuarioId']?.toInt() ?? 0,
-      setorId: map['setorId']?.toInt() ?? 0,
+      orgaoId: map['orgao_id']?.toInt() ?? 0,
+      usuarioId: map['usuario_id']?.toInt() ?? 0,
+      setorId: map['setor_id']?.toInt() ?? 0,
     );
   }
 
