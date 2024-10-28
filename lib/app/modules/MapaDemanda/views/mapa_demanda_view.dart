@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../controllers/mapa_demanda_controller.dart';
 
 class MapaDemanda extends GetView<MapaDemandaController> {
@@ -8,7 +9,6 @@ class MapaDemanda extends GetView<MapaDemandaController> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mapa de Demanda'),
@@ -38,14 +38,23 @@ class MapaDemanda extends GetView<MapaDemandaController> {
               },
             ));
       }),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     controller.createRoute();
-      //   },
-      //   child: const Icon(Icons.directions),
-      // ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final url = Uri.parse(
+              'https://www.google.com/maps/dir/?api=1&origin=${controller.userLocation.value.latitude},${controller.userLocation.value.longitude}&destination=${controller.destination.latitude},${controller.destination.longitude}&travelmode=driving');
+
+          if (await canLaunchUrl(url)) {
+            await launchUrl(url);
+          } else {
+            Get.snackbar(
+              'Erro',
+              'Não foi possível abrir o Google Maps.',
+              snackPosition: SnackPosition.BOTTOM,
+            );
+          }
+        },
+        child: const Icon(Icons.directions),
+      ),
     );
   }
-
-
 }

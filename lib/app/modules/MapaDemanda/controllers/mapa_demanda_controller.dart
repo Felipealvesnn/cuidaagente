@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -10,17 +12,17 @@ class MapaDemandaController extends GetxController {
 
   late GoogleMapController mapController;
   late LatLng destination;
-  var userLocation =
-      LatLng(-3.7327, -38.5267).obs; // Localização padrão inicial
+  var userLocation = LatLng(-3.7327, -38.5267).obs; // Localização inicial padrão
   var polylineCoordinates = <LatLng>[].obs;
   late PolylinePoints polylinePoints;
   var polylines = <Polyline>{}.obs;
+  StreamSubscription<Position>? positionStream;
 
   @override
   void onInit() async {
     super.onInit();
 
-    // Pega latitude e longitude dos argumentos
+    // Recebe latitude e longitude dos argumentos
     destinationLatitude = Get.arguments['latitude'] ?? -3.7327;
     destinationLongitude = Get.arguments['longitude'] ?? -38.5267;
     destination = LatLng(destinationLatitude, destinationLongitude);
@@ -28,36 +30,25 @@ class MapaDemandaController extends GetxController {
     polylinePoints = PolylinePoints();
     await _getUserLocation();
     await createRoute();
+
+    // Inicia o monitoramento da posição
+    positionStream = Geolocator.getPositionStream().listen((Position position) {
+      userLocation.value = LatLng(position.latitude, position.longitude);
+      // updateRoute();
+      // _moveCameraToCurrentPosition();
+    });
   }
 
   Future<void> _getUserLocation() async {
-  bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  if (!serviceEnabled) {
-    await Geolocator.openLocationSettings();
-    return Future.error('Location services are disabled.');
+    // Solicita permissões e obtém a posição inicial
+    Position position = await Geolocator.getCurrentPosition();
+    userLocation.value = LatLng(position.latitude, position.longitude);
+
+    // Atualiza a câmera para a posição inicial do usuário
+    _moveCameraToCurrentPosition();
   }
 
-  LocationPermission permission = await Geolocator.checkPermission();
-  if (permission == LocationPermission.denied) {
-    permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error('Location permissions are permanently denied.');
-    }
-  }
-
-  Position position = await Geolocator.getCurrentPosition();
-  userLocation.value = LatLng(position.latitude, position.longitude);
-
-  // Atualiza a câmera para a posição atual do usuário
-  if (mapController != null) {
-    mapController.animateCamera(
-      CameraUpdate.newLatLngZoom(userLocation.value, 14),
-    );
-  }
-}
-
-
-  Future<void> createRoute() async {
+   Future<void> createRoute() async {
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
       request: PolylineRequest(
         origin: PointLatLng(
@@ -81,8 +72,44 @@ class MapaDemandaController extends GetxController {
       ));
     }
   }
-  
 
-  
+  Future<void> updateRoute() async {
+    // Atualiza a rota conforme a posição do usuário muda
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+      request: PolylineRequest(
+        origin: PointLatLng(userLocation.value.latitude, userLocation.value.longitude),
+        destination: PointLatLng(destination.latitude, destination.longitude),
+        mode: TravelMode.driving,
+      ),
+      googleApiKey: 'AIzaSyAsinfHRMZKKrM5CH7L0IoDpQSIJ2dWios',
+    );
 
+    if (result.points.isNotEmpty) {
+      polylineCoordinates.clear();
+      for (var point in result.points) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      }
+      polylines.clear();
+      polylines.add(Polyline(
+        polylineId: const PolylineId('route'),
+        color: Colors.blue,
+        width: 5,
+        points: polylineCoordinates,
+      ));
+    }
+  }
+
+  void _moveCameraToCurrentPosition() {
+    if (mapController != null) {
+      mapController.animateCamera(
+        CameraUpdate.newLatLngZoom(userLocation.value, 15),
+      );
+    }
+  }
+
+  @override
+  void onClose() {
+    positionStream?.cancel(); // Encerra o monitoramento ao sair
+    super.onClose();
+  }
 }
