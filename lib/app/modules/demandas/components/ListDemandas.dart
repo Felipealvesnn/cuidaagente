@@ -1,3 +1,4 @@
+import 'package:cuidaagente/app/modules/demandas/components/demandasDetalhes.dart';
 import 'package:cuidaagente/app/modules/demandas/controllers/demandas_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -72,7 +73,7 @@ class ListDemandas extends StatelessWidget {
 
               onTap: () {
                 // Navega para a página de detalhes da vistoria ao clicar
-                // Get.to(() => VistoriaDetalhesView(vistoria: vistoria));
+                Get.to(() => DemandasDetalhes (demanda: demanda));
               },
             ),
           );

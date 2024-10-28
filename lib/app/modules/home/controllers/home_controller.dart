@@ -8,7 +8,7 @@ class HomeController extends GetxController {
 
   
    Future verifyAuth() async {
-    var biometria = await Storagers.boxInicial.read('biometria');
+    var biometria = await Storagers.boxInicial.read('biometria')?? false;
     Usuario user = Usuario();
     final usuario = await Storagers.boxUserLogado.read('user');
     if (usuario != null) {

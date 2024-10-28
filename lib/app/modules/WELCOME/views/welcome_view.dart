@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import '../controllers/welcome_controller.dart';
 
 class WelcomeView extends GetView<WelcomeController> {
-  LoginController initial_page_controller = LoginController();
+  LoginPageController initial_page_controller = LoginPageController();
    WelcomeView({super.key});
   @override
   Widget build(BuildContext context) {

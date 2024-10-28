@@ -26,7 +26,7 @@ class HomeView extends GetView<HomeController> {
         },
         childWidget: SizedBox(
           height: 50,
-          child: Image.asset("assets/icon/icon.png"),
+         // child: Image.asset("assets/icon/icon.png"),
         ),
         duration: const Duration(milliseconds: 1000),
         animationDuration: const Duration(milliseconds: 500),

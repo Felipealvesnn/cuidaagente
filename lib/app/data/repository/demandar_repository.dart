@@ -4,10 +4,10 @@ import 'package:cuidaagente/app/data/provider/demandas_provider.dart';
 class DemandasRepository {
   final DemandasProvider demandasClient = DemandasProvider();
 
-  Future<List<Demanda>> getDemandas() async {
+  Future<List<Demanda>> getDemandas({int pageNumber = 1, int pageSize = 10}) async {
     try {
       // Obtém a resposta do provedor (assumindo que é uma lista de JSON)
-      dynamic response = await demandasClient.getDemandas();
+      dynamic response = await demandasClient.getDemandas(pageNumber: pageNumber, pageSize: pageSize);
 
       // Verifica se o retorno é uma lista de objetos JSON
       if (response is List) {

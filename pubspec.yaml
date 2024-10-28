@@ -40,6 +40,13 @@ dependencies:
   intl: ^0.19.0
   another_flutter_splash_screen: ^1.2.1
   local_auth: ^2.3.0
+  retry: ^3.1.2
+  hexcolor: ^3.0.1
+  validatorless: ^1.2.3
+  flutter_polyline_points: ^2.1.0
+  google_maps_flutter: ^2.9.0
+  geolocator: ^13.0.1
+  #google_navigation_flutter: ^0.3.0
 
 
 dev_dependencies:
@@ -63,6 +70,14 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/
+    - assets/ICON.PNG
+    - assets/iconCar.png
+    - assets/splash.png
+    - assets/logo003.png
+    - assets/logo001.png
+    - assets/cuida.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

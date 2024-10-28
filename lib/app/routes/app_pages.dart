@@ -1,7 +1,11 @@
 import 'package:get/get.dart';
 
+import '../modules/CONFIGURACOES/bindings/configuracoes_binding.dart';
+import '../modules/CONFIGURACOES/views/configuracoes_view.dart';
 import '../modules/LOGIN/bindings/login_binding.dart';
 import '../modules/LOGIN/views/login_view.dart';
+import '../modules/MapaDemanda/bindings/mapa_demanda_binding.dart';
+import '../modules/MapaDemanda/views/mapa_demanda_view.dart';
 import '../modules/WELCOME/bindings/welcome_binding.dart';
 import '../modules/WELCOME/views/welcome_view.dart';
 import '../modules/demandas/bindings/demandas_binding.dart';
@@ -14,7 +18,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.DEMANDAS;
+  static const INITIAL = Routes.HOME;
 
   static final routes = [
     GetPage(
@@ -29,13 +33,23 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.WELCOME,
-      page: () => const WelcomeView(),
+      page: () => WelcomeView(),
       binding: WelcomeBinding(),
     ),
     GetPage(
       name: _Paths.LOGIN,
-      page: () => const LoginView(),
+      page: () => LoginPageView(),
       binding: LoginBinding(),
+    ),
+    GetPage(
+      name: _Paths.CONFIGURACOES,
+      page: () => const ConfiguracoesView(),
+      binding: ConfiguracoesBinding(),
+    ),
+    GetPage(
+      name: _Paths.MAPA_DEMANDA,
+      page: () =>  MapaDemanda(),
+      binding: MapaDemandaBinding(),
     ),
   ];
 }

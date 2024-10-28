@@ -1,8 +1,9 @@
+import 'dart:convert';
 import 'package:cuidaagente/app/data/global/constants.dart';
 import 'package:get/get_connect/connect.dart';
 
 class DemandasProvider extends GetConnect {
-  Future getDemandas() async {
+  Future getDemandas({int pageNumber = 1, int pageSize = 10}) async {
     timeout = const Duration(minutes: 10);
     final headers = {
       "Content-Type": "application/json",
@@ -10,20 +11,27 @@ class DemandasProvider extends GetConnect {
       "Authorization": "sdfsdf" // Ajuste o token conforme necessário
     };
 
-    List<int> parametros = [13, 3]; // Parâmetros que devem ser enviados no corpo da requisição
+    List<int> parametros = [13, 3]; // IDs enviados no corpo da requisição
 
-    final body = parametros; // Corpo da requisição
+    // URL com parâmetros de paginação
+    var url =
+        "${baseUrlw2e}demandas_ocorrencia/Getdemandas_ocorrencia?pageNumber=$pageNumber&pageSize=$pageSize";
 
     var response = await request(
-      "${baseUrlw2e}demandas_ocorrencia/Getdemandas_ocorrencia",
-      'GET', // Método GET
-      body: body, // Corpo da requisição
+      url,
+      'GET', // Usando POST para enviar o corpo com parâmetros
+      body: parametros, // Corpo da requisição contendo os IDs
       headers: headers,
     );
 
-    if (response.statusCode == 200) {
+    // Trata a resposta para verificar a mensagem de erro
+    if (response.isOk) {
       return response.body;
     } else {
+      final responseBody = json.decode(response.bodyString ?? '{}');
+      if (responseBody['Message'] == "Número de página inválido.") {
+        return []; // Retorna lista vazia se a página é inválida
+      }
       throw Exception('Failed to fetch demandas!');
     }
   }

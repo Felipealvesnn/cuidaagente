@@ -1,4 +1,6 @@
 import 'package:cuidaagente/app/data/models/Usuario.dart';
+import 'package:cuidaagente/app/modules/WELCOME/controllers/welcome_controller.dart';
+import 'package:cuidaagente/app/routes/app_pages.dart';
 import 'package:cuidaagente/app/utils/getstorages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -57,7 +59,7 @@ class MyDrawer extends StatelessWidget {
             title: const Text('Configurações'),
             onTap: () {
               // Navegar para a tela de configurações
-              // Get.toNamed(Routes.CONFIGURACOES);
+               Get.toNamed(Routes.CONFIGURACOES);
             },
           ),
 
@@ -86,7 +88,7 @@ class MyDrawer extends StatelessWidget {
                         child: const Text('Sair'),
                         onPressed: () {
                           Navigator.of(context).pop(); // Fecha o diálogo
-                          //  WelcomeController.logout(); // Realiza o logout
+                          WelcomeController.logout(); // Realiza o logout
                         },
                       ),
                     ],

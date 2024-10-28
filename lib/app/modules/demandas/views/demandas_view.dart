@@ -19,18 +19,12 @@ class DemandasView extends GetView<DemandasController> {
         ),
         child: ClipRRect(
           borderRadius: const BorderRadius.only(
-            bottomLeft: Radius.circular(30.0),
-            bottomRight: Radius.circular(30.0),
+            bottomLeft: Radius.circular(1.0),
+            bottomRight: Radius.circular(1.0),
           ),
           child: SizedBox(
             height: tamanho, // Ajusta a altura do AppBar
             child: AppBar(
-              actions: const [
-                IconButton(
-                  icon: Icon(Icons.filter_list),
-                  onPressed: null,
-                ),
-              ],
               title: const Text(
                 'Demandas',
                 textAlign: TextAlign.center,
@@ -40,34 +34,19 @@ class DemandasView extends GetView<DemandasController> {
                 ),
               ),
               centerTitle: true,
-              elevation: 10, // Adiciona a elevação (sombra)
+              elevation: 50, // Adiciona a elevação (sombra)
               shadowColor:
                   Colors.black.withOpacity(0.5), // Personaliza a cor da sombra
             ),
           ),
         ),
       ),
-      floatingActionButton: Container(
-        margin: const EdgeInsets.all(16),
-        child: FloatingActionButton(
-          onPressed: () {
-            //Get.to(() => VistoriaFormPage());
-          },
-          // Cor do botão e do ícone
-          foregroundColor: Colors.white,
-          elevation: 6,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Icon(Icons.add),
-        ),
-      ),
       body: RefreshIndicator(
         onRefresh: () async {
+          controller.currentPage.value = 1;
           controller.hasMoreDemandas.value = true;
           controller.isLoadingDemandaInicial.value = true;
-          controller.demandasList.clear();
-          controller.isLoadingDemandaInicial.value = false;
+          await controller.fetchDemandas();
         },
         child: Obx(() {
           if (controller.isLoadingDemandaInicial.value) {
@@ -77,7 +56,7 @@ class DemandasView extends GetView<DemandasController> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Carregando vistorias...'),
+                  Text('Carregando demandas...'),
                   SizedBox(height: 20),
                   CircularProgressIndicator(),
                 ],
@@ -94,7 +73,7 @@ class DemandasView extends GetView<DemandasController> {
                   child: Padding(
                     padding: EdgeInsets.only(top: 20.0),
                     child: Text(
-                      'Nenhuma vistoria encontrada.',
+                      'Nenhuma demanda encontrada.',
                       style: TextStyle(fontSize: 20),
                     ),
                   ),

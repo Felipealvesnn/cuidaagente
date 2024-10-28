@@ -246,11 +246,11 @@ class OrgaoSetorUsuario {
 class Roles {
   final int id;
   final String descricao;
-  final List<Usuario> usuarioSistema;
+  final List<Usuario>? usuarioSistema;
   Roles({
     required this.id,
     required this.descricao,
-    required this.usuarioSistema,
+     this.usuarioSistema,
   });
 
   
@@ -271,7 +271,7 @@ class Roles {
     return {
       'id': id,
       'descricao': descricao,
-      'usuarioSistema': usuarioSistema.map((x) => x.toMap()).toList(),
+     // 'usuarioSistema': usuarioSistema.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -279,7 +279,7 @@ class Roles {
     return Roles(
       id: map['id']?.toInt() ?? 0,
       descricao: map['descricao'] ?? '',
-      usuarioSistema: List<Usuario>.from(map['usuarioSistema']?.map((x) => Usuario.fromMap(x))),
+      //usuarioSistema: List<Usuario>.from(map['usuarioSistema']?.map((x) => Usuario.fromMap(x))),
     );
   }
 
