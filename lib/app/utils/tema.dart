@@ -114,6 +114,9 @@ MaterialColor createMaterialColor(Color color) {
 
 final apptemprincipal = ThemeData(
   primaryColor: Colors.blue.shade300,
+  bottomSheetTheme: const BottomSheetThemeData(
+    backgroundColor: Colors.white,
+  ),
   scaffoldBackgroundColor: Colors.grey[200],
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(

@@ -11,7 +11,8 @@ class DemandasProvider extends GetConnect {
       "Accept": "application/json",
       "Authorization": "sdfsdf" // Ajuste o token conforme necessário
     };
-     var parametros =  await Storagers.boxUserLogado.read('boxOrgaoIds');
+    List<int> parametros = (await Storagers.boxUserLogado.read('boxOrgaoIds') as List<dynamic>).cast<int>();
+
    // List<int> parametros = [13, 3]; // IDs enviados no corpo da requisição
 
     // URL com parâmetros de paginação

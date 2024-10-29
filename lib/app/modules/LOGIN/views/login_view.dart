@@ -10,7 +10,7 @@ import 'package:validatorless/validatorless.dart';
 
 
 class LoginPageView extends GetView<LoginPageController> {
-  final double _headerHeight = Get.size.height / 3;
+  final double headerHeight = Get.size.height / 3;
   final formKey = GlobalKey<FormState>();
 
   TextEditingController myEmailController = TextEditingController();
@@ -26,9 +26,8 @@ class LoginPageView extends GetView<LoginPageController> {
           child: Column(
             children: [
               SizedBox(
-                height: _headerHeight,
-                child: HeaderWidget(_headerHeight, true,
-                    Icons.login_rounded), //let's create a common header widget
+                height: headerHeight,
+                child: HeaderWidget(headerHeight, true, Icons.login_rounded), //let's create a common header widget
               ),
               Container(
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),

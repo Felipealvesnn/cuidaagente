@@ -1,11 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../controllers/mapa_demanda_controller.dart';
+import 'package:map_launcher/map_launcher.dart';
 
 class MapaDemanda extends GetView<MapaDemandaController> {
-  MapaDemanda({Key? key}) : super(key: key);
+  const MapaDemanda({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +23,7 @@ class MapaDemanda extends GetView<MapaDemandaController> {
         }
 
         return Obx(() => GoogleMap(
+              myLocationButtonEnabled: true,
               initialCameraPosition: CameraPosition(
                 target: controller.userLocation.value,
                 zoom: 14,
@@ -40,15 +44,61 @@ class MapaDemanda extends GetView<MapaDemandaController> {
       }),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final url = Uri.parse(
-              'https://www.google.com/maps/dir/?api=1&origin=${controller.userLocation.value.latitude},${controller.userLocation.value.longitude}&destination=${controller.destination.latitude},${controller.destination.longitude}&travelmode=driving');
+          final origin = Coords(
+            controller.userLocation.value.latitude,
+            controller.userLocation.value.longitude,
+          );
+          final destination = Coords(
+            controller.destination.latitude,
+            controller.destination.longitude,
+          );
 
-          if (await canLaunchUrl(url)) {
-            await launchUrl(url);
+          // Verifica quais mapas estão disponíveis
+          final availableMaps = await MapLauncher.installedMaps;
+
+          if (availableMaps.isNotEmpty) {
+            // Mostra a lista de mapas para o usuário escolher
+            await showModalBottomSheet(
+              context: context,
+              builder: (context) {
+                return SafeArea(
+                  child: Wrap(
+                    children: [
+                      const ListTile(
+                        title: Text(
+                          'Escolha seu mapa',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      ...availableMaps.map((map) {
+                        return ListTile(
+                          onTap: () {
+                            // Abre o mapa selecionado com a rota de navegação
+                            map.showDirections(
+                              origin: origin,
+                              destination: destination,
+                              directionsMode: DirectionsMode.driving,
+                            );
+                            Get.back(); // Fecha o modal
+                          },
+                          title: Text(map.mapName),
+                          leading: SvgPicture.asset(
+                            map.icon,
+                            height: 30.0,
+                            width: 30.0,
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                );
+              },
+            );
           } else {
             Get.snackbar(
               'Erro',
-              'Não foi possível abrir o Google Maps.',
+              'Nenhum aplicativo de mapa encontrado.',
               snackPosition: SnackPosition.BOTTOM,
             );
           }

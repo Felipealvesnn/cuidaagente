@@ -47,6 +47,11 @@ dependencies:
   google_maps_flutter: ^2.9.0
   geolocator: ^13.0.1
   url_launcher:
+  firebase_messaging: 
+  firebase_core:
+  awesome_notifications: ^0.10.0
+  map_launcher: ^3.5.0
+  flutter_svg: ^2.0.10+1
   #google_navigation_flutter: ^0.3.0
 
 

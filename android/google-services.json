@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "976599680188",
+    "project_id": "cuida-820ab",
+    "storage_bucket": "cuida-820ab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:976599680188:android:4b8b087bf92c6231f7fcb9",
+        "android_client_info": {
+          "package_name": "com.example.cuidaagente"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQCvaM6Re3hF0ezW0aZYCuc4U2QN-NIdg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

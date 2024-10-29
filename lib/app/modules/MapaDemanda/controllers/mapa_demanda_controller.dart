@@ -32,11 +32,11 @@ class MapaDemandaController extends GetxController {
     await createRoute();
 
     // Inicia o monitoramento da posição
-    positionStream = Geolocator.getPositionStream().listen((Position position) {
-      userLocation.value = LatLng(position.latitude, position.longitude);
-      // updateRoute();
-      // _moveCameraToCurrentPosition();
-    });
+    // positionStream = Geolocator.getPositionStream().listen((Position position) {
+    //   userLocation.value = LatLng(position.latitude, position.longitude);
+    //     updateRoute();
+    //    _moveCameraToCurrentPosition();
+    // });
   }
 
   Future<void> _getUserLocation() async {

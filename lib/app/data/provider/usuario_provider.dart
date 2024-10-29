@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:cuidaagente/app/data/global/constants.dart';
 import 'package:cuidaagente/app/data/models/Usuario.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/connect.dart';
@@ -13,7 +14,7 @@ import 'package:retry/retry.dart';
 class UsuarioProvider extends GetConnect {
   Future<Map<String, dynamic>?> login(String email, String senha) async {
     timeout = const Duration(minutes: 10);
-    // String? tokenFcm = await FirebaseMessaging.instance.getToken();
+     String? tokenFcm = await FirebaseMessaging.instance.getToken();
     var url = "${baseUrlw2e}UsuarioSistema/LoginUsuario/";
     late Response<dynamic> response;
     var model = json.encode({"login_usuario": email, "senha_usuario": senha});
