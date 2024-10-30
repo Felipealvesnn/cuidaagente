@@ -1,3 +1,4 @@
+import 'package:cuidaagente/app/data/models/LogAgenteDemanda.dart';
 import 'package:cuidaagente/app/data/models/demandas.dart';
 import 'package:cuidaagente/app/data/repository/demandar_repository.dart';
 import 'package:flutter/material.dart';

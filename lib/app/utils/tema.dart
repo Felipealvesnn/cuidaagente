@@ -129,6 +129,24 @@ final apptemprincipal = ThemeData(
       ),
     ),
   ),
+  inputDecorationTheme: InputDecorationTheme(
+    floatingLabelStyle: const TextStyle(fontSize: 14, color: Colors.black),
+    outlineBorder: const BorderSide(
+      color: Colors.grey,
+      width: 2,
+    ),
+    isDense: true,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: const BorderSide(
+        color: Colors.grey,
+        width: 2,
+      ),
+    ),
+  ),
   appBarTheme: AppBarTheme(
     color: Colors.blue.shade300,
     centerTitle: true,

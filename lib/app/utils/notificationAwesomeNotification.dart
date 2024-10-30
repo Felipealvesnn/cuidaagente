@@ -79,8 +79,8 @@ class NotificationAwesomeNotification {
   static Future<void> onActionReceivedMethod(
       ReceivedAction receivedAction) async {
     debugPrint('onActionReceivedMethod');
-    // Get.toNamed(Routes.NOTIFICACAO,
-    //     parameters: {"id": receivedAction.id.toString()});
+
+    await Get.offAllNamed(Routes.DEMANDAS);
 
     // await playerMain.stop();
     final payload = receivedAction.payload ?? {};
@@ -181,6 +181,4 @@ class NotificationAwesomeNotification {
           ],
     );
   }
-
-
 }
