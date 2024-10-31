@@ -1,4 +1,6 @@
 // ignore: file_names, camel_case_types
+import 'package:cuidaagente/app/data/models/Usuario.dart';
+
 class Log_alteracao_demanda {
   int? Log_alteracao_Demanda_Id;
   int? demanda_id;
@@ -19,6 +21,7 @@ class Log_alteracao_demanda {
   DateTime? data_alteracao;
   String? hora_alteracao;
   int? usuario_alteracao_id;
+  Usuario? usuario_sistema;
 
   // Construtor com todos os parâmetros opcionais
   Log_alteracao_demanda({
@@ -41,6 +44,7 @@ class Log_alteracao_demanda {
     this.data_alteracao,
     this.hora_alteracao,
     this.usuario_alteracao_id,
+    this.usuario_sistema,
   });
 
   // Método para converter de Map (ex: JSON) para Log_alteracao_demanda
@@ -65,6 +69,7 @@ class Log_alteracao_demanda {
       data_alteracao: map['data_alteracao'] != null ? DateTime.parse(map['data_alteracao']) : null,
       hora_alteracao: map['hora_alteracao'],
       usuario_alteracao_id: map['usuario_alteracao_id'],
+      usuario_sistema: map['usuario_sistema'] != null ? Usuario.fromMap(map['usuario_sistema']) : null,
     );
   }
 

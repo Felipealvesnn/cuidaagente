@@ -50,7 +50,7 @@ class MapaDemandaController extends GetxController {
     // });
   }
 
-   Future<void> getUserLocation() async {
+  Future<void> getUserLocation() async {
     // Primeiro, verifica e solicita permissão
     bool permissionGranted = await LocationService.checkAndRequestPermission();
     if (!permissionGranted) return null;
@@ -58,7 +58,6 @@ class MapaDemandaController extends GetxController {
     // Se a permissão for concedida, obtém a posição
     Position position = await Geolocator.getCurrentPosition();
     userLocation.value = LatLng(position.latitude, position.longitude);
-  
   }
 
   Future<void> createRoute() async {
@@ -121,7 +120,7 @@ class MapaDemandaController extends GetxController {
 
   Future<void> finalizarDemanda() async {
     // Exibe o diálogo de carregamento para bloquear a tela
-
+    Usuario usuario = Storagers.boxUserLogado.read('user');
     Get.dialog(
       const Center(child: CircularProgressIndicator()),
       barrierDismissible: false, // Impede que o usuário feche o diálogo
@@ -132,6 +131,7 @@ class MapaDemandaController extends GetxController {
       await demandasRepository.finalizarDemanda(
         demandaId,
         motivoController.text,
+        usuario.usuarioId!,
       );
 
       // Exibe o Snackbar de confirmação

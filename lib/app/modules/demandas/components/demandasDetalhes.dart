@@ -22,6 +22,10 @@ class DemandasDetalhes extends StatelessWidget {
     final statusText =
         demanda.statusDemanda?.descricaoStatusDemanda.toUpperCase() ??
             "NÃO APROVADO";
+    final nomeUsuario = (demanda.logAlteracaoDemanda?.isNotEmpty ?? false)
+        ? demanda.logAlteracaoDemanda!.last.usuario_sistema?.nome
+        : null;
+
     final dataCriacaoText = _formatDate(demanda.dataCriacaoDemanda);
     final listTileShape = RoundedRectangleBorder(
       side: BorderSide(color: Colors.grey.withOpacity(0.5), width: 1),
@@ -35,7 +39,12 @@ class DemandasDetalhes extends StatelessWidget {
               physics: const BouncingScrollPhysics(),
               slivers: [
                 _buildAppBar(
-                    leadingIcon, isFinalizado, statusText, dataCriacaoText),
+                  leadingIcon,
+                  isFinalizado,
+                  statusText,
+                  dataCriacaoText,
+                  nomeUsuario,
+                ),
                 _buildDemandasDetails(listTileShape),
               ],
             ),
@@ -55,7 +64,7 @@ class DemandasDetalhes extends StatelessWidget {
 
   // Método para construir o AppBar com status
   Widget _buildAppBar(IconData leadingIcon, bool isFinalizado,
-      String statusText, String dataCriacaoText) {
+      String statusText, String dataCriacaoText, String? nomeUsuario) {
     return SliverAppBar(
       expandedHeight: 200.0,
       pinned: true,
@@ -82,6 +91,13 @@ class DemandasDetalhes extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 8),
+              if (nomeUsuario != null)
+                Text(
+                  'Finalizado por: $nomeUsuario',
+                  style: const TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
               Text(
                   'Despacho demanda: ${demanda.despachoAcao?.toUpperCase() ?? ""}',
                   style: const TextStyle(fontSize: 14)),

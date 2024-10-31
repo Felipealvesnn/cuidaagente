@@ -67,7 +67,7 @@ class DemandasProvider extends GetConnect {
   }
 
   // Método para finalizar uma demanda específica
-  Future<void> finalizarDemanda(int demandaId, String despacho) async {
+  Future<void> finalizarDemanda(int demandaId, String despacho, int usuarioID) async {
     timeout = const Duration(minutes: 10);
 
     // Lê o token armazenado
@@ -82,7 +82,7 @@ class DemandasProvider extends GetConnect {
 
     // Monta a URL com os parâmetros como query string
     var url =
-        "${baseUrlw2e}demandas_ocorrencia/finalizarDemanda?idedemanda=$demandaId&despacho=$despacho";
+        "${baseUrlw2e}demandas_ocorrencia/finalizarDemanda?idedemanda=$demandaId&despacho=$despacho&usuarioID=$usuarioID";
 
     // Executa a requisição GET para finalizar a demanda com parâmetros na URL
 

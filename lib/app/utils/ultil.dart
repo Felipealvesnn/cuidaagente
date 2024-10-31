@@ -44,6 +44,8 @@ class LocationService {
           'É necessário conceder permissão de localização.',
           snackPosition: SnackPosition.BOTTOM,
         );
+        _showPermissionDeniedDialog();
+
         return false;
       }
     }

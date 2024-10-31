@@ -34,10 +34,10 @@ class DemandasRepository {
     }
   }
 
-  Future<void> finalizarDemanda(int idedemanda, String despacho) async {
+  Future<void> finalizarDemanda(int idedemanda, String despacho, int usuarioID) async {
     try {
       // Envia o log para o provedor
-      await demandasClient.finalizarDemanda(idedemanda, despacho);
+      await demandasClient.finalizarDemanda(idedemanda, despacho, usuarioID);
     } catch (e) {
       rethrow;
     }
