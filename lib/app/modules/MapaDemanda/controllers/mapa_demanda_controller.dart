@@ -6,6 +6,7 @@ import 'package:cuidaagente/app/data/models/demandas.dart';
 import 'package:cuidaagente/app/data/repository/demandar_repository.dart';
 import 'package:cuidaagente/app/routes/app_pages.dart';
 import 'package:cuidaagente/app/utils/getstorages.dart';
+import 'package:cuidaagente/app/utils/ultil.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -37,7 +38,7 @@ class MapaDemandaController extends GetxController {
     destination = LatLng(destinationLatitude, destinationLongitude);
     demandaId = Get.arguments['demanda_id'];
     polylinePoints = PolylinePoints();
-    await _getUserLocation();
+    await getUserLocation();
     await createRoute();
     await logDemandaAgente();
 
@@ -49,13 +50,15 @@ class MapaDemandaController extends GetxController {
     // });
   }
 
-  Future<void> _getUserLocation() async {
-    // Solicita permissões e obtém a posição inicial
+   Future<void> getUserLocation() async {
+    // Primeiro, verifica e solicita permissão
+    bool permissionGranted = await LocationService.checkAndRequestPermission();
+    if (!permissionGranted) return null;
+
+    // Se a permissão for concedida, obtém a posição
     Position position = await Geolocator.getCurrentPosition();
     userLocation.value = LatLng(position.latitude, position.longitude);
-
-    // Atualiza a câmera para a posição inicial do usuário
-    // moveCameraToCurrentPosition();
+  
   }
 
   Future<void> createRoute() async {

@@ -1,13 +1,10 @@
-
 import 'package:cuidaagente/app/modules/LOGIN/controllers/login_controller.dart';
 import 'package:cuidaagente/app/modules/LOGIN/views/header_widget.dart';
 import 'package:cuidaagente/app/utils/theme_helper.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 import 'package:validatorless/validatorless.dart';
-
 
 class LoginPageView extends GetView<LoginPageController> {
   final double headerHeight = Get.size.height / 3;
@@ -21,13 +18,18 @@ class LoginPageView extends GetView<LoginPageController> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        //resizeToAvoidBottomInset: true,
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
           child: Column(
             children: [
               SizedBox(
                 height: headerHeight,
-                child: HeaderWidget(headerHeight, true, Icons.login_rounded), //let's create a common header widget
+                child: HeaderWidget(
+                    headerHeight,
+                    true,
+                    Icons
+                        .login_rounded), //let's create a common header widget
               ),
               Container(
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
@@ -54,9 +56,9 @@ class LoginPageView extends GetView<LoginPageController> {
                                 decoration:
                                     ThemeHelper().inputBoxDecorationShaddow(),
                                 child: TextFormField(
-                                  decoration: ThemeHelper().textInputDecoration(
-                                      'Email / CPF',
-                                      'Entre com Email OU CPF registrado'),
+                                  decoration: ThemeHelper()
+                                      .textInputDecoration('Email / CPF',
+                                          'Entre com Email OU CPF registrado'),
                                   validator: Validatorless.multiple([
                                     Validatorless.required(
                                         "campo obrigatório !"),
@@ -91,7 +93,8 @@ class LoginPageView extends GetView<LoginPageController> {
                                           ),
                                           onPressed: () {
                                             controller.showPassword.value =
-                                                !controller.showPassword.value;
+                                                !controller
+                                                    .showPassword.value;
                                           },
                                         ),
                                         labelText: "Senha",
@@ -115,12 +118,16 @@ class LoginPageView extends GetView<LoginPageController> {
                                             borderRadius:
                                                 BorderRadius.circular(100.0),
                                             borderSide: const BorderSide(
-                                                color: Colors.red, width: 2.0)),
-                                        focusedErrorBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(100.0),
-                                            borderSide: const BorderSide(
-                                                color: Colors.red, width: 2.0)),
+                                                color: Colors.red,
+                                                width: 2.0)),
+                                        focusedErrorBorder:
+                                            OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        100.0),
+                                                borderSide: const BorderSide(
+                                                    color: Colors.red,
+                                                    width: 2.0)),
                                       )),
                                 ),
                               ),
@@ -130,15 +137,7 @@ class LoginPageView extends GetView<LoginPageController> {
                                     const EdgeInsets.fromLTRB(10, 0, 10, 15),
                                 alignment: Alignment.topRight,
                                 child: GestureDetector(
-                                  onTap: () {
-                                    //Get.toNamed(Routes.ESQUECI_A_SENHA);
-                                    /*   Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                ForgotPasswordPage()),
-                                      ); */
-                                  },
+                                  onTap: () {},
                                   child: const Text(
                                     "Esqueceu a senha?",
                                     style: TextStyle(
@@ -167,7 +166,8 @@ class LoginPageView extends GetView<LoginPageController> {
                                         ),
                                       ),
                                       onPressed: () {
-                                        if (formKey.currentState!.validate()) {
+                                        if (formKey.currentState!
+                                            .validate()) {
                                           controller.login(
                                               myEmailController.text,
                                               myPasswordController.text);
@@ -203,14 +203,7 @@ class LoginPageView extends GetView<LoginPageController> {
                                   TextSpan(
                                     text: 'Criar',
                                     recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        // Get.toNamed(Routes.CADASTRO_USUARIO);
-                                        /* Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      RegistrationPage())); */
-                                      },
+                                      ..onTap = () {},
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Theme.of(context)
