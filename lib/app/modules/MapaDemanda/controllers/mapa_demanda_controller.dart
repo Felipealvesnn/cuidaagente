@@ -50,14 +50,15 @@ class MapaDemandaController extends GetxController {
     // });
   }
 
-  static Future<LatLng?> getUserLocation() async {
+   Future<void> getUserLocation() async {
     // Primeiro, verifica e solicita permissão
     bool permissionGranted = await LocationService.checkAndRequestPermission();
     if (!permissionGranted) return null;
 
     // Se a permissão for concedida, obtém a posição
     Position position = await Geolocator.getCurrentPosition();
-    return LatLng(position.latitude, position.longitude);
+    userLocation.value = LatLng(position.latitude, position.longitude);
+  
   }
 
   Future<void> createRoute() async {
