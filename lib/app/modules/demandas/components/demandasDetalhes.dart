@@ -98,7 +98,7 @@ class DemandasDetalhes extends StatelessWidget {
                     fontSize: 14,
                   ),
                 ),
-              Text(
+              Text(textAlign: TextAlign.center ,
                   'Despacho demanda: ${demanda.despachoAcao?.toUpperCase() ?? ""}',
                   style: const TextStyle(fontSize: 14)),
               Text('Realizada: $dataCriacaoText',
