@@ -22,9 +22,6 @@ class LoginPageView extends GetView<LoginPageController> {
         backgroundColor: Colors.white,
         body: Padding(
           padding: EdgeInsets.only(
-            top: 16.0,
-            left: 16.0,
-            right: 16.0,
             // Ajusta o padding inferior para acomodar o teclado
             bottom: MediaQuery.of(context).viewInsets.bottom + 16.0,
           ),
