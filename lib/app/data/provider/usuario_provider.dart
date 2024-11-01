@@ -3,12 +3,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cuidaagente/app/data/global/constants.dart';
+import 'package:cuidaagente/app/data/models/PosicaoAgente.dart';
 import 'package:cuidaagente/app/data/models/Usuario.dart';
+import 'package:cuidaagente/app/utils/getstorages.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/connect.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:retry/retry.dart';
 
 class UsuarioProvider extends GetConnect {
@@ -42,6 +45,34 @@ class UsuarioProvider extends GetConnect {
           duration: const Duration(seconds: 10),
           snackPosition: SnackPosition.TOP);
       return response.body;
+    }
+  }
+
+  Future<void> sendLogAgenteDemanda(PosicaoAgente log) async {
+    timeout = const Duration(minutes: 10);
+    await GetStorage.init("boxToken");
+    var token = Storagers.boxToken.read('boxToken') as String;
+
+    final headers = {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "Authorization": 'Bearer $token' // Ajuste o token conforme necessário
+    };
+    var url = "${baseUrlw2e}UsuarioSistema/SalvarPosicaoAgente";
+    var body = log.toMap();
+
+    var response = await post(
+      url,
+      body,
+      headers: headers,
+    );
+
+    if (response.isOk) {
+      print("Log enviado com sucesso!");
+    } else {
+      final responseBody = json.decode(response.bodyString ?? '{}');
+      throw Exception(
+          responseBody['Message'] ?? 'Falha ao enviar log de agente demanda!');
     }
   }
 }

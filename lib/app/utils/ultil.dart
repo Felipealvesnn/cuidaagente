@@ -1,8 +1,17 @@
+import 'dart:async';
+import 'dart:ui';
+
+import 'package:cuidaagente/app/data/models/PosicaoAgente.dart';
+import 'package:cuidaagente/app/data/models/Usuario.dart';
+import 'package:cuidaagente/app/data/repository/usuario_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:permission_handler/permission_handler.dart' as ph;
 
 void showSnackbar(String title, String message) {
   Get.snackbar(
@@ -77,7 +86,7 @@ class LocationService {
           TextButton(
             onPressed: () {
               Get.back();
-              openAppSettings(); // Abre as configurações do aplicativo
+              ph.openAppSettings(); // Abre as configurações do aplicativo
             },
             child: const Text('Abrir Configurações'),
           ),
@@ -85,4 +94,71 @@ class LocationService {
       ),
     );
   }
+}
+
+Future<void> initializeBackgroundService({
+  Function(ServiceInstance service)? funcao, // Torna funcao opcional
+}) async {
+  final service = FlutterBackgroundService();
+
+  await service.configure(
+    androidConfiguration: AndroidConfiguration(
+      onStart: funcao ?? onStart,
+      autoStart: true,
+      isForegroundMode: true,// this must match with notification channel you created above.
+      initialNotificationTitle: 'AWESOME SERVICE',
+      initialNotificationContent: 'Initializing',
+    ),
+    iosConfiguration: IosConfiguration(
+      onForeground: funcao ?? onStart,
+      onBackground: onIosBackground,
+    ),
+  );
+
+  service.startService();
+}
+
+bool onIosBackground(ServiceInstance service) {
+  // WidgetsFlutterBinding.ensureInitialized();
+  return true;
+}
+
+void onStart(ServiceInstance service) async {
+  DartPluginRegistrant.ensureInitialized();
+
+  bool permissionGranted = await LocationService.checkAndRequestPermission();
+  if (!permissionGranted) return null;
+
+  await mandarnotificacao();
+
+  Timer.periodic(const Duration(minutes: 1), (timer) async {
+    await mandarnotificacao();
+  });
+}
+
+Future<void> mandarnotificacao() async {
+  Position position = await Geolocator.getCurrentPosition();
+  LatLng currentLocation = LatLng(position.latitude, position.longitude);
+
+  // Envie os dados para sua API
+  await sendLocationToApi(currentLocation);
+}
+
+Future<void> sendLocationToApi(LatLng location) async {
+  UsuarioRepository repository = UsuarioRepository();
+  await GetStorage.init("boxUserLogado");
+  final boxUserLogado = GetStorage('boxUserLogado');
+  final usuario = boxUserLogado.read('user');
+
+  var user = usuario is Usuario ? usuario : Usuario.fromJson(usuario);
+
+  PosicaoAgente posicao = PosicaoAgente(
+    latitude: location.latitude,
+    longitude: location.longitude,
+    usuarioId: user.usuarioId,
+  );
+
+  await repository.sendLogAgenteDemanda(posicao);
+  // Chame a sua API aqui para enviar a localização
+  // Exemplo básico de como enviar os dados da localização
 }

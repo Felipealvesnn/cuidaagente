@@ -2,6 +2,7 @@ import 'package:cuidaagente/app/data/global/constants.dart';
 import 'package:cuidaagente/app/data/models/Usuario.dart';
 import 'package:cuidaagente/app/routes/app_pages.dart';
 import 'package:cuidaagente/app/utils/getstorages.dart';
+import 'package:cuidaagente/app/utils/ultil.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 
@@ -16,7 +17,7 @@ class HomeController extends GetxController {
       user = usuario is Usuario ? usuario : Usuario.fromJson(usuario);
       await Storagers.boxUserLogado.write('user', user);
     }
-
+    //
     if (user.cpf != null) {
       // ADICONA O AGENTE AO GRUPO DE MENSAGENS DO ORGAO DELE
       List<int> parametros =
