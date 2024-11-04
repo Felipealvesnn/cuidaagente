@@ -17,7 +17,7 @@ class HomeView extends GetView<HomeController> {
           end: Alignment.bottomCenter,
           colors: [
             Get.theme.primaryColor,
-            const Color.fromARGB(221, 34, 90, 35)
+            Colors.blue.shade800,
           ],
         ),
         onEnd: () async {
