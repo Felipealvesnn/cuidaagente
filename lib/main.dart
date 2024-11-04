@@ -15,8 +15,7 @@ void main() async {
 
   await inicializacaoGetStorage();
   //await initializeForegroundService();
-  await initializeBackgroundService();
-
+  bool permissionGranted = await LocationService.checkAndRequestPermission();
   runApp(
     GetMaterialApp(
       title: "Application",

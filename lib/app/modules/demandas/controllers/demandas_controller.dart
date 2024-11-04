@@ -1,6 +1,7 @@
 import 'package:cuidaagente/app/data/models/LogAgenteDemanda.dart';
 import 'package:cuidaagente/app/data/models/demandas.dart';
 import 'package:cuidaagente/app/data/repository/demandar_repository.dart';
+import 'package:cuidaagente/app/utils/ultil.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -17,6 +18,7 @@ class DemandasController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
+    await initializeBackgroundService();
 
     // Carrega a primeira página de demandas
     await fetchDemandas();

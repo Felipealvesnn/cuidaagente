@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:cuidaagente/app/data/global/constants.dart';
 import 'package:cuidaagente/app/data/models/LogAgenteDemanda.dart';
+import 'package:cuidaagente/app/data/models/adicionarPontos.dart';
 import 'package:cuidaagente/app/utils/getstorages.dart';
 import 'package:get/get_connect/connect.dart';
 
@@ -46,7 +47,7 @@ class DemandasProvider extends GetConnect {
     final headers = {
       "Content-Type": "application/json",
       "Accept": "application/json",
-       "Authorization": 'Bearer $token'  // Ajuste o token conforme necessário
+      "Authorization": 'Bearer $token' // Ajuste o token conforme necessário
     };
     var url = "${baseUrlw2e}demandas_ocorrencia/logAgenteDemanda";
     var body = log.toMap();
@@ -66,8 +67,35 @@ class DemandasProvider extends GetConnect {
     }
   }
 
+  Future<void> EnviarRotaAgente(adicionarPontos adicionarPontos) async {
+    var token = Storagers.boxToken.read('boxToken') as String;
+    timeout = const Duration(minutes: 10);
+    final headers = {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "Authorization": 'Bearer $token' // Ajuste o token conforme necessário
+    };
+    var url = "${baseUrlw2e}demandas_ocorrencia/AdicionarPontosRodaDemanda";
+    var body = adicionarPontos.toMap();
+
+    var response = await post(
+      url,
+      body,
+      headers: headers,
+    );
+
+    if (response.isOk) {
+      print("Log enviado com sucesso!");
+    } else {
+      final responseBody = json.decode(response.bodyString ?? '{}');
+      throw Exception(
+          responseBody['Message'] ?? 'Falha ao enviar log de agente demanda!');
+    }
+  }
+
   // Método para finalizar uma demanda específica
-  Future<void> finalizarDemanda(int demandaId, String despacho, int usuarioID) async {
+  Future<void> finalizarDemanda(
+      int demandaId, String despacho, int usuarioID) async {
     timeout = const Duration(minutes: 10);
 
     // Lê o token armazenado
@@ -77,7 +105,7 @@ class DemandasProvider extends GetConnect {
     final headers = {
       "Content-Type": "application/json",
       "Accept": "application/json",
-       "Authorization": 'Bearer $token' 
+      "Authorization": 'Bearer $token'
     };
 
     // Monta a URL com os parâmetros como query string

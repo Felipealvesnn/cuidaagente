@@ -1,9 +1,18 @@
 import 'package:cuidaagente/app/data/models/LogAgenteDemanda.dart';
+import 'package:cuidaagente/app/data/models/adicionarPontos.dart';
 import 'package:cuidaagente/app/data/models/demandas.dart';
 import 'package:cuidaagente/app/data/provider/demandas_provider.dart';
 
 class DemandasRepository {
   final DemandasProvider demandasClient = DemandasProvider();
+
+  Future<void> EnviarRotaAgente(adicionarPontos model) async {
+    try {
+      return await demandasClient.EnviarRotaAgente(model);
+    } on Exception catch (e) {
+      // TODO
+    }
+  }
 
   Future<List<Demanda>> getDemandas(
       {int pageNumber = 1, int pageSize = 10}) async {
@@ -34,7 +43,8 @@ class DemandasRepository {
     }
   }
 
-  Future<void> finalizarDemanda(int idedemanda, String despacho, int usuarioID) async {
+  Future<void> finalizarDemanda(
+      int idedemanda, String despacho, int usuarioID) async {
     try {
       // Envia o log para o provedor
       await demandasClient.finalizarDemanda(idedemanda, despacho, usuarioID);

@@ -1,8 +1,7 @@
 import 'dart:async';
-
 import 'package:cuidaagente/app/data/models/LogAgenteDemanda.dart';
 import 'package:cuidaagente/app/data/models/Usuario.dart';
-import 'package:cuidaagente/app/data/models/demandas.dart';
+import 'package:cuidaagente/app/data/models/adicionarPontos.dart';
 import 'package:cuidaagente/app/data/repository/demandar_repository.dart';
 import 'package:cuidaagente/app/routes/app_pages.dart';
 import 'package:cuidaagente/app/utils/getstorages.dart';
@@ -26,11 +25,16 @@ class MapaDemandaController extends GetxController {
   var polylineCoordinates = <LatLng>[].obs;
   late PolylinePoints polylinePoints;
   var polylines = <Polyline>{}.obs;
+  late Usuario usuario;
   StreamSubscription<Position>? positionStream;
+  var lastPosition =
+      const LatLng(0.0, 0.0); // Armazena a última posição conhecida
+  final keymaps = 'AIzaSyAsinfHRMZKKrM5CH7L0IoDpQSIJ2dWios';
 
   @override
   void onInit() async {
     super.onInit();
+    usuario = Storagers.boxUserLogado.read('user');
 
     // Recebe latitude e longitude dos argumentos
     destinationLatitude = Get.arguments['latitude'] ?? -3.7327;
@@ -43,17 +47,42 @@ class MapaDemandaController extends GetxController {
     await logDemandaAgente();
 
     // Inicia o monitoramento da posição
-    positionStream = Geolocator.getPositionStream().listen((Position position) {
-      userLocation.value = LatLng(position.latitude, position.longitude);
-      updateRoute();
-      moveCameraToCurrentPosition();
+    positionStream =
+        Geolocator.getPositionStream().listen((Position position) async {
+      LatLng newPosition = LatLng(position.latitude, position.longitude);
+
+      // Calcula a distância entre a última posição e a nova posição
+      double distance = Geolocator.distanceBetween(
+        lastPosition.latitude,
+        lastPosition.longitude,
+        newPosition.latitude,
+        newPosition.longitude,
+      );
+      // Atualiza somente se a distância for maior que um certo limite (ex: 5 metros)
+      if (distance > 10) {
+        userLocation.value = newPosition;
+        lastPosition = newPosition; // Atualiza a última posição registrada
+        await updateRoute();
+        await moveCameraToCurrentPosition();
+        //await enviarPontosRota();
+      }
     });
+  }
+
+  Future<void> enviarPontosRota() async {
+    adicionarPontos model = adicionarPontos(
+      demanda_id: demandaId,
+      latitude: userLocation.value.latitude,
+      longitude: userLocation.value.longitude,
+      usuario_id: usuario.usuarioId,
+    );
+    demandasRepository.EnviarRotaAgente(model);
   }
 
   Future<void> getUserLocation() async {
     // Primeiro, verifica e solicita permissão
     bool permissionGranted = await LocationService.checkAndRequestPermission();
-    if (!permissionGranted) return null;
+    if (!permissionGranted) return;
 
     // Se a permissão for concedida, obtém a posição
     Position position = await Geolocator.getCurrentPosition();
@@ -68,7 +97,7 @@ class MapaDemandaController extends GetxController {
         destination: PointLatLng(destination.latitude, destination.longitude),
         mode: TravelMode.driving,
       ),
-      googleApiKey: 'AIzaSyAsinfHRMZKKrM5CH7L0IoDpQSIJ2dWios',
+      googleApiKey: keymaps,
     );
 
     if (result.points.isNotEmpty) {
@@ -94,7 +123,7 @@ class MapaDemandaController extends GetxController {
         destination: PointLatLng(destination.latitude, destination.longitude),
         mode: TravelMode.driving,
       ),
-      googleApiKey: 'AIzaSyAsinfHRMZKKrM5CH7L0IoDpQSIJ2dWios',
+      googleApiKey: keymaps,
     );
 
     if (result.points.isNotEmpty) {
@@ -112,17 +141,18 @@ class MapaDemandaController extends GetxController {
     }
   }
 
-  void moveCameraToCurrentPosition() {
-    mapController.animateCamera(
-      CameraUpdate.newLatLngZoom(userLocation.value, 15),
+  Future<void> moveCameraToCurrentPosition() async {
+    await mapController.animateCamera(
+      CameraUpdate.newLatLngZoom(userLocation.value, 20),
     );
   }
 
   Future<void> finalizarDemanda() async {
     // Exibe o diálogo de carregamento para bloquear a tela
-    Usuario usuario = Storagers.boxUserLogado.read('user');
     Get.dialog(
-      const Center(child: CircularProgressIndicator()),
+      const Center(
+        child: CircularProgressIndicator(),
+      ),
       barrierDismissible: false, // Impede que o usuário feche o diálogo
     );
 
