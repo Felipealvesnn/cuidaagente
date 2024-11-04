@@ -113,7 +113,7 @@ MaterialColor createMaterialColor(Color color) {
 }
 
 final apptemprincipal = ThemeData(
-  primaryColor: Colors.blue.shade300,
+  primaryColor: Colors.blue.shade800,
   bottomSheetTheme: const BottomSheetThemeData(
     backgroundColor: Colors.white,
   ),
