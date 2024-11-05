@@ -77,7 +77,7 @@ class MapaDemanda extends GetView<MapaDemandaController> {
         ),
         const SizedBox(height: 16),
         FloatingActionButton(
-          heroTag: "directions_button",
+          heroTag: "mover_camera",
           onPressed: ()async => await controller.moveCameraToCurrentPosition(),
           child: const Icon(Icons.map),
           tooltip: 'Abrir Mapa',

@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:isolate';
+import 'dart:ui';
 import 'package:background_locator_2/background_locator.dart';
 import 'package:background_locator_2/settings/android_settings.dart';
 import 'package:background_locator_2/settings/locator_settings.dart';
@@ -13,6 +15,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart' as ph;
 import 'package:background_locator_2/location_dto.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void showSnackbar(String title, String message) {
   Get.snackbar(
@@ -97,13 +100,14 @@ class LocationService {
   }
 }
 
+@pragma('vm:entry-point')
 Future<void> initializeBackgroundService() async {
   await BackgroundLocator.initialize();
 
   BackgroundLocator.registerLocationUpdate(
-    locationCallback,
-    initCallback: initCallback,
-    disposeCallback: disposeCallback,
+    LocationCallbackHandler.locationCallback,
+    initCallback: LocationCallbackHandler.initCallback,
+    disposeCallback: LocationCallbackHandler.disposeCallback,
     androidSettings: const AndroidSettings(
       accuracy: LocationAccuracy.NAVIGATION,
       interval: 60, // 1 minuto em segundos
@@ -121,36 +125,75 @@ Future<void> initializeBackgroundService() async {
   );
 }
 
-// Função chamada quando o serviço de localização é iniciado
-void initCallback(Map<String, dynamic> params) {
-  print("Serviço de localização iniciado");
+// Função chamada quando @pragma('vm:entry-point')o serviço de localização é iniciado
+@pragma('vm:entry-point')
+class LocationCallbackHandler {
+  static const String _isolateName = "LocatorIsolate";
+  static ReceivePort port = ReceivePort();
+
+  // Inicialização do Isolate
+  static void initializeIsolate() {
+    IsolateNameServer.registerPortWithName(port.sendPort, _isolateName);
+    
+    port.listen((dynamic data) {
+      print("Dados de localização recebidos: $data");
+      // Aqui você pode fazer qualquer processamento com os dados recebidos.
+    });
+  }
+
+  // Callback inicial do serviço
+  @pragma('vm:entry-point')
+  static void initCallback(Map<String, dynamic> params) {
+    print("Serviço de localização iniciado");
+  }
+
+  // Callback de atualização de localização
+  @pragma('vm:entry-point')
+  static void locationCallback(LocationDto locationDto) async {
+    LatLng currentLocation = LatLng(locationDto.latitude, locationDto.longitude);
+    await sendLocationToApi(currentLocation);
+  }
+
+  // Callback de encerramento do serviço
+  @pragma('vm:entry-point')
+  static void disposeCallback() {
+    print("Serviço de localização encerrado");
+  }
+
+  // Função para enviar os dados de localização para a API
+  @pragma('vm:entry-point')
+  static Future<void> sendLocationToApi(LatLng location) async {
+    UsuarioRepository repository = UsuarioRepository();
+
+    // Exemplo de feedback para depuração
+    showSnackbar('Localização Atualizada', 'Latitude: ${location.latitude}, Longitude: ${location.longitude}');
+
+    await GetStorage.init("boxUserLogado");
+    final boxUserLogado = GetStorage('boxUserLogado');
+    final usuario = boxUserLogado.read('user');
+
+    var user = usuario is Usuario ? usuario : Usuario.fromJson(usuario);
+
+    PosicaoAgente posicao = PosicaoAgente(
+      latitude: location.latitude,
+      longitude: location.longitude,
+      usuarioId: user.usuarioId,
+    );
+
+    await repository.sendLogAgenteDemanda(posicao);
+    showSnackbar('Localização Enviada', 'Latitude: ${location.latitude}, Longitude: ${location.longitude}');
+  }
 }
 
-// Função de callback chamada para cada atualização de localização
-void locationCallback(LocationDto locationDto) async {
-  LatLng currentLocation = LatLng(locationDto.latitude, locationDto.longitude);
-  await sendLocationToApi(currentLocation);
-}
+  
 
-// Função de callback chamada quando o serviço é encerrado
-void disposeCallback() {
-  print("Serviço de localização encerrado");
-}
-
-// Função para enviar os dados para a API
-Future<void> sendLocationToApi(LatLng location) async {
-  UsuarioRepository repository = UsuarioRepository();
-  await GetStorage.init("boxUserLogado");
-  final boxUserLogado = GetStorage('boxUserLogado');
-  final usuario = boxUserLogado.read('user');
-
-  var user = usuario is Usuario ? usuario : Usuario.fromJson(usuario);
-
-  PosicaoAgente posicao = PosicaoAgente(
-    latitude: location.latitude,
-    longitude: location.longitude,
-    usuarioId: user.usuarioId,
-  );
-
-  await repository.sendLogAgenteDemanda(posicao);
+Future<bool> requestLocationPermissions() async {
+  // Verifique e solicite permissão de localização enquanto o app estiver em uso
+  var status = await Permission.locationWhenInUse.request();
+  if (status.isGranted) {
+    // Solicite permissão de localização em segundo plano
+    status = await Permission.locationAlways.request();
+    return status.isGranted;
+  }
+  return false;
 }

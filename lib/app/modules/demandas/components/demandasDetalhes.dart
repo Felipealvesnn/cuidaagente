@@ -1,3 +1,4 @@
+import 'package:cuidaagente/app/modules/demandas/controllers/demandas_controller.dart';
 import 'package:cuidaagente/app/routes/app_pages.dart';
 import 'package:cuidaagente/app/utils/ultil.dart';
 import 'package:flutter/material.dart';
@@ -9,27 +10,17 @@ class DemandasDetalhes extends StatelessWidget {
   final Demanda demanda;
 
   const DemandasDetalhes({
-    Key? key,
+    super.key,
     required this.demanda,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<DemandasController>();
+    final isusuarioBoll = _isUsuarioRelacionado(controller.usuario.usuarioId!);
     final isFinalizado =
         demanda.statusDemanda?.descricaoStatusDemanda.toUpperCase() ==
             "FINALIZADO";
-    final leadingIcon = isFinalizado ? Icons.check : Icons.info_outline;
-    final statusText =
-        demanda.statusDemanda?.descricaoStatusDemanda.toUpperCase() ??
-            "NÃO APROVADO";
-    final nomeUsuario = (demanda.logAlteracaoDemanda?.isNotEmpty ?? false)
-        ? demanda.logAlteracaoDemanda!.last.usuario_sistema?.nome
-        : null;
-
-    final dataCriacaoText = _formatDate(demanda.dataCriacaoDemanda);
-    final listTileShape = RoundedRectangleBorder(
-      side: BorderSide(color: Colors.grey.withOpacity(0.5), width: 1),
-    );
 
     return Scaffold(
       body: Column(
@@ -39,20 +30,36 @@ class DemandasDetalhes extends StatelessWidget {
               physics: const BouncingScrollPhysics(),
               slivers: [
                 _buildAppBar(
-                  leadingIcon,
-                  isFinalizado,
-                  statusText,
-                  dataCriacaoText,
-                  nomeUsuario,
+                  leadingIcon: isFinalizado ? Icons.check : Icons.schedule,
+                  isFinalizado: isFinalizado,
+                  statusText: demanda.statusDemanda?.descricaoStatusDemanda
+                          .toUpperCase() ??
+                      "NÃO APROVADO",
+                  dataCriacaoText: _formatDate(demanda.dataCriacaoDemanda),
+                  nomeUsuario: _getNomeUsuarioFinalizado(),
                 ),
-                _buildDemandasDetails(listTileShape),
+                _buildDemandasDetails(),
               ],
             ),
           ),
-          _buildOpenMapButton(context, isFinalizado),
+          _buildOpenMapButton(context, isFinalizado, isusuarioBoll),
         ],
       ),
     );
+  }
+
+  // Verifica se o usuário está relacionado à demanda
+  bool _isUsuarioRelacionado(int usuarioId) {
+    return demanda.logAgenteDemanda
+            ?.any((element) => element.usuarioId == usuarioId) ??
+        false;
+  }
+
+  // Obtém o nome do usuário que finalizou a demanda
+  String? _getNomeUsuarioFinalizado() {
+    return (demanda.logAlteracaoDemanda?.isNotEmpty ?? false)
+        ? demanda.logAlteracaoDemanda!.last.usuario_sistema?.nome
+        : null;
   }
 
   // Método para formatar a data
@@ -63,8 +70,13 @@ class DemandasDetalhes extends StatelessWidget {
   }
 
   // Método para construir o AppBar com status
-  Widget _buildAppBar(IconData leadingIcon, bool isFinalizado,
-      String statusText, String dataCriacaoText, String? nomeUsuario) {
+  Widget _buildAppBar({
+    required IconData leadingIcon,
+    required bool isFinalizado,
+    required String statusText,
+    required String dataCriacaoText,
+    String? nomeUsuario,
+  }) {
     return SliverAppBar(
       expandedHeight: 200.0,
       pinned: true,
@@ -75,38 +87,16 @@ class DemandasDetalhes extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    leadingIcon,
-                    color: isFinalizado ? Colors.green : Colors.red,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Status: $statusText',
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
+              _buildStatusRow(leadingIcon, isFinalizado, statusText),
               const SizedBox(height: 8),
               if (nomeUsuario != null)
-                Text(
-                  'Finalizado por: $nomeUsuario',
-                  style: const TextStyle(
-                    fontSize: 14,
-                  ),
-                ),
-              Text(
-                  textAlign: TextAlign.center,
-                  'Despacho demanda: ${demanda.despachoAcao?.toUpperCase() ?? ""}',
-                  style: const TextStyle(fontSize: 14)),
-              Text('Realizada: $dataCriacaoText',
-                  style: const TextStyle(fontSize: 14)),
-              Text(
-                  'Órgão: ${demanda.orgao?.nomeAbreviadoOrgao ?? "Indisponível"}',
-                  style: const TextStyle(fontSize: 14)),
+                Text('Finalizado por: $nomeUsuario',
+                    style: const TextStyle(fontSize: 14)),
+              _buildTextRow(
+                  'Despacho demanda: ${demanda.despachoAcao?.toUpperCase() ?? ""}'),
+              _buildTextRow('Realizada: $dataCriacaoText'),
+              _buildTextRow(
+                  'Órgão: ${demanda.orgao?.nomeAbreviadoOrgao ?? "Indisponível"}'),
             ],
           ),
         ),
@@ -114,64 +104,98 @@ class DemandasDetalhes extends StatelessWidget {
     );
   }
 
+  // Método para exibir o status da demanda com ícone
+  Widget _buildStatusRow(IconData icon, bool isFinalizado, String statusText) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, color: Colors.black),
+        const SizedBox(width: 8),
+        Text('Status: $statusText',
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+      ],
+    );
+  }
+
+  // Método para exibir linhas de texto formatadas
+  Widget _buildTextRow(String text) {
+    return Text(
+      text,
+      textAlign: TextAlign.center,
+      style: const TextStyle(fontSize: 14),
+    );
+  }
+
   // Método para construir os detalhes da demanda
-  Widget _buildDemandasDetails(RoundedRectangleBorder shape) {
+  Widget _buildDemandasDetails() {
     return SliverList(
       delegate: SliverChildListDelegate([
         _buildListTile(
-            shape,
             'Local: ${demanda.ocorrencia?.enderecoOcorrencia ?? "N/A"}',
             'Bairro: ${demanda.ocorrencia?.bairroOcorrencia ?? "N/A"}'),
         _buildListTile(
-            shape,
             'Cidade: ${demanda.ocorrencia?.cidadeOcorrencia ?? "N/A"}',
             'Estado: ${demanda.ocorrencia?.ufOcorrencia ?? "N/A"}'),
         _buildListTile(
-            shape,
             'Data da Ocorrência: ${_formatDate(demanda.ocorrencia?.dataAberturaOcorrencia)}',
             'Horário Informado: ${demanda.ocorrencia?.horaInformadaOcorrencia ?? "N/A"}'),
-        _buildListTile(shape, 'Relato do Autor',
+        _buildListTile('Relato do Autor',
             demanda.ocorrencia?.relatoAutorRegistroOcorrencia ?? "N/A"),
-        _buildListTile(shape, 'Relato do Atendente',
+        _buildListTile('Relato do Atendente',
             demanda.ocorrencia?.relatoAtendenteOcorrencia ?? "N/A"),
-        _buildListTile(shape, 'Observações Finais',
+        _buildListTile('Observações Finais',
             demanda.ocorrencia?.observacoesFinaisOcorrencia ?? "N/A"),
       ]),
     );
   }
 
   // Método para construir o ListTile com estilo
-  Widget _buildListTile(
-      RoundedRectangleBorder shape, String title, String subtitle) {
+  Widget _buildListTile(String title, String subtitle) {
     return ListTile(
-      shape: shape,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: Colors.grey.withOpacity(0.5), width: 1),
+      ),
       title: Text(title),
       subtitle: Text(subtitle),
     );
   }
 
   // Botão para abrir o mapa com confirmação
-  Widget _buildOpenMapButton(BuildContext context, bool isFinalizado) {
+  Widget _buildOpenMapButton(
+      BuildContext context, bool isFinalizado, bool isusuarioBoll) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
       width: MediaQuery.of(context).size.width,
       child: ElevatedButton(
-        onPressed: () => _handleOpenMap(context, isFinalizado),
+        onPressed: () => _handleOpenMap(context, isFinalizado, isusuarioBoll),
         child: const Text('Abrir Mapa'),
       ),
     );
   }
 
   // Método para tratar a ação do botão Abrir Mapa
-  void _handleOpenMap(BuildContext context, bool isFinalizado) {
+  void _handleOpenMap(
+      BuildContext context, bool isFinalizado, bool isusuarioBoll) {
     if (isFinalizado) {
       showSnackbar("Aviso", "Demanda já finalizada");
+    } else if (isusuarioBoll) {
+      _openMap();
     } else {
       _showConfirmationDialog(context);
     }
   }
 
-  // Método para mostrar o Snackbar de aviso
+  // Método para abrir o mapa diretamente
+  void _openMap() {
+    Get.toNamed(
+      Routes.MAPA_DEMANDA,
+      arguments: {
+        'latitude': demanda.ocorrencia?.latitude,
+        'longitude': demanda.ocorrencia?.longitude,
+        'demanda_id': demanda.demandaId,
+      },
+    );
+  }
 
   // Método para mostrar o diálogo de confirmação
   void _showConfirmationDialog(BuildContext context) {
@@ -187,16 +211,17 @@ class DemandasDetalhes extends StatelessWidget {
               child: const Text('Não'),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 Navigator.of(context).pop();
-                Get.toNamed(
-                  Routes.MAPA_DEMANDA,
-                  arguments: {
-                    'latitude': demanda.ocorrencia?.latitude,
-                    'longitude': demanda.ocorrencia?.longitude,
-                    'demanda_id': demanda.demandaId,
-                  },
-                );
+
+                var resultado = await Get.find<DemandasController>()
+                    .logDemandaAgente(demanda);
+                if (resultado) {
+                  _openMap();
+                } else {
+                  showSnackbar(
+                      "Erro", "Você já está vinculado a outra demanda");
+                }
               },
               child: const Text('Sim'),
             ),

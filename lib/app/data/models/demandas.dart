@@ -1,3 +1,4 @@
+import 'package:cuidaagente/app/data/models/LogAgenteDemanda.dart';
 import 'package:cuidaagente/app/data/models/LogAlteracaoDemanda.dart';
 import 'package:cuidaagente/app/data/models/StatusDemanda.dart';
 import 'package:cuidaagente/app/data/models/ocorrencia.dart';
@@ -26,6 +27,7 @@ class Demanda {
   final Orgao? orgao;
   final StatusDemanda? statusDemanda;
   final List<Log_alteracao_demanda>? logAlteracaoDemanda;
+  final List<LogAgenteDemanda>? logAgenteDemanda;
 
   Demanda({
     this.demandaId,
@@ -50,6 +52,7 @@ class Demanda {
     this.orgao,
     this.statusDemanda,
     this.logAlteracaoDemanda,
+    this.logAgenteDemanda,
   });
 
   // Método para converter a classe em um Map
@@ -77,6 +80,7 @@ class Demanda {
       'orgao': orgao?.toMap(),
       'status_demanda': statusDemanda?.toMap(),
       'log_alteracao_demanda': logAlteracaoDemanda?.map((e) => e.toMap()).toList(),
+      'log_agente_demanda': logAgenteDemanda?.map((e) => e.toMap()).toList(),
     };
   }
 
@@ -111,6 +115,9 @@ class Demanda {
       logAlteracaoDemanda: map['log_alteracao_demanda'] != null
           ? List<Log_alteracao_demanda>.from(
               map['log_alteracao_demanda'].map((x) => Log_alteracao_demanda.fromMap(x)))
+          : null,
+          logAgenteDemanda : map['logAgenteDemanda'] != null? List<LogAgenteDemanda>.from(
+              map['logAgenteDemanda'].map((x) => LogAgenteDemanda.fromMap(x)))
           : null,
     );
   }

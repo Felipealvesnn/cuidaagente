@@ -1,8 +1,13 @@
+import 'dart:isolate';
+
 import 'package:cuidaagente/app/data/models/LogAgenteDemanda.dart';
+import 'package:cuidaagente/app/data/models/Usuario.dart';
 import 'package:cuidaagente/app/data/models/demandas.dart';
 import 'package:cuidaagente/app/data/repository/demandar_repository.dart';
+import 'package:cuidaagente/app/utils/getstorages.dart';
 import 'package:cuidaagente/app/utils/ultil.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 
 class DemandasController extends GetxController {
@@ -12,11 +17,17 @@ class DemandasController extends GetxController {
   var demandasList = <Demanda>[].obs;
   var hasMoreDemandas = true.obs;
   var isLoadingMore = false.obs;
+  static const String _isolateName = "LocatorIsolate";
+  ReceivePort port = ReceivePort();
+
   var currentPage = 1.obs;
   final int pageSize = 10;
+  late Usuario usuario;
 
   @override
   void onInit() async {
+    usuario = await Storagers.boxUserLogado.read('user') as Usuario;
+
     super.onInit();
     await initializeBackgroundService();
 
@@ -66,5 +77,38 @@ class DemandasController extends GetxController {
   void onClose() {
     scrollController.dispose();
     super.onClose();
+  }
+
+  Future<bool> logDemandaAgente(Demanda model) async {
+    // Abre um diálogo de carregamento
+    Get.dialog(
+      const PopScope(
+        canPop: false,
+        child: Center(
+          child: CircularProgressIndicator(), // Indicador de carregamento
+        ),
+      ),
+      barrierDismissible:
+          false, // Impede que o usuário feche o diálogo tocando fora
+    );
+
+    try {
+      Position userLocation = await Geolocator.getCurrentPosition();
+
+      // Cria um novo log com os dados da demanda
+      LogAgenteDemanda log = LogAgenteDemanda(
+        usuarioId: usuario.usuarioId, // ID do usuário logado
+        latitude: userLocation.latitude, // Latitude do dispositivo
+        longitude: userLocation.longitude, // Longitude do dispositivo
+        demandaId: model.demandaId, // ID da demanda
+        dataIniciado: DateTime.now(), // Data de início do atendimento
+      );
+
+      // Envia o log para o servidor
+      var resultado = await demandasRepository.sendLogAgenteDemanda(log);
+      return resultado;
+    } finally {
+      Get.back(); // Fecha o diálogo de carregamento ao final da execução
+    }
   }
 }

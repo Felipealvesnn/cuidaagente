@@ -34,10 +34,11 @@ class DemandasRepository {
     }
   }
 
-  Future<void> sendLogAgenteDemanda(LogAgenteDemanda log) async {
+  Future<bool> sendLogAgenteDemanda(LogAgenteDemanda log) async {
     try {
       // Envia o log para o provedor
-      await demandasClient.sendLogAgenteDemanda(log);
+      final value = await demandasClient.sendLogAgenteDemanda(log);
+      return value;
     } catch (e) {
       rethrow;
     }

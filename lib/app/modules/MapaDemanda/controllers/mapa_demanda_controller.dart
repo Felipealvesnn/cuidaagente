@@ -44,7 +44,7 @@ class MapaDemandaController extends GetxController {
     polylinePoints = PolylinePoints();
     await getUserLocation();
     await createRoute();
-    await logDemandaAgente();
+    //await logDemandaAgente();
 
     // Inicia o monitoramento da posição
     positionStream =
