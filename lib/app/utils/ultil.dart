@@ -188,12 +188,37 @@ class LocationCallbackHandler {
   
 
 Future<bool> requestLocationPermissions() async {
-  // Verifique e solicite permissão de localização enquanto o app estiver em uso
+  // Solicita permissão de localização "quando em uso"
   var status = await Permission.locationWhenInUse.request();
+
   if (status.isGranted) {
-    // Solicite permissão de localização em segundo plano
+    // Solicita permissão de localização "sempre"
     status = await Permission.locationAlways.request();
-    return status.isGranted;
+    if (status.isGranted) {
+      return true;
+    } else {
+      // Mostra diálogo para explicar a importância da permissão
+      return _showPermissionDialog();
+    }
+  } else {
+    // Mostra diálogo para explicar a importância da permissão
+    return _showPermissionDialog();
   }
-  return false;
+}
+
+// Função para mostrar o diálogo e redirecionar para as configurações
+Future<bool> _showPermissionDialog() async {
+  return await Get.defaultDialog<bool>(
+    title: 'Permissão Necessária',
+    middleText: 'Este aplicativo precisa da sua localização para funcionar corretamente. '
+                'Por favor, conceda permissão para rastreamento contínuo da localização.',
+    textConfirm: 'Abrir Configurações',
+    textCancel: 'Cancelar',
+    onConfirm: () async {
+      // Abre as configurações do aplicativo
+      await openAppSettings();
+      Get.back(result: false); // Retorna false para indicar que o usuário foi para as configurações
+    },
+    onCancel: () => Get.back(result: false), // Retorna false se o usuário cancelar
+  ) ?? false;
 }
