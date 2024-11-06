@@ -67,7 +67,8 @@ ThemeData ThemaApp() {
         backgroundColor:
             WidgetStateProperty.all<Color>(colorVerde), // Cor de fundo do botão
         textStyle: WidgetStateProperty.all<TextStyle>(
-          const TextStyle(fontSize: 16), // Tamanho do texto
+          const TextStyle(
+              fontSize: 16, color: Colors.white), // Tamanho do texto
         ),
       ),
     ),

@@ -60,6 +60,7 @@ class ListDemandas extends StatelessWidget {
       elevation: 2,
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: ExpansionTile(
+        shape: const Border(),
         leading: const Icon(Icons.assignment),
         title: Row(
           children: [

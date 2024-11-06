@@ -219,12 +219,14 @@ Future<bool> requestLocationPermissions() async {
 // Função para mostrar o diálogo e redirecionar para as configurações
 Future<bool> _showPermissionDialog() async {
   return await Get.defaultDialog<bool>(
+        contentPadding: const EdgeInsets.all(16),
         title: 'Permissão Necessária',
         middleText:
             'Este aplicativo precisa da sua localização para funcionar corretamente. '
             'Por favor, conceda permissão para rastreamento contínuo da localização.',
         textConfirm: 'Abrir Configurações',
         textCancel: 'Cancelar',
+        confirmTextColor: Colors.white,
         onConfirm: () async {
           // Abre as configurações do aplicativo
           var model = await openAppSettings();
