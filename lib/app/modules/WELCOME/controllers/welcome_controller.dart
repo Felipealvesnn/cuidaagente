@@ -1,3 +1,4 @@
+import 'package:background_locator_2/background_locator.dart';
 import 'package:cuidaagente/app/routes/app_pages.dart';
 import 'package:cuidaagente/app/utils/getstorages.dart';
 import 'package:get/get.dart';
@@ -25,7 +26,7 @@ class WelcomeController extends GetxController {
     Storagers.boxUserLogado.erase();
     Storagers.boxCpf.erase();
     Storagers.boxToken.erase();
-
+    await BackgroundLocator.unRegisterLocationUpdate();
     await Get.offAllNamed(Routes.LOGIN);
   }
 

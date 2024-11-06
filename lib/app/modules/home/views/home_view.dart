@@ -17,7 +17,10 @@ class HomeView extends GetView<HomeController> {
           end: Alignment.bottomCenter,
           colors: [
             Get.theme.primaryColor,
-            Colors.blue.shade800,
+            Get.theme.primaryColor
+                .withRed((Get.theme.primaryColor.red * 0.8).toInt())
+                .withGreen((Get.theme.primaryColor.green * 0.8).toInt())
+                .withBlue((Get.theme.primaryColor.blue * 0.8).toInt())
           ],
         ),
         onEnd: () async {
@@ -26,7 +29,7 @@ class HomeView extends GetView<HomeController> {
         },
         childWidget: SizedBox(
           height: 50,
-         // child: Image.asset("assets/icon/icon.png"),
+          // child: Image.asset("assets/icon/icon.png"),
         ),
         duration: const Duration(milliseconds: 1000),
         animationDuration: const Duration(milliseconds: 500),

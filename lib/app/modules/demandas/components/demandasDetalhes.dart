@@ -230,4 +230,5 @@ class DemandasDetalhes extends StatelessWidget {
       },
     );
   }
+
 }

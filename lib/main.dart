@@ -25,7 +25,7 @@ void main() async {
       title: "Application",
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
-      theme: apptemprincipal,
+      theme: ThemaApp(),
     ),
   );
 }
