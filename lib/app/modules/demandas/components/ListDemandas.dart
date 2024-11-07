@@ -66,7 +66,7 @@ class ListDemandas extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                'Status: ${(demanda.statusDemanda != null ? demanda.statusDemanda!.descricaoStatusDemanda.toUpperCase() : "NAO APROVADO")}',
+                'ID: ${demanda.ocorrenciaId}',
               ),
             ),
           ],
@@ -75,12 +75,15 @@ class ListDemandas extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Realizada: ${DateFormat('dd/MM/yyyy HH:mm').format(demanda.dataCriacaoDemanda!)}',
+              'Aberta: ${DateFormat('dd/MM/yyyy HH:mm').format(demanda.dataCriacaoDemanda!)}',
             ),
             Text(
               'Despacho demanda: ${(demanda.despachoAcao != null ? demanda.despachoAcao!.toUpperCase() : "")}',
             ),
             Text('Orgao: ${demanda.orgao?.nomeAbreviadoOrgao}'),
+            Text(
+              'Status: ${(demanda.statusDemanda != null ? demanda.statusDemanda!.descricaoStatusDemanda.toUpperCase() : "NAO APROVADO")}',
+            ),
           ],
         ),
         children: [
@@ -121,26 +124,29 @@ class ListDemandas extends StatelessWidget {
               ),
             ],
           ),
-          _buildRichText('Local: ', demanda.ocorrencia?.enderecoOcorrencia),
-          const Divider(),
-          _buildRichText('Bairro: ', demanda.ocorrencia?.bairroOcorrencia),
-          const Divider(),
-          _buildRichText('Cidade: ', demanda.ocorrencia?.cidadeOcorrencia),
-          const Divider(),
+          _buildRichText(
+              'Local: ', demanda.ocorrencia?.enderecoOcorrencia?.toUpperCase()),
+          //const Divider(),
+          _buildRichText(
+              'Bairro: ', demanda.ocorrencia?.bairroOcorrencia?.toUpperCase()),
+          // const Divider(),
+          _buildRichText(
+              'Cidade: ', demanda.ocorrencia?.cidadeOcorrencia?.toUpperCase()),
+          // const Divider(),
           _buildRichText(
             'Data da Ocorrência: ',
             DateFormat('dd/MM/yyyy HH:mm')
                 .format(demanda.ocorrencia!.dataAberturaOcorrencia!),
           ),
-          const Divider(),
+          // const Divider(),
           _buildRichText('Relato do Autor: ',
-              demanda.ocorrencia?.relatoAutorRegistroOcorrencia),
-          const Divider(),
+              demanda.ocorrencia?.relatoAutorRegistroOcorrencia?.toUpperCase()),
+          // const Divider(),
           _buildRichText('Relato do Atendente: ',
-              demanda.ocorrencia?.relatoAtendenteOcorrencia),
-          const Divider(),
-          _buildRichText('Relato do Finais: ',
-              demanda.ocorrencia?.observacoesFinaisOcorrencia),
+              demanda.ocorrencia?.relatoAtendenteOcorrencia?.toUpperCase()),
+          // const Divider(),
+          _buildRichText('Relato do Final: ',
+              demanda.ocorrencia?.observacoesFinaisOcorrencia?.toUpperCase()),
           _buildOpenMapButton(context, isFinalizado, isusuarioBoll, demanda),
         ],
       ),
@@ -173,7 +179,7 @@ class ListDemandas extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () =>
             _handleOpenMap(context, isFinalizado, isusuarioBoll, demanda),
-        child: const Text('Abrir Mapa'),
+        child: isusuarioBoll ? const Text('Continuar Rota'): const Text('Iniciar Demanda'),
       ),
     );
   }
@@ -194,7 +200,7 @@ class ListDemandas extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Abrir Mapa'),
+          title: const Text('Iniciar Demanda'),
           content: const Text('Você deseja se vincular a essa demanda?'),
           actions: [
             TextButton(
@@ -211,7 +217,7 @@ class ListDemandas extends StatelessWidget {
                   _openMap(demanda);
                 } else {
                   showSnackbar(
-                      "Erro", "Você já está vinculado a outra demanda");
+                      "info", "Você já está vinculado a outra demanda");
                 }
               },
               child: const Text('Sim'),

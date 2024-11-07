@@ -27,6 +27,12 @@ class DemandasController extends GetxController {
 
   @override
   void onInit() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      bool permissionGranted =
+          await LocationService.checkAndRequestPermission();
+      await requestLocationPermissions();
+    });
+
     usuario = await Storagers.boxUserLogado.read('user') as Usuario;
 
     super.onInit();

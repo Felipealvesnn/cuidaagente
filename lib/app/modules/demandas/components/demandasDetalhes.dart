@@ -220,7 +220,7 @@ class DemandasDetalhes extends StatelessWidget {
                   _openMap();
                 } else {
                   showSnackbar(
-                      "Erro", "Você já está vinculado a outra demanda");
+                      "info", "Você já está vinculado a outra demanda");
                 }
               },
               child: const Text('Sim'),

@@ -15,10 +15,7 @@ void main() async {
 
   await inicializacaoGetStorage();
   //await initializeForegroundService();
-   WidgetsBinding.instance.addPostFrameCallback((_) async {
-   bool permissionGranted = await LocationService.checkAndRequestPermission();
-  await requestLocationPermissions();
-  });
+   
   
   runApp(
     GetMaterialApp(

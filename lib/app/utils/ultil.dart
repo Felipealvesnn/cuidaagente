@@ -22,7 +22,7 @@ void showSnackbar(String title, String message) {
     title,
     message,
     snackPosition: SnackPosition.TOP,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.deepOrange,
     duration: const Duration(seconds: 3),
   );
 }
@@ -200,19 +200,19 @@ Future<bool> requestLocationPermissions() async {
       return true;
     } else {
       // Mostra diálogo para explicar a importância da permissão
-      var vlue = await _showPermissionDialog();
+      //var vlue = await _showPermissionDialog();
 
-      await requestLocationPermissions();
+    //  await requestLocationPermissions();
 
-      return vlue;
+      return true;
     }
   } else {
     // Mostra diálogo para explicar a importância da permissão
-    var vlue = await _showPermissionDialog();
+   // var vlue = await _showPermissionDialog();
 
     await requestLocationPermissions();
 
-    return vlue;
+    return true;
   }
 }
 

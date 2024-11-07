@@ -15,7 +15,7 @@ class MapaDemanda extends GetView<MapaDemandaController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mapa de Demanda'),
+        title: const Text('Rota Ocorrência'),
       ),
       body: Obx(() {
         if (controller.userLocation.value.latitude == 0.0 &&
@@ -65,22 +65,22 @@ class MapaDemanda extends GetView<MapaDemandaController> {
         FloatingActionButton(
           heroTag: "finalizar_demanda",
           onPressed: () => _showFinalizarDemandaModal(context, controller),
-          child: const Icon(Icons.check),
           tooltip: 'Finalizar Demanda',
+          child: const Icon(Icons.check),
         ),
         const SizedBox(height: 16),
         FloatingActionButton(
           heroTag: "directions_button",
           onPressed: () => _openMapSelection(context),
-          child: const Icon(Icons.directions),
           tooltip: 'Abrir Mapa',
+          child: const Icon(Icons.directions),
         ),
         const SizedBox(height: 16),
         FloatingActionButton(
           heroTag: "mover_camera",
-          onPressed: ()async => await controller.moveCameraToCurrentPosition(),
-          child: const Icon(Icons.map),
+          onPressed: () async => await controller.moveCameraToCurrentPosition(),
           tooltip: 'Abrir Mapa',
+          child: const Icon(Icons.my_location),
         ),
       ],
     );

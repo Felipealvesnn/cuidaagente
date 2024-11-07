@@ -71,7 +71,7 @@ class LoginPageController extends GetxController {
 
           if (isAuthenticated) {
             Storagers.boxInicial.write('biometria', true);
-            await Get.offAllNamed(Routes.HOME, arguments: false);
+            await Get.offAllNamed(Routes.DEMANDAS, arguments: false);
           } else {
             return;
           }
@@ -89,8 +89,14 @@ class LoginPageController extends GetxController {
 
   final count = 0.obs;
   @override
-  void onInit() {
+  void onInit() async {
+    isSwitched.value = await Storagers.boxInicial.read('biometria') ?? false;
+
     super.onInit();
+  }
+
+  mudarBiometria() {
+    Storagers.boxInicial.write('biometria', isSwitched.value);
   }
 
   @override

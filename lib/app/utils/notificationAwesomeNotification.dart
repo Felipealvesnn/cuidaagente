@@ -156,7 +156,7 @@ class NotificationAwesomeNotification {
     final String? bigPicture,
     final List<NotificationActionButton>? actionButtons,
   }) async {
-    await AwesomeNotifications().createNotification(
+    var msg = await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: id ?? DateTime.now().millisecondsSinceEpoch,
         channelKey: 'high_importance_channel',
@@ -180,5 +180,6 @@ class NotificationAwesomeNotification {
             )
           ],
     );
+    print(msg);
   }
 }
