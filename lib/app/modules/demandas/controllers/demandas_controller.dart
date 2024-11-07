@@ -4,6 +4,7 @@ import 'package:cuidaagente/app/data/models/LogAgenteDemanda.dart';
 import 'package:cuidaagente/app/data/models/Usuario.dart';
 import 'package:cuidaagente/app/data/models/demandas.dart';
 import 'package:cuidaagente/app/data/repository/demandar_repository.dart';
+import 'package:cuidaagente/app/routes/app_pages.dart';
 import 'package:cuidaagente/app/utils/getstorages.dart';
 import 'package:cuidaagente/app/utils/ultil.dart';
 import 'package:flutter/material.dart';
@@ -54,9 +55,60 @@ class DemandasController extends GetxController {
       hasMoreDemandas.value = false;
     } else {
       demandasList.addAll(demandas);
+
+      // Filtra as demandas em que o usuário já está vinculado
+      List<Demanda> filteredDemandas = demandasList.where((demanda) {
+        return demanda.logAgenteDemanda?.any(
+              (element) => element.usuarioId == usuario.usuarioId,
+            ) ??
+            false;
+      }).toList();
+
+      // Verifica se o usuário já está vinculado a alguma demanda
+      if (filteredDemandas.isNotEmpty) {
+        // Exibe o diálogo para o usuário
+        bool? result = await Get.dialog<bool>(
+          AlertDialog(
+            title: const Text('Demanda em andamento'),
+            content: const Text(
+                'Você já está seguindo uma ocorrência, deseja voltar ao mapa?'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Get.back(result: false);
+                },
+                child: const Text('Não'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Get.back(result: true);
+                },
+                child: const Text('Sim'),
+              ),
+            ],
+          ),
+        );
+
+        if (result == true) {
+          // Usuário optou por voltar ao mapa
+          _openMap(filteredDemandas.first);
+        }
+      }
+
       currentPage.value++;
     }
     isLoadingDemandaInicial.value = false;
+  }
+
+  void _openMap(Demanda demanda) {
+    Get.toNamed(
+      Routes.MAPA_DEMANDA,
+      arguments: {
+        'latitude': demanda.ocorrencia?.latitude,
+        'longitude': demanda.ocorrencia?.longitude,
+        'demanda_id': demanda.demandaId,
+      },
+    );
   }
 
   Future<void> loadMoreDemandas() async {
