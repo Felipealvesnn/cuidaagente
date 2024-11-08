@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:cuidaagente/app/modules/LOGIN/controllers/login_controller.dart';
+import 'package:cuidaagente/app/routes/app_pages.dart';
 import 'package:cuidaagente/app/utils/ultil.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,32 +14,39 @@ class MapaDemanda extends GetView<MapaDemandaController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Rota Ocorrência'),
-      ),
-      body: Obx(() {
-        if (controller.userLocation.value.latitude == 0.0 &&
-            controller.userLocation.value.longitude == 0.0 &&
-            controller.polylines.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) async {
+        if (controller.IniciadaDemanda) {
+          Get.back(closeOverlays: true);
         }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Rota Ocorrência'),
+        ),
+        body: Obx(() {
+          if (controller.userLocation.value.latitude == 0.0 &&
+              controller.userLocation.value.longitude == 0.0 &&
+              controller.polylines.isEmpty) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        return Obx(() => GoogleMap(
-              myLocationButtonEnabled: true,
-              initialCameraPosition: CameraPosition(
-                target: controller.userLocation.value,
-                zoom: 14,
-              ),
-              markers: _buildMarkers(),
-              polylines: controller.polylines,
-              onMapCreated: (mapController) {
-                controller.mapController = mapController;
-                controller.moveCameraToCurrentPosition();
-              },
-            ));
-      }),
-      floatingActionButton: _buildFloatingButtons(context, controller),
+          return Obx(() => GoogleMap(
+                myLocationButtonEnabled: true,
+                initialCameraPosition: CameraPosition(
+                  target: controller.userLocation.value,
+                  zoom: 14,
+                ),
+                markers: _buildMarkers(),
+                polylines: controller.polylines,
+                onMapCreated: (mapController) {
+                  controller.mapController = mapController;
+                  controller.moveCameraToCurrentPosition();
+                },
+              ));
+        }),
+        floatingActionButton: _buildFloatingButtons(context, controller),
+      ),
     );
   }
 
@@ -118,9 +126,9 @@ class MapaDemanda extends GetView<MapaDemandaController> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     Navigator.of(context).pop();
-                    _showConfirmationDialog(context, contrltetext);
+                    await _showConfirmationDialog(context, contrltetext);
                   },
                   child: const Text('Finalizar'),
                 ),
@@ -147,9 +155,9 @@ class MapaDemanda extends GetView<MapaDemandaController> {
               child: const Text('Não'),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 Navigator.of(context).pop();
-                controler.finalizarDemanda();
+                await controler.finalizarDemanda();
               },
               child: const Text('Sim'),
             ),

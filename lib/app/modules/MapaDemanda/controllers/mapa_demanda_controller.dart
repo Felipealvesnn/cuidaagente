@@ -21,15 +21,14 @@ class MapaDemandaController extends GetxController {
   late int demandaId;
   late GoogleMapController mapController;
   late LatLng destination;
-  var userLocation = const LatLng(0.0, 0.0).obs; // Localização inicial padrão
   var polylineCoordinates = <LatLng>[].obs;
   late PolylinePoints polylinePoints;
   var polylines = <Polyline>{}.obs;
   late Usuario usuario;
   StreamSubscription<Position>? positionStream;
-  var lastPosition =
-      const LatLng(0.0, 0.0); // Armazena a última posição conhecida
+  var userLocation = const LatLng(0.0, 0.0).obs; // Localização inicial padrão
   final keymaps = 'AIzaSyAsinfHRMZKKrM5CH7L0IoDpQSIJ2dWios';
+  bool IniciadaDemanda = false;
 
   @override
   void onInit() async {
@@ -41,6 +40,8 @@ class MapaDemandaController extends GetxController {
     destinationLongitude = Get.arguments['longitude'] ?? -38.5267;
     destination = LatLng(destinationLatitude, destinationLongitude);
     demandaId = Get.arguments['demanda_id'];
+    IniciadaDemanda = Get.arguments['IniciadaDemanda'] ?? false;
+
     polylinePoints = PolylinePoints();
     await getUserLocation();
     await createRoute();
@@ -53,30 +54,19 @@ class MapaDemandaController extends GetxController {
 
       // Calcula a distância entre a última posição e a nova posição
       double distance = Geolocator.distanceBetween(
-        lastPosition.latitude,
-        lastPosition.longitude,
+        userLocation.value.latitude,
+        userLocation.value.longitude,
         newPosition.latitude,
         newPosition.longitude,
       );
       // Atualiza somente se a distância for maior que um certo limite (ex: 5 metros)
       if (distance > 10) {
         userLocation.value = newPosition;
-        lastPosition = newPosition; // Atualiza a última posição registrada
         await updateRoute();
         await moveCameraToCurrentPosition();
         //await enviarPontosRota();
       }
     });
-  }
-
-  Future<void> enviarPontosRota() async {
-    adicionarPontos model = adicionarPontos(
-      demanda_id: demandaId,
-      latitude: userLocation.value.latitude,
-      longitude: userLocation.value.longitude,
-      usuario_id: usuario.usuarioId,
-    );
-    demandasRepository.EnviarRotaAgente(model);
   }
 
   Future<void> getUserLocation() async {
@@ -147,22 +137,40 @@ class MapaDemandaController extends GetxController {
     );
   }
 
+  var Finalizado = true;
   Future<void> finalizarDemanda() async {
     // Exibe o diálogo de carregamento para bloquear a tela
-    Get.dialog(
-      const Center(
-        child: CircularProgressIndicator(),
-      ),
-      barrierDismissible: false, // Impede que o usuário feche o diálogo
-    );
 
     try {
-      // Chama o método de finalização da demanda
-      await demandasRepository.finalizarDemanda(
-        demandaId,
-        motivoController.text,
-        usuario.usuarioId!,
+      double distance = Geolocator.distanceBetween(
+        userLocation.value.latitude,
+        userLocation.value.longitude,
+        destinationLatitude,
+        destinationLongitude,
       );
+      if (distance < 20) {
+        Get.dialog(
+          const Center(
+            child: CircularProgressIndicator(),
+          ),
+          barrierDismissible: false, // Impede que o usuário feche o diálogo
+        );
+        // Chama o método de finalização da demanda
+        await demandasRepository.finalizarDemanda(
+          demandaId,
+          motivoController.text,
+          usuario.usuarioId!,
+        );
+        Finalizado = true;
+      } else {
+        Get.snackbar(
+          'Info',
+          'Você precisa estar próximo ao local da demanda para finalizar.',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        Finalizado = false;
+        return;
+      }
 
       // Exibe o Snackbar de confirmação
       Get.snackbar(
@@ -174,22 +182,16 @@ class MapaDemandaController extends GetxController {
       // Redireciona para a rota DEMANDAS após finalizar
       await Get.offAllNamed(Routes.DEMANDAS);
     } catch (e) {
-      // Trate o erro, caso ocorra
-      Get.snackbar(
-        'Erro',
-        'Ocorreu um erro ao finalizar a demanda.',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      print(e);
     } finally {
-      // Fecha o diálogo de carregamento ao final da execução
-
-      Get.back();
-      Get.snackbar(
-        'Demanda Finalizada',
-        'A demanda foi finalizada com sucesso.',
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      await Get.offAllNamed(Routes.DEMANDAS);
+      if (Finalizado) {
+        Get.snackbar(
+          'Demanda Finalizada',
+          'A demanda foi finalizada com sucesso.',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        await Get.offAllNamed(Routes.DEMANDAS);
+      }
     }
   }
 

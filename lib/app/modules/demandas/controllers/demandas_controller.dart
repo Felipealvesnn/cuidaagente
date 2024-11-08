@@ -106,6 +106,14 @@ class DemandasController extends GetxController {
     isLoadingDemandaInicial.value = false;
   }
 
+  Future<void> Refresh() async {
+    currentPage.value = 1;
+    hasMoreDemandas.value = true;
+    isLoadingDemandaInicial.value = true;
+    demandasList.clear();
+    await fetchDemandas();
+  }
+
   void _openMap(Demanda demanda) {
     Get.toNamed(
       Routes.MAPA_DEMANDA,

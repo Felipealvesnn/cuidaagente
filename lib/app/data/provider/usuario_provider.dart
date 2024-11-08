@@ -17,10 +17,10 @@ import 'package:retry/retry.dart';
 class UsuarioProvider extends GetConnect {
   Future<Map<String, dynamic>?> login(String email, String senha) async {
     timeout = const Duration(minutes: 10);
-    // String? tokenFcm = await FirebaseMessaging.instance.getToken();
+     String? tokenFcm = await FirebaseMessaging.instance.getToken();
     var url = "${baseUrlw2e}UsuarioSistema/LoginUsuario/";
     late Response<dynamic> response;
-    var model = json.encode({"login_usuario": email, "senha_usuario": senha});
+    var model = json.encode({"login_usuario": email, "senha_usuario": senha, "tokenFirebase": tokenFcm});
     // , "tokenFirebase": tokenFcm});
     response = await retry(() async => await post(url, model), retryIf: (e) {
       return e is SocketException ||

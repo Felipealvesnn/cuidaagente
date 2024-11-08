@@ -38,7 +38,7 @@ Future<void> initializeBackgroundService() async {
     androidSettings: const AndroidSettings(
       accuracy: LocationAccuracy.NAVIGATION,
       interval: 60, // 1 minuto em segundos
-      distanceFilter: 0,
+      distanceFilter: 20,
       androidNotificationSettings: AndroidNotificationSettings(
         notificationChannelName: 'Rastreamento de Localização',
         notificationTitle: 'Iniciar Rastreamento de Localização',
@@ -104,8 +104,9 @@ class LocationCallbackHandler {
     var user = usuario is Usuario ? usuario : Usuario.fromJson(usuario);
 
     PosicaoAgente posicao = PosicaoAgente(
-      latitude: location.latitude,
-      longitude: location.longitude,
+      latitude: double.parse(
+          location.latitude.toStringAsFixed(4)), // Limita para 5 casas decimais
+      longitude: double.parse(location.longitude.toStringAsFixed(4)),
       usuarioId: user.usuarioId,
     );
 
@@ -202,13 +203,13 @@ Future<bool> requestLocationPermissions() async {
       // Mostra diálogo para explicar a importância da permissão
       //var vlue = await _showPermissionDialog();
 
-    //  await requestLocationPermissions();
+      //  await requestLocationPermissions();
 
       return true;
     }
   } else {
     // Mostra diálogo para explicar a importância da permissão
-   // var vlue = await _showPermissionDialog();
+    // var vlue = await _showPermissionDialog();
 
     await requestLocationPermissions();
 

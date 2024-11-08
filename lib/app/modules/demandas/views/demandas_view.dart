@@ -43,11 +43,7 @@ class DemandasView extends GetView<DemandasController> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          controller.currentPage.value = 1;
-          controller.hasMoreDemandas.value = true;
-          controller.isLoadingDemandaInicial.value = true;
-          controller.demandasList.clear();
-          await controller.fetchDemandas();
+          await controller.Refresh();
         },
         child: Obx(() {
           if (controller.isLoadingDemandaInicial.value) {

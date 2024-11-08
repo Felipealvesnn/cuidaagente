@@ -17,7 +17,7 @@ class ListDemandas extends StatelessWidget {
     return Obx(() {
       return ListView.builder(
         controller: controller.scrollController,
-        physics: const BouncingScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         itemCount: controller.demandasList.length + 1,
         itemBuilder: (context, index) {
           if (index == controller.demandasList.length) {
@@ -179,7 +179,9 @@ class ListDemandas extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () =>
             _handleOpenMap(context, isFinalizado, isusuarioBoll, demanda),
-        child: isusuarioBoll ? const Text('Continuar Rota'): const Text('Iniciar Demanda'),
+        child: isusuarioBoll
+            ? const Text('Continuar Rota')
+            : const Text('Iniciar Demanda'),
       ),
     );
   }
@@ -191,11 +193,12 @@ class ListDemandas extends StatelessWidget {
     } else if (isusuarioBoll) {
       _openMap(demanda);
     } else {
-      _showConfirmationDialog(context, demanda);
+      _showConfirmationDialog(context, demanda, isusuarioBoll);
     }
   }
 
-  void _showConfirmationDialog(BuildContext context, Demanda demanda) {
+  void _showConfirmationDialog(
+      BuildContext context, Demanda demanda, bool isusuarioBoll) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -210,11 +213,16 @@ class ListDemandas extends StatelessWidget {
             ElevatedButton(
               onPressed: () async {
                 Navigator.of(context).pop();
-
+                if (!isusuarioBoll) {
+                  showSnackbar(
+                      "info", "Você já está vinculado a outra demanda");
+                  return;
+                }
                 var resultado = await Get.find<DemandasController>()
                     .logDemandaAgente(demanda);
                 if (resultado) {
-                  _openMap(demanda);
+                  await Get.find<DemandasController>().Refresh();
+                  _openMap(demanda, IniciadaDemanda: true);
                 } else {
                   showSnackbar(
                       "info", "Você já está vinculado a outra demanda");
@@ -228,13 +236,14 @@ class ListDemandas extends StatelessWidget {
     );
   }
 
-  void _openMap(Demanda demanda) {
+  void _openMap(Demanda demanda, {bool IniciadaDemanda = false}) {
     Get.toNamed(
       Routes.MAPA_DEMANDA,
       arguments: {
         'latitude': demanda.ocorrencia?.latitude,
         'longitude': demanda.ocorrencia?.longitude,
         'demanda_id': demanda.demandaId,
+        'IniciadaDemanda': IniciadaDemanda,
       },
     );
   }
