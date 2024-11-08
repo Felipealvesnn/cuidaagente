@@ -66,6 +66,8 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+       <service android:name="io.flutter.plugins.firebasemessaging.FlutterFirebaseMessagingService" android:exported="true"/>   
+
     </application>
 
     <!-- Permissão para Visibilidade de Pacotes para Processamento de Texto -->
