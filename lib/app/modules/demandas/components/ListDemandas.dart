@@ -52,6 +52,13 @@ class ListDemandas extends StatelessWidget {
 
   Widget _buildDemandasCard(int index, BuildContext context) {
     var demanda = controller.demandasList[index];
+    var isUsuarioBolllist = controller.demandasList.any((fsdf) =>
+        fsdf.demandaId !=
+                demanda.demandaId && // Verifica se não é a demanda atual
+            fsdf.logAgenteDemanda!.any((element) =>
+                element.usuarioId == controller.usuario.usuarioId) ??
+        false);
+
     final isUsuarioBoll = demanda.logAgenteDemanda?.any(
             (element) => element.usuarioId == controller.usuario.usuarioId) ??
         false;
@@ -87,7 +94,8 @@ class ListDemandas extends StatelessWidget {
           ],
         ),
         children: [
-          _buildDetalhesOcorrencia(demanda, context, isUsuarioBoll),
+          _buildDetalhesOcorrencia(
+              demanda, context, isUsuarioBoll, isUsuarioBolllist),
         ],
         onExpansionChanged: (expanded) {
           if (expanded) {
@@ -98,8 +106,8 @@ class ListDemandas extends StatelessWidget {
     );
   }
 
-  Widget _buildDetalhesOcorrencia(
-      Demanda demanda, BuildContext context, bool isusuarioBoll) {
+  Widget _buildDetalhesOcorrencia(Demanda demanda, BuildContext context,
+      bool isusuarioBoll, bool isUsuarioBolllist) {
     final isFinalizado =
         demanda.statusDemanda?.descricaoStatusDemanda.toUpperCase() ==
             "FINALIZADO";
@@ -147,7 +155,8 @@ class ListDemandas extends StatelessWidget {
           // const Divider(),
           _buildRichText('Relato do Final: ',
               demanda.ocorrencia?.observacoesFinaisOcorrencia?.toUpperCase()),
-          _buildOpenMapButton(context, isFinalizado, isusuarioBoll, demanda),
+          _buildOpenMapButton(
+              context, isFinalizado, isusuarioBoll, demanda, isUsuarioBolllist),
         ],
       ),
     );
@@ -172,13 +181,13 @@ class ListDemandas extends StatelessWidget {
   }
 
   Widget _buildOpenMapButton(BuildContext context, bool isFinalizado,
-      bool isusuarioBoll, Demanda demanda) {
+      bool isusuarioBoll, Demanda demanda, bool isUsuarioBolllist) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
       width: MediaQuery.of(context).size.width,
       child: ElevatedButton(
-        onPressed: () =>
-            _handleOpenMap(context, isFinalizado, isusuarioBoll, demanda),
+        onPressed: () => _handleOpenMap(
+            context, isFinalizado, isusuarioBoll, demanda, isUsuarioBolllist),
         child: isusuarioBoll
             ? const Text('Continuar Rota')
             : const Text('Iniciar Demanda'),
@@ -187,9 +196,9 @@ class ListDemandas extends StatelessWidget {
   }
 
   void _handleOpenMap(BuildContext context, bool isFinalizado,
-      bool isusuarioBoll, Demanda demanda) {
-    if (isFinalizado) {
-      showSnackbar("Aviso", "Demanda já finalizada");
+      bool isusuarioBoll, Demanda demanda, bool isUsuarioBolllist) {
+    if (isUsuarioBolllist) {
+      showSnackbar("info", "Você já está vinculado a outra demanda");
     } else if (isusuarioBoll) {
       _openMap(demanda);
     } else {
@@ -213,15 +222,16 @@ class ListDemandas extends StatelessWidget {
             ElevatedButton(
               onPressed: () async {
                 Navigator.of(context).pop();
-                if (!isusuarioBoll) {
-                  showSnackbar(
-                      "info", "Você já está vinculado a outra demanda");
-                  return;
-                }
+                // if (!isusuarioBoll) {
+                //   showSnackbar(
+                //       "info", "Você já está vinculado a outra demanda");
+                //   return;
+                // }
                 var resultado = await Get.find<DemandasController>()
                     .logDemandaAgente(demanda);
                 if (resultado) {
-                  await Get.find<DemandasController>().Refresh();
+                  await Get.find<DemandasController>()
+                      .Refresh(MostrarLogo: false);
                   _openMap(demanda, IniciadaDemanda: true);
                 } else {
                   showSnackbar(

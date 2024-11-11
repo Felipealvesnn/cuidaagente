@@ -127,8 +127,13 @@ class MapaDemanda extends GetView<MapaDemandaController> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () async {
-                    Navigator.of(context).pop();
-                    await _showConfirmationDialog(context, contrltetext);
+                    bool validarDisntancia =
+                        await Get.find<MapaDemandaController>()
+                            .ValidarDistancia();
+                    if (validarDisntancia) {
+                      Navigator.of(context).pop();
+                      await _showConfirmationDialog(context, contrltetext);
+                    }
                   },
                   child: const Text('Finalizar'),
                 ),

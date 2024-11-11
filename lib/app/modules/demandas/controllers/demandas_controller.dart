@@ -52,7 +52,7 @@ class DemandasController extends GetxController {
     });
   }
 
-  Future<void> fetchDemandas() async {
+  Future<void> fetchDemandas({bool MostrarLogo = true}) async {
     isLoadingDemandaInicial.value = true;
     List<Demanda> demandas = await demandasRepository.getDemandas(
         pageNumber: currentPage.value, pageSize: pageSize);
@@ -71,7 +71,7 @@ class DemandasController extends GetxController {
       }).toList();
 
       // Verifica se o usuário já está vinculado a alguma demanda
-      if (filteredDemandas.isNotEmpty) {
+      if (filteredDemandas.isNotEmpty && MostrarLogo) {
         // Exibe o diálogo para o usuário
         bool? result = await Get.dialog<bool>(
           AlertDialog(
@@ -106,12 +106,12 @@ class DemandasController extends GetxController {
     isLoadingDemandaInicial.value = false;
   }
 
-  Future<void> Refresh() async {
+  Future<void> Refresh({bool MostrarLogo = true}) async {
     currentPage.value = 1;
     hasMoreDemandas.value = true;
     isLoadingDemandaInicial.value = true;
     demandasList.clear();
-    await fetchDemandas();
+    await fetchDemandas(MostrarLogo: MostrarLogo);
   }
 
   void _openMap(Demanda demanda) {

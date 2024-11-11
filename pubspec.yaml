@@ -55,6 +55,7 @@ dependencies:
   permission_handler: ^11.3.1
   flutter_background_service: ^5.0.10
   background_locator_2: ^2.0.6
+  icons_launcher: ^3.0.0
   #google_navigation_flutter: ^0.3.0
 
 
@@ -68,6 +69,14 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
+
+icons_launcher:
+  image_path: "assets/ic_launcher_round.png"
+  platforms:
+    android:
+      enable: true
+    ios:
+      enable: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -87,6 +96,7 @@ flutter:
     - assets/logo003.png
     - assets/logo001.png
     - assets/cuida.png
+    - assets/ic_launcher_round.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

@@ -29,6 +29,7 @@ class MapaDemandaController extends GetxController {
   var userLocation = const LatLng(0.0, 0.0).obs; // Localização inicial padrão
   final keymaps = 'AIzaSyAsinfHRMZKKrM5CH7L0IoDpQSIJ2dWios';
   bool IniciadaDemanda = false;
+  bool ValidarDistanciaBool = false;
 
   @override
   void onInit() async {
@@ -137,18 +138,33 @@ class MapaDemandaController extends GetxController {
     );
   }
 
+  Future<bool> ValidarDistancia() async {
+    double distance = Geolocator.distanceBetween(
+      userLocation.value.latitude,
+      userLocation.value.longitude,
+      destinationLatitude,
+      destinationLongitude,
+    );
+    if (distance < 50) {
+      ValidarDistanciaBool = true;
+      return ValidarDistanciaBool;
+    } else {
+      Get.snackbar(
+        'Info',
+        'Você precisa estar próximo ao local da demanda para finalizar.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      ValidarDistanciaBool = false;
+      return ValidarDistanciaBool;
+    }
+  }
+
   var Finalizado = true;
   Future<void> finalizarDemanda() async {
     // Exibe o diálogo de carregamento para bloquear a tela
 
     try {
-      double distance = Geolocator.distanceBetween(
-        userLocation.value.latitude,
-        userLocation.value.longitude,
-        destinationLatitude,
-        destinationLongitude,
-      );
-      if (distance < 20) {
+      if (ValidarDistanciaBool) {
         Get.dialog(
           const Center(
             child: CircularProgressIndicator(),

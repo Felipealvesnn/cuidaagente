@@ -5,8 +5,8 @@ const Color successColor = Colors.green; //errorColor;
 const Color CinzaCalro = const Color.fromARGB(255, 249, 249, 249);
 
 //endereço de produção
-const baseUrlw2e = 'https://w2esolucoes.ddns.net/cuida.caucaia/api/';
-const nomeCliente = 'Caucaia';
+const baseUrlw2e = 'https://w2esolucoes.ddns.net/CUIDA.ITAITINGA/api/';
+const nomeCliente = 'ITAITINGA';
 //const nomeCliente = 'SaoAmarante';
 
 
