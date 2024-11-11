@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 import '../controllers/mapa_demanda_controller.dart';
 import 'package:map_launcher/map_launcher.dart';
 
@@ -24,6 +25,7 @@ class MapaDemanda extends GetView<MapaDemandaController> {
         appBar: AppBar(
           title: const Text('Rota Ocorrência'),
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         body: Obx(() {
           if (controller.userLocation.value.latitude == 0.0 &&
               controller.userLocation.value.longitude == 0.0 &&
@@ -75,6 +77,13 @@ class MapaDemanda extends GetView<MapaDemandaController> {
           onPressed: () => _showFinalizarDemandaModal(context, controller),
           tooltip: 'Finalizar Demanda',
           child: const Icon(Icons.check),
+        ),
+        const SizedBox(height: 16),
+        FloatingActionButton(
+          heroTag: "AdicionarFotos",
+          onPressed: () => _showImageSourceSelection(context),
+          tooltip: 'Adicionar Fotos',
+          child: const Icon(Icons.photo),
         ),
         const SizedBox(height: 16),
         FloatingActionButton(
@@ -141,6 +150,45 @@ class MapaDemanda extends GetView<MapaDemandaController> {
             ),
           ),
         );
+      },
+    );
+  }
+
+  void _showImageSourceSelection(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              _imageSourceTile(
+                icon: Icons.photo_library,
+                label: 'Selecionar da galeria',
+                source: ImageSource.gallery,
+              ),
+              _imageSourceTile(
+                icon: Icons.camera_alt,
+                label: 'Tirar foto',
+                source: ImageSource.camera,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  ListTile _imageSourceTile({
+    required IconData icon,
+    required String label,
+    required ImageSource source,
+  }) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(label),
+      onTap: () async {
+        await controller.pickImage(source);
+        Get.back();
       },
     );
   }
