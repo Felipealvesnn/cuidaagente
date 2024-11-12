@@ -160,7 +160,7 @@ class OcorrenciaController extends GetxController {
 
       // Adiciona a imagem como base64 e o nome ao JSON
       imagensMonitoramento.add(ImagensMonitoramento(
-          foto_base64: base64Image, nome_imagem: fileName));
+          foto_base64: base64Image, nome_imagem: "NomeIMagem"));
       print(base64Image);
     }
 
@@ -180,11 +180,13 @@ class OcorrenciaController extends GetxController {
       tipo_ocorrencia_id: selectedTipoOcorrencia.value?.tipo_ocorrencia_id,
     );
 
-    // if (imagensMonitoramento.isNotEmpty) {
-    //   LogVideoMonitoramento logVideoMonitoramento =
-    //       LogVideoMonitoramento(imagens_monitoramento: imagensMonitoramento);
-    //   ocorrencia.log_VideoMonitoramento  = [logVideoMonitoramento];
-    // }
+    if (imagensMonitoramento.isNotEmpty) {
+      LogVideoMonitoramento logVideoMonitoramento =
+          LogVideoMonitoramento(imagens_monitoramento: imagensMonitoramento);
+          print(jsonEncode(logVideoMonitoramento.toMap()));
+        ocorrencia.log_VideoMonitoramento  = [logVideoMonitoramento];
+    }
+    //ocorrencia.log_VideoMonitoramento  =[LogVideoMonitoramento()];
 
     print(jsonEncode(ocorrencia.toMap()));
     var s = jsonEncode(ocorrencia.toMap());
