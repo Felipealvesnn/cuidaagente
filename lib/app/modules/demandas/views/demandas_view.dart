@@ -1,6 +1,7 @@
 import 'package:cuidaagente/app/modules/demandas/components/BottomNavigationvarDemanda.dart';
 import 'package:cuidaagente/app/modules/demandas/components/ListDemandas.dart';
 import 'package:cuidaagente/app/modules/demandas/components/MyDrawer.dart';
+import 'package:cuidaagente/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/demandas_controller.dart';
@@ -43,7 +44,7 @@ class DemandasView extends GetView<DemandasController> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Get.toNamed('/demandas/create');
+           Get.toNamed(Routes.OCORRENCIA);
         },
         shape: RoundedRectangleBorder(
           borderRadius:

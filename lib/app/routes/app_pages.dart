@@ -12,6 +12,8 @@ import '../modules/demandas/bindings/demandas_binding.dart';
 import '../modules/demandas/views/demandas_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
+import '../modules/ocorrencia/bindings/ocorrencia_binding.dart';
+import '../modules/ocorrencia/views/ocorrencia_view.dart';
 
 part 'app_routes.dart';
 
@@ -48,8 +50,13 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.MAPA_DEMANDA,
-      page: () =>  MapaDemanda(),
+      page: () => MapaDemanda(),
       binding: MapaDemandaBinding(),
+    ),
+    GetPage(
+      name: _Paths.OCORRENCIA,
+      page: () => const OcorrenciaView(),
+      binding: OcorrenciaBinding(),
     ),
   ];
 }
