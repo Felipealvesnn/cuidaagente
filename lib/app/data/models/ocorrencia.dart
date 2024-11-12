@@ -20,7 +20,7 @@ class Ocorrencia {
   final String? bairroOcorrencia;
   final String? cidadeOcorrencia;
   final String? ufOcorrencia;
-  final String? cepOcorrencia;
+  final String? cepOcorrencia; 
   final int? usuarioId;
   final int? pessoaId;
   final int? classificacaoGravidadeId;
