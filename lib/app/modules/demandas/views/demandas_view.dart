@@ -1,4 +1,4 @@
-import 'package:cuidaagente/app/data/models/demandas.dart';
+import 'package:cuidaagente/app/modules/demandas/components/BottomNavigationvarDemanda.dart';
 import 'package:cuidaagente/app/modules/demandas/components/ListDemandas.dart';
 import 'package:cuidaagente/app/modules/demandas/components/MyDrawer.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +41,19 @@ class DemandasView extends GetView<DemandasController> {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Get.toNamed('/demandas/create');
+        },
+        shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(28.0), // Ajuste o valor se necessário
+        ),
+        child: const Icon(Icons.add, color: Colors.white,),
+        //params
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: const BottomNavigationvarDemanda(),
       body: RefreshIndicator(
         onRefresh: () async {
           await controller.Refresh();
