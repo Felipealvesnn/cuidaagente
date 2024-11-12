@@ -1,32 +1,32 @@
 import 'dart:convert';
 
 class Ocorrencia {
-  final int? ocorrenciaId;
-  final String? cpfUsuarioAbertura;
-  final DateTime? dataAberturaOcorrencia;
-  final String? protocoloOcorrencia;
-  final int? origemOcorrenciaId;
-  final int? naturezaOcorrenciaId;
-  final int? statusOcorrenciaId;
-  final int? tipoOcorrenciaId;
-  final DateTime? diaInformadoOcorrencia;
-  final String? horaInformadaOcorrencia;
-  final String? relatoAutorRegistroOcorrencia;
-  final String? relatoAtendenteOcorrencia;
-  final String? observacoesFinaisOcorrencia;
-  final String? enderecoOcorrencia;
-  final String? numeroEnderecoOcorrencia;
-  final String? complementoEnderecoOcorrencia;
-  final String? bairroOcorrencia;
-  final String? cidadeOcorrencia;
-  final String? ufOcorrencia;
-  final String? cepOcorrencia;
-  final int? usuarioId;
-  final int? pessoaId;
-  final int? classificacaoGravidadeId;
-  final double? latitude;
-  final double? longitude;
-  final bool? visualizado;
+   int? ocorrenciaId;
+   String? cpfUsuarioAbertura;
+   DateTime? dataAberturaOcorrencia;
+   String? protocoloOcorrencia;
+   int? origemOcorrenciaId;
+   int? naturezaOcorrenciaId;
+   int? statusOcorrenciaId;
+   int? tipoOcorrenciaId;
+   DateTime? diaInformadoOcorrencia;
+   String? horaInformadaOcorrencia;
+   String? relatoAutorRegistroOcorrencia;
+   String? relatoAtendenteOcorrencia;
+   String? observacoesFinaisOcorrencia;
+   String? enderecoOcorrencia;
+   String? numeroEnderecoOcorrencia;
+   String? complementoEnderecoOcorrencia;
+   String? bairroOcorrencia;
+   String? cidadeOcorrencia;
+   String? ufOcorrencia;
+   String? cepOcorrencia;
+   int? usuarioId;
+   int? pessoaId;
+   int? classificacaoGravidadeId;
+   double? latitude;
+   double? longitude;
+   bool? visualizado;
 
   Ocorrencia({
     this.ocorrenciaId,
