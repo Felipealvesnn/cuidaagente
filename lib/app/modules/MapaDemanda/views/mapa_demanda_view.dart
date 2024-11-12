@@ -25,7 +25,7 @@ class MapaDemanda extends GetView<MapaDemandaController> {
         appBar: AppBar(
           title: const Text('Rota Ocorrência'),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButtonLocation: FloatingActionButtonLocation.startDocked,
         body: Obx(() {
           if (controller.userLocation.value.latitude == 0.0 &&
               controller.userLocation.value.longitude == 0.0 &&
@@ -107,7 +107,7 @@ class MapaDemanda extends GetView<MapaDemandaController> {
   Future<void> _showFinalizarDemandaModal(
       BuildContext context, MapaDemandaController contrltetext) async {
     await showModalBottomSheet(
-      isScrollControlled: true, // Permite que o modal ocupe o espaço necessário
+      isScrollControlled: true,
       context: context,
       builder: (context) {
         return Padding(
@@ -115,7 +115,6 @@ class MapaDemanda extends GetView<MapaDemandaController> {
             top: 16.0,
             left: 16.0,
             right: 16.0,
-            // Ajusta o padding inferior para acomodar o teclado
             bottom: MediaQuery.of(context).viewInsets.bottom + 16.0,
           ),
           child: SingleChildScrollView(
@@ -136,10 +135,22 @@ class MapaDemanda extends GetView<MapaDemandaController> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () async {
-                    bool validarDisntancia =
+                    if (contrltetext.motivoController.text.isEmpty) {
+                      // Exibe uma mensagem de erro se o campo estiver vazio
+                      Get.snackbar(
+                        "Campo obrigatório",
+                        "Por favor, informe o motivo da finalização.",
+                        backgroundColor: Colors.red,
+                        colorText: Colors.white,
+                      );
+                      return; // Interrompe a execução se o campo estiver vazio
+                    }
+
+                    // Validação da distância
+                    bool validarDistancia =
                         await Get.find<MapaDemandaController>()
                             .ValidarDistancia();
-                    if (validarDisntancia) {
+                    if (validarDistancia) {
                       Navigator.of(context).pop();
                       await _showConfirmationDialog(context, contrltetext);
                     }

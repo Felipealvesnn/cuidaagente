@@ -55,7 +55,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.OCORRENCIA,
-      page: () => const OcorrenciaView(),
+      page: () =>  OcorrenciaView(),
       binding: OcorrenciaBinding(),
     ),
   ];
