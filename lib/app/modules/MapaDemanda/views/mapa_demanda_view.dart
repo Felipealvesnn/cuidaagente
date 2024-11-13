@@ -99,6 +99,7 @@ class MapaDemanda extends GetView<MapaDemandaController> {
           tooltip: 'Abrir Mapa',
           child: const Icon(Icons.my_location),
         ),
+        const SizedBox(height: 16),
       ],
     );
   }
@@ -182,6 +183,7 @@ class MapaDemanda extends GetView<MapaDemandaController> {
                 label: 'Tirar foto',
                 source: ImageSource.camera,
               ),
+              _buildSelectedImages(context),
             ],
           ),
         );
@@ -199,7 +201,60 @@ class MapaDemanda extends GetView<MapaDemandaController> {
       title: Text(label),
       onTap: () async {
         await controller.pickImage(source);
-        Get.back();
+        // Get.back();
+      },
+    );
+  }
+
+  Widget _buildSelectedImages(BuildContext context) {
+    return Obx(
+      () {
+        return controller.selectedImages.isEmpty
+            ? Container()
+            : Wrap(
+                spacing: 8.0,
+                runSpacing: 8.0,
+                children: controller.selectedImages.map((imageFile) {
+                  return Stack(
+                    alignment: Alignment
+                        .center, // Alinhar o conteúdo do Stack ao centro
+                    children: [
+                      ClipOval(
+                        child: Image.file(
+                          imageFile,
+                          height: 100,
+                          width: 100,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            Get.dialog(AlertDialog(
+                              title: const Text("Confirmar"),
+                              content:
+                                  const Text("Você deseja excluir a imagem?"),
+                              actions: [
+                                TextButton(
+                                  child: const Text("Cancelar"),
+                                  onPressed: () {
+                                    Get.back();
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text("Excluir"),
+                                  onPressed: () {
+                                    controller.selectedImages.remove(imageFile);
+                                    Get.back();
+                                  },
+                                ),
+                              ],
+                            ));
+                          })
+                    ],
+                  );
+                }).toList(),
+              );
       },
     );
   }

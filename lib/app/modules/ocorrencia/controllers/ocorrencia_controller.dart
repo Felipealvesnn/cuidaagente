@@ -157,6 +157,7 @@ class OcorrenciaController extends GetxController {
 
       // Obter o nome da foto
       String fileName = path.basename(image.path);
+      
 
       // Adiciona a imagem como base64 e o nome ao JSON
       imagensMonitoramento.add(ImagensMonitoramento(

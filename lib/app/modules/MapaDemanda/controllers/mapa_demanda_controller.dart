@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:cuidaagente/app/data/models/LogAgenteDemanda.dart';
 import 'package:cuidaagente/app/data/models/Usuario.dart';
 import 'package:cuidaagente/app/data/models/adicionarPontos.dart';
+import 'package:cuidaagente/app/data/models/ocorrenciaPost.dart';
 import 'package:cuidaagente/app/data/repository/demandar_repository.dart';
 import 'package:cuidaagente/app/routes/app_pages.dart';
 import 'package:cuidaagente/app/utils/getstorages.dart';
@@ -16,7 +18,6 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:image/image.dart' as img; // Importa a biblioteca 'image'
 import 'package:path/path.dart' as path;
 import 'package:image_picker/image_picker.dart';
-
 
 final DemandasRepository demandasRepository = DemandasRepository();
 
@@ -36,7 +37,8 @@ class MapaDemandaController extends GetxController {
   final keymaps = 'AIzaSyAsinfHRMZKKrM5CH7L0IoDpQSIJ2dWios';
   bool IniciadaDemanda = false;
   bool ValidarDistanciaBool = false;
-   var selectedImages = RxList<File>([]);
+  var selectedImages = RxList<File>([]);
+  List<ImagensMonitoramento> imagensMonitoramento = [];
 
   @override
   void onInit() async {
@@ -77,7 +79,7 @@ class MapaDemandaController extends GetxController {
     });
   }
 
-    Future<void> pickImage(ImageSource source) async {
+  Future<void> pickImage(ImageSource source) async {
     if (selectedImages.length >= 5) {
       // Adicione uma lógica para mostrar uma mensagem ou alerta de limite de imagens
       Get.snackbar('Limite atingido', 'Você só pode adicionar até 3 imagens.');
@@ -139,7 +141,6 @@ class MapaDemandaController extends GetxController {
       print('Nome da foto: $fileName'); // Exibe o nome da foto
     }
   }
-
 
   Future<void> getUserLocation() async {
     // Primeiro, verifica e solicita permissão
@@ -242,12 +243,25 @@ class MapaDemandaController extends GetxController {
           ),
           barrierDismissible: false, // Impede que o usuário feche o diálogo
         );
+
+        for (var image in selectedImages) {
+          // Lê o arquivo como bytes
+          List<int> imageBytes = await image.readAsBytes();
+
+          // Converte para base64
+          String base64Image = base64Encode(imageBytes);
+
+          // Obter o nome da foto
+          // String fileName = path.basename(image.path);
+
+          // Adiciona a imagem como base64 e o nome ao JSON
+          imagensMonitoramento.add(ImagensMonitoramento(
+              foto_base64: base64Image, nome_imagem: "NomeIMagem"));
+        }
+
         // Chama o método de finalização da demanda
-        await demandasRepository.finalizarDemanda(
-          demandaId,
-          motivoController.text,
-          usuario.usuarioId!,
-        );
+        await demandasRepository.finalizarDemanda(demandaId,
+            motivoController.text, usuario.usuarioId!, imagensMonitoramento);
         Finalizado = true;
       } else {
         Get.snackbar(

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:cuidaagente/app/data/global/constants.dart';
 import 'package:cuidaagente/app/data/models/LogAgenteDemanda.dart';
 import 'package:cuidaagente/app/data/models/adicionarPontos.dart';
+import 'package:cuidaagente/app/data/models/ocorrenciaPost.dart';
 import 'package:cuidaagente/app/utils/getstorages.dart';
 import 'package:get/get_connect/connect.dart';
 
@@ -67,8 +68,8 @@ class DemandasProvider extends GetConnect {
       print("Log enviado com sucesso!");
     } else {
       final responseBody = json.decode(response.bodyString ?? '{}');
-        return false;
-      
+      return false;
+
       // throw Exception(
       //     responseBody['Message'] ?? 'Falha ao enviar log de agente demanda!');
     }
@@ -101,8 +102,8 @@ class DemandasProvider extends GetConnect {
   }
 
   // Método para finalizar uma demanda específica
-  Future<void> finalizarDemanda(
-      int demandaId, String despacho, int usuarioID) async {
+  Future<void> finalizarDemanda(int demandaId, String despacho, int usuarioID,
+      List<ImagensMonitoramento> imagensMonitoramento) async {
     timeout = const Duration(minutes: 10);
 
     // Lê o token armazenado
@@ -116,14 +117,25 @@ class DemandasProvider extends GetConnect {
     };
 
     // Monta a URL com os parâmetros como query string
-    var url =
-        "${baseUrlw2e}demandas_ocorrencia/finalizarDemanda?idedemanda=$demandaId&despacho=$despacho&usuarioID=$usuarioID";
+    // var url =
+    //     "${baseUrlw2e}demandas_ocorrencia/finalizarDemanda?idedemanda=$demandaId&despacho=$despacho&usuarioID=$usuarioID&imagens=$imagensMonitoramento";
+
+    var body = {
+      "idedemanda": demandaId,
+      "despacho": despacho,
+      "usuarioID": usuarioID,
+      "imagens": imagensMonitoramento.map((imagem) => imagem.toMap()).toList(),
+    };
+    print(jsonEncode(body));
+
+    var url = "${baseUrlw2e}demandas_ocorrencia/finalizarDemanda";
 
     // Executa a requisição GET para finalizar a demanda com parâmetros na URL
 
     var response = await request(
       url,
       'POST',
+      body: body,
       headers: headers,
     );
 

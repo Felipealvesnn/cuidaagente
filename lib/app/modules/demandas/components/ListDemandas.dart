@@ -85,7 +85,7 @@ class ListDemandas extends StatelessWidget {
               'Aberta: ${DateFormat('dd/MM/yyyy HH:mm').format(demanda.dataCriacaoDemanda!)}',
             ),
             Text(
-              'Despacho demanda: ${(demanda.despachoAcao != null ? demanda.despachoAcao!.toUpperCase() : "")}',
+              'Tipo : ${(demanda.despachoAcao != null ? demanda.despachoAcao!.toUpperCase() : "")}',
             ),
             Text('Orgao: ${demanda.orgao?.nomeAbreviadoOrgao}'),
             Text(
@@ -132,14 +132,13 @@ class ListDemandas extends StatelessWidget {
               ),
             ],
           ),
-          _buildRichText(
-              'Local: ', demanda.ocorrencia?.enderecoOcorrencia?.toUpperCase()),
+          _buildRichText('Local: ',
+              '${demanda.ocorrencia?.enderecoOcorrencia?.toUpperCase()} - ${demanda.ocorrencia?.numeroEnderecoOcorrencia}'),
           //const Divider(),
           _buildRichText(
               'Bairro: ', demanda.ocorrencia?.bairroOcorrencia?.toUpperCase()),
           // const Divider(),
-          _buildRichText(
-              'Cidade: ', demanda.ocorrencia?.cidadeOcorrencia?.toUpperCase()),
+
           // const Divider(),
           _buildRichText(
             'Data da Ocorrência: ',
@@ -153,8 +152,7 @@ class ListDemandas extends StatelessWidget {
           _buildRichText('Relato do Atendente: ',
               demanda.ocorrencia?.relatoAtendenteOcorrencia?.toUpperCase()),
           // const Divider(),
-          _buildRichText('Relato do Final: ',
-              demanda.ocorrencia?.observacoesFinaisOcorrencia?.toUpperCase()),
+
           _buildOpenMapButton(
               context, isFinalizado, isusuarioBoll, demanda, isUsuarioBolllist),
         ],

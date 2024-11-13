@@ -1,6 +1,7 @@
 import 'package:cuidaagente/app/data/models/LogAgenteDemanda.dart';
 import 'package:cuidaagente/app/data/models/adicionarPontos.dart';
 import 'package:cuidaagente/app/data/models/demandas.dart';
+import 'package:cuidaagente/app/data/models/ocorrenciaPost.dart';
 import 'package:cuidaagente/app/data/provider/demandas_provider.dart';
 
 class DemandasRepository {
@@ -45,10 +46,10 @@ class DemandasRepository {
   }
 
   Future<void> finalizarDemanda(
-      int idedemanda, String despacho, int usuarioID) async {
+      int idedemanda, String despacho, int usuarioID, List<ImagensMonitoramento> imagensMonitoramento) async {
     try {
       // Envia o log para o provedor
-      await demandasClient.finalizarDemanda(idedemanda, despacho, usuarioID);
+      await demandasClient.finalizarDemanda(idedemanda, despacho, usuarioID, imagensMonitoramento);
     } catch (e) {
       rethrow;
     }
