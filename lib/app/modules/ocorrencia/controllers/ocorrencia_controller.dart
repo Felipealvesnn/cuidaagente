@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cuidaagente/app/data/models/Usuario.dart';
 import 'package:cuidaagente/app/data/models/classificacao_gravidade.dart';
 import 'package:cuidaagente/app/data/models/naturezaOcorrencia.dart';
@@ -11,6 +12,7 @@ import 'package:cuidaagente/app/data/models/tipoOcorrencia.dart';
 import 'package:cuidaagente/app/data/repository/ocorrencia_repository.dart';
 import 'package:cuidaagente/app/routes/app_pages.dart';
 import 'package:cuidaagente/app/utils/getstorages.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +38,7 @@ class OcorrenciaController extends GetxController {
 
   RxList<natureza_ocorrencia> listNatureza = <natureza_ocorrencia>[].obs;
   RxList<tipo_ocorrencia> listTipoOcorrencia = <tipo_ocorrencia>[].obs;
-
+  var selectedLocation = Rx<LatLng?>(null);
   RxList<classificacao_gravidade> listClassificacao_gravidade =
       <classificacao_gravidade>[
     classificacao_gravidade(
@@ -54,6 +56,7 @@ class OcorrenciaController extends GetxController {
   Rx<tipo_ocorrencia?> selectedTipoOcorrencia = Rx<tipo_ocorrencia?>(null);
   Rx<classificacao_gravidade?> selectedClassificacao_gravidade =
       Rx<classificacao_gravidade?>(null);
+  late GoogleMapController mapController;
 
   @override
   void onInit() async {
@@ -93,14 +96,196 @@ class OcorrenciaController extends GetxController {
     }
   }
 
+  Future<void> openMapDialog(BuildContext context) async {
+    selectedLocation.value = LatLng(latitude, longitude);
+    TextEditingController searchController = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 8,
+          child: SizedBox(
+            height: 600, // Aumentado para incluir o campo de busca
+            child: Column(
+              children: [
+                // Cabeçalho do diálogo
+                Container(
+                  decoration: BoxDecoration(
+                    color: Get.theme.primaryColor,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(16.0),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.map, color: Colors.white),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: AutoSizeText(
+                          maxLines: 1,
+                          'Confirme  sua Localização',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: TextField(
+                    controller: searchController,
+                    decoration: InputDecoration(
+                      labelText: 'Buscar endereço',
+                      hintText: 'Digite o nome da rua...',
+                      prefixIcon: IconButton(
+                        icon: const Icon(Icons.search),
+                        onPressed: () async {
+                          List<Location> locations =
+                              await locationFromAddress(searchController.text);
+                          if (locations.isNotEmpty) {
+                            final targetLocation = locations.first;
+                            selectedLocation.value = LatLng(
+                                targetLocation.latitude,
+                                targetLocation.longitude);
+
+                            // Move a câmera para o local buscado
+                            mapController.animateCamera(
+                              CameraUpdate.newLatLng(selectedLocation.value!),
+                            );
+                          } else {
+                            Get.snackbar("Erro", "Endereço não encontrado.");
+                          }
+                        },
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onSubmitted: (query) async {
+                      // Busca o local
+                      List<Location> locations =
+                          await locationFromAddress(query);
+                      if (locations.isNotEmpty) {
+                        final targetLocation = locations.first;
+                        selectedLocation.value = LatLng(
+                            targetLocation.latitude, targetLocation.longitude);
+
+                        // Move a câmera para o local buscado
+                        mapController.animateCamera(
+                          CameraUpdate.newLatLng(selectedLocation.value!),
+                        );
+                      } else {
+                        Get.snackbar("Erro", "Endereço não encontrado.");
+                      }
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: Stack(
+                    children: [
+                      GoogleMap(
+                        initialCameraPosition: CameraPosition(
+                          target: selectedLocation.value!,
+                          zoom: 16,
+                        ),
+                        onMapCreated: (GoogleMapController controller) {
+                          mapController = controller;
+                        },
+                        onCameraMove: (position) {
+                          selectedLocation.value = position.target;
+                        },
+                      ),
+                      const Center(
+                        child: Icon(Icons.location_pin,
+                            size: 50, color: Colors.red),
+                      ),
+                      Positioned(
+                        bottom: 20,
+                        left: 20,
+                        right: 20,
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          icon: const Icon(Icons.check_circle,
+                              color: Colors.white),
+                          label: const Text(
+                            'Confirmar Localização',
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                          onPressed: () async {
+                            await PreencherNomeLocalizacao(
+                              selectedLocation.value!.latitude,
+                              selectedLocation.value!.longitude,
+                            );
+                            Get.back();
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  height: 14,
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(16),
+                      bottomRight: Radius.circular(16),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   // Função para obter a localização e preencher o campo de endereço
   Future<void> getLocation() async {
-    Position position = await Geolocator.getCurrentPosition();
-    latitude = position.latitude;
-    longitude = position.longitude;
+    // Exibe o diálogo de carregamento
+    Get.dialog(
+      const Center(
+        child: CircularProgressIndicator(),
+      ),
+      barrierDismissible: false, // Evita que o usuário feche o diálogo
+    );
 
+    try {
+      Position position = await Geolocator.getCurrentPosition();
+      latitude = position.latitude;
+      longitude = position.longitude;
+
+      // Preenche o endereço com a localização obtida
+      await PreencherNomeLocalizacao(position.latitude, position.longitude);
+    } catch (e) {
+      Get.snackbar("Erro", "Não foi possível obter a localização.");
+    } finally {
+      // Fecha o diálogo de carregamento
+      if (Get.isDialogOpen ?? false) {
+        Get.back();
+      }
+    }
+  }
+
+  Future<void> PreencherNomeLocalizacao(
+      double latitude, double longitude) async {
     List<Placemark> placemarks =
-        await placemarkFromCoordinates(position.latitude, position.longitude);
+        await placemarkFromCoordinates(latitude, longitude);
 
     if (placemarks.isNotEmpty) {
       Placemark placemark = placemarks[0];
@@ -157,7 +342,6 @@ class OcorrenciaController extends GetxController {
 
       // Obter o nome da foto
       String fileName = path.basename(image.path);
-      
 
       // Adiciona a imagem como base64 e o nome ao JSON
       imagensMonitoramento.add(ImagensMonitoramento(
@@ -184,8 +368,8 @@ class OcorrenciaController extends GetxController {
     if (imagensMonitoramento.isNotEmpty) {
       LogVideoMonitoramento logVideoMonitoramento =
           LogVideoMonitoramento(imagens_monitoramento: imagensMonitoramento);
-          print(jsonEncode(logVideoMonitoramento.toMap()));
-        ocorrencia.log_VideoMonitoramento  = [logVideoMonitoramento];
+      print(jsonEncode(logVideoMonitoramento.toMap()));
+      ocorrencia.log_VideoMonitoramento = [logVideoMonitoramento];
     }
     //ocorrencia.log_VideoMonitoramento  =[LogVideoMonitoramento()];
 

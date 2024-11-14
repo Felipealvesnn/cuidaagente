@@ -19,271 +19,296 @@ class OcorrenciaView extends GetView<OcorrenciaController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Criar Ocorrência"),
-        centerTitle: true,
-      ),
-      floatingActionButton: FloatibuttonOcorrencia(
-          controller: controller,
-          formKey: _formKey), // Adiciona o botão flutuante
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomNavigationvarocorencia(
-        onImageSourceSelection: () {
-          _showImageSourceSelection(context);
-        },
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Obx(() => SizedBox(
-                      width: double.infinity,
-                      child: DropdownButtonFormField<natureza_ocorrencia>(
-                        isExpanded: true,
-                        borderRadius: BorderRadius.circular(20).copyWith(
-                          topLeft: const Radius.circular(0),
-                        ),
-                        hint: const Text('Selecione a Natureza'),
-                        value: controller.selectedNatureza.value,
-                        onChanged: (natureza) {
-                          controller.selectNatureza(natureza);
-                        },
-                        items: controller.listNatureza.map((natureza) {
-                          return DropdownMenuItem<natureza_ocorrencia>(
-                            value: natureza,
-                            child: Text(
-                                natureza.descricao_natureza_ocorrencia ?? ''),
-                          );
-                        }).toList(),
-                        validator: (value) {
-                          if (value == null) {
-                            return 'Campo obrigatório';
-                          }
-                          return null;
-                        },
-                      ),
-                    )),
-                const SizedBox(height: 20),
-                Obx(() {
-                  if (controller.selectedNatureza.value != null) {
-                    return SizedBox(
-                      width: double.infinity,
-                      child: DropdownButtonFormField<tipo_ocorrencia>(
-                        borderRadius: BorderRadius.circular(20).copyWith(
-                          topLeft: const Radius.circular(0),
-                        ),
-                        hint: const Text('Selecione o Tipo de Ocorrência'),
-                        value: controller.selectedTipoOcorrencia.value,
-                        onChanged: (tipo) {
-                          controller.selectTipoOcorrencia(tipo);
-                        },
-                        isExpanded: true,
-                        items: controller.listTipoOcorrencia.map((tipo) {
-                          return DropdownMenuItem<tipo_ocorrencia>(
-                            value: tipo,
-                            child: Text(tipo.descricao_tipo_ocorrencia ?? ''),
-                          );
-                        }).toList(),
-                        validator: (value) {
-                          if (value == null) {
-                            return 'Campo obrigatório';
-                          }
-                          return null;
-                        },
-                      ),
-                    );
-                  } else {
-                    return Container();
-                  }
-                }),
-                const SizedBox(height: 20),
-                Obx(() {
-                  if (controller.selectedClassificacao_gravidade.value !=
-                      null) {
-                    return SizedBox(
-                      width: double.infinity,
-                      child: DropdownButtonFormField<classificacao_gravidade>(
-                        borderRadius: BorderRadius.circular(20).copyWith(
-                          topLeft: const Radius.circular(0),
-                        ),
-                        hint: const Text(
-                            'Selecione a Classificação de Gravidade'),
-                        value: controller.selectedClassificacao_gravidade.value,
-                        onChanged: (gravidade) {
-                          controller.selectedClassificacao_gravidade.value =
-                              gravidade;
-                        },
-                        isExpanded: true,
-                        items: controller.listClassificacao_gravidade
-                            .map((gravidade) {
-                          return DropdownMenuItem<classificacao_gravidade>(
-                            value: gravidade,
-                            child: Text(
-                                gravidade.descricao_classificacao_gravidade ??
-                                    ''),
-                          );
-                        }).toList(),
-                        validator: (value) {
-                          if (value == null) {
-                            return 'Campo obrigatório';
-                          }
-                          return null;
-                        },
-                      ),
-                    );
-                  } else {
-                    return Container();
-                  }
-                }),
-                Obx(() {
-                  if (controller.selectedClassificacao_gravidade.value !=
-                      null) {
-                    return Column(
-                      children: [
-                        const SizedBox(height: 20),
-                        TextFormField(
-                          controller: controller.enderecoController,
-                          decoration: InputDecoration(
-                            labelText: 'Endereço',
-                            prefixIcon: IconButton(
-                              icon: const Icon(Icons.location_on),
-                              onPressed: () async {
-                                await controller.getLocation();
-                              },
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Campo obrigatório';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        TextFormField(
-                          controller: controller.Bairro,
-                          decoration: const InputDecoration(
-                            labelText: 'Bairro',
-                          ),
-                          keyboardType: TextInputType.number,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Campo obrigatório';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        TextFormField(
-                          controller: controller.numeroController,
-                          decoration: const InputDecoration(
-                            labelText: 'Número',
-                          ),
-                          keyboardType: TextInputType.number,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Campo obrigatório';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextFormField(
-                                controller: controller.dataController,
-                                decoration: InputDecoration(
-                                  labelText: 'Data (DD/MM/AA)',
-                                  suffixIcon: IconButton(
-                                    icon: const Icon(Icons.calendar_today),
-                                    onPressed: () async {
-                                      DateTime? pickedDate =
-                                          await showDatePicker(
-                                        context: context,
-                                        initialDate: DateTime.now(),
-                                        firstDate: DateTime(2000),
-                                        lastDate: DateTime(2101),
-                                      );
-                                      if (pickedDate != null) {
-                                        controller.dataController.text =
-                                            DateFormat('dd/MM/yy')
-                                                .format(pickedDate);
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: TextFormField(
-                                controller: controller.horaController,
-                                decoration: InputDecoration(
-                                  labelText: 'Hora (HH:MM)',
-                                  suffixIcon: IconButton(
-                                    icon: const Icon(Icons.access_time),
-                                    onPressed: () async {
-                                      TimeOfDay? pickedTime =
-                                          await showTimePicker(
-                                        context: context,
-                                        initialTime: TimeOfDay.now(),
-                                      );
-                                      if (pickedTime != null) {
-                                        final now = DateTime.now();
-                                        final selectedTime = DateTime(
-                                          now.year,
-                                          now.month,
-                                          now.day,
-                                          pickedTime.hour,
-                                          pickedTime.minute,
-                                        );
-                                        controller.horaController.text =
-                                            DateFormat('HH:mm')
-                                                .format(selectedTime);
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        TextFormField(
-                          controller: controller.relatoController,
-                          decoration: const InputDecoration(
-                            labelText: 'Relato do Autor',
-                          ),
-                          maxLines: 4,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Campo obrigatório';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        _buildSelectedImages(context),
-                      ],
-                    );
-                  } else {
-                    return Container();
-                  }
-                }),
-              ],
-            ),
-          ),
+        appBar: AppBar(
+          title: const Text("Criar Ocorrência"),
+          centerTitle: true,
         ),
-      ),
-    );
+        floatingActionButton: FloatibuttonOcorrencia(
+            controller: controller,
+            formKey: _formKey), // Adiciona o botão flutuante
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: BottomNavigationvarocorencia(
+          onImageSourceSelection: () {
+            _showImageSourceSelection(context);
+          },
+        ),
+        body: Obx(
+          () => controller.listNatureza.isEmpty
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Obx(() => SizedBox(
+                                width: double.infinity,
+                                child: DropdownButtonFormField<
+                                    natureza_ocorrencia>(
+                                  isExpanded: true,
+                                  borderRadius:
+                                      BorderRadius.circular(20).copyWith(
+                                    topLeft: const Radius.circular(0),
+                                  ),
+                                  hint: const Text('Selecione a Natureza'),
+                                  value: controller.selectedNatureza.value,
+                                  onChanged: (natureza) {
+                                    controller.selectNatureza(natureza);
+                                  },
+                                  items:
+                                      controller.listNatureza.map((natureza) {
+                                    return DropdownMenuItem<
+                                        natureza_ocorrencia>(
+                                      value: natureza,
+                                      child: Text(natureza
+                                              .descricao_natureza_ocorrencia ??
+                                          ''),
+                                    );
+                                  }).toList(),
+                                  validator: (value) {
+                                    if (value == null) {
+                                      return 'Campo obrigatório';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              )),
+                          const SizedBox(height: 20),
+                          Obx(() {
+                            if (controller.selectedNatureza.value != null) {
+                              return SizedBox(
+                                width: double.infinity,
+                                child: DropdownButtonFormField<tipo_ocorrencia>(
+                                  borderRadius:
+                                      BorderRadius.circular(20).copyWith(
+                                    topLeft: const Radius.circular(0),
+                                  ),
+                                  hint: const Text(
+                                      'Selecione o Tipo de Ocorrência'),
+                                  value:
+                                      controller.selectedTipoOcorrencia.value,
+                                  onChanged: (tipo) {
+                                    controller.selectTipoOcorrencia(tipo);
+                                  },
+                                  isExpanded: true,
+                                  items:
+                                      controller.listTipoOcorrencia.map((tipo) {
+                                    return DropdownMenuItem<tipo_ocorrencia>(
+                                      value: tipo,
+                                      child: Text(
+                                          tipo.descricao_tipo_ocorrencia ?? ''),
+                                    );
+                                  }).toList(),
+                                  validator: (value) {
+                                    if (value == null) {
+                                      return 'Campo obrigatório';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              );
+                            } else {
+                              return Container();
+                            }
+                          }),
+                          const SizedBox(height: 20),
+                          Obx(() {
+                            if (controller
+                                    .selectedClassificacao_gravidade.value !=
+                                null) {
+                              return SizedBox(
+                                width: double.infinity,
+                                child: DropdownButtonFormField<
+                                    classificacao_gravidade>(
+                                  borderRadius:
+                                      BorderRadius.circular(20).copyWith(
+                                    topLeft: const Radius.circular(0),
+                                  ),
+                                  hint: const Text(
+                                      'Selecione a Classificação de Gravidade'),
+                                  value: controller
+                                      .selectedClassificacao_gravidade.value,
+                                  onChanged: (gravidade) {
+                                    controller.selectedClassificacao_gravidade
+                                        .value = gravidade;
+                                  },
+                                  isExpanded: true,
+                                  items: controller.listClassificacao_gravidade
+                                      .map((gravidade) {
+                                    return DropdownMenuItem<
+                                        classificacao_gravidade>(
+                                      value: gravidade,
+                                      child: Text(gravidade
+                                              .descricao_classificacao_gravidade ??
+                                          ''),
+                                    );
+                                  }).toList(),
+                                  validator: (value) {
+                                    if (value == null) {
+                                      return 'Campo obrigatório';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              );
+                            } else {
+                              return Container();
+                            }
+                          }),
+                          Obx(() {
+                            if (controller
+                                    .selectedClassificacao_gravidade.value !=
+                                null) {
+                              return Column(
+                                children: [
+                                  const SizedBox(height: 20),
+                                  TextFormField(
+                                    controller: controller.enderecoController,
+                                    decoration: InputDecoration(
+                                      labelText: 'Endereço',
+                                      prefixIcon: IconButton(
+                                        icon: const Icon(Icons.location_on),
+                                        onPressed: () async {
+                                          await controller.getLocation();
+                                          await controller
+                                              .openMapDialog(context);
+                                        },
+                                      ),
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Campo obrigatório';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  const SizedBox(height: 10),
+                                  TextFormField(
+                                    controller: controller.Bairro,
+                                    decoration: const InputDecoration(
+                                      labelText: 'Bairro',
+                                    ),
+                                    keyboardType: TextInputType.number,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Campo obrigatório';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  const SizedBox(height: 10),
+                                  TextFormField(
+                                    controller: controller.numeroController,
+                                    decoration: const InputDecoration(
+                                      labelText: 'Número',
+                                    ),
+                                    keyboardType: TextInputType.number,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Campo obrigatório';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: TextFormField(
+                                          controller: controller.dataController,
+                                          decoration: InputDecoration(
+                                            labelText: 'Data (DD/MM/AA)',
+                                            suffixIcon: IconButton(
+                                              icon: const Icon(
+                                                  Icons.calendar_today),
+                                              onPressed: () async {
+                                                DateTime? pickedDate =
+                                                    await showDatePicker(
+                                                  context: context,
+                                                  initialDate: DateTime.now(),
+                                                  firstDate: DateTime(2000),
+                                                  lastDate: DateTime(2101),
+                                                );
+                                                if (pickedDate != null) {
+                                                  controller
+                                                          .dataController.text =
+                                                      DateFormat('dd/MM/yy')
+                                                          .format(pickedDate);
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: TextFormField(
+                                          controller: controller.horaController,
+                                          decoration: InputDecoration(
+                                            labelText: 'Hora (HH:MM)',
+                                            suffixIcon: IconButton(
+                                              icon:
+                                                  const Icon(Icons.access_time),
+                                              onPressed: () async {
+                                                TimeOfDay? pickedTime =
+                                                    await showTimePicker(
+                                                  context: context,
+                                                  initialTime: TimeOfDay.now(),
+                                                );
+                                                if (pickedTime != null) {
+                                                  final now = DateTime.now();
+                                                  final selectedTime = DateTime(
+                                                    now.year,
+                                                    now.month,
+                                                    now.day,
+                                                    pickedTime.hour,
+                                                    pickedTime.minute,
+                                                  );
+                                                  controller
+                                                          .horaController.text =
+                                                      DateFormat('HH:mm')
+                                                          .format(selectedTime);
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  TextFormField(
+                                    controller: controller.relatoController,
+                                    decoration: const InputDecoration(
+                                      labelText: 'Relato do Autor',
+                                    ),
+                                    maxLines: 4,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Campo obrigatório';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  const SizedBox(height: 10),
+                                  _buildSelectedImages(context),
+                                ],
+                              );
+                            } else {
+                              return Container();
+                            }
+                          }),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+        ));
   }
-  
-   Widget _buildSelectedImages(BuildContext context) {
+
+  Widget _buildSelectedImages(BuildContext context) {
     return Obx(
       () {
         return controller.selectedImages.isEmpty
@@ -335,7 +360,6 @@ class OcorrenciaView extends GetView<OcorrenciaController> {
       },
     );
   }
-
 
   void _showImageSourceSelection(BuildContext context) {
     showModalBottomSheet(

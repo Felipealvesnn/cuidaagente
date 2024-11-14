@@ -19,7 +19,7 @@ class BottomNavigationvarocorencia extends StatelessWidget {
       tabBuilder: (int index, bool isActive) {
         // Define a lista de ícones e cores
         final iconList = [Icons.home, Icons.camera_alt];
-        final colorList = [Colors.green, Colors.white];
+        final colorList = [Get.theme.primaryColor, Colors.white];
 
         // Escolhe a cor e o ícone da lista com base no índice
         var color = colorList[index];
