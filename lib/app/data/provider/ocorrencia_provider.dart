@@ -1,13 +1,9 @@
 import 'dart:convert';
-
 import 'package:cuidaagente/app/data/global/constants.dart';
-import 'package:cuidaagente/app/data/models/ocorrencia.dart';
 import 'package:cuidaagente/app/data/models/ocorrenciaPost.dart';
 import 'package:cuidaagente/app/utils/getstorages.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
-import 'package:path_provider/path_provider.dart';
 
 class OcorrenciaProvider extends GetConnect {
   Future<Map<String, dynamic>?> postOcorrencia(OcorrenciaPost ocorrencia) async {
