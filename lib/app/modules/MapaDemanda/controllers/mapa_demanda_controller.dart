@@ -26,6 +26,7 @@ class MapaDemandaController extends GetxController {
   late double destinationLatitude;
   late double destinationLongitude;
   late int demandaId;
+  late int logAgenteDemandaID;
   late GoogleMapController mapController;
   late LatLng destination;
   var polylineCoordinates = <LatLng>[].obs;
@@ -50,6 +51,7 @@ class MapaDemandaController extends GetxController {
     destinationLongitude = Get.arguments['longitude'] ?? -38.5267;
     destination = LatLng(destinationLatitude, destinationLongitude);
     demandaId = Get.arguments['demanda_id'];
+    logAgenteDemandaID = Get.arguments['logAgenteDemandaID'];
     IniciadaDemanda = Get.arguments['IniciadaDemanda'] ?? false;
 
     polylinePoints = PolylinePoints();
@@ -58,25 +60,25 @@ class MapaDemandaController extends GetxController {
     //await logDemandaAgente();
 
     // Inicia o monitoramento da posição
-    positionStream =
-        Geolocator.getPositionStream().listen((Position position) async {
-      LatLng newPosition = LatLng(position.latitude, position.longitude);
+    // positionStream =
+    //     Geolocator.getPositionStream().listen((Position position) async {
+    //   LatLng newPosition = LatLng(position.latitude, position.longitude);
 
-      // Calcula a distância entre a última posição e a nova posição
-      double distance = Geolocator.distanceBetween(
-        userLocation.value.latitude,
-        userLocation.value.longitude,
-        newPosition.latitude,
-        newPosition.longitude,
-      );
-      // Atualiza somente se a distância for maior que um certo limite (ex: 5 metros)
-      if (distance > 10) {
-        userLocation.value = newPosition;
-        await updateRoute();
-        await moveCameraToCurrentPosition();
-        //await enviarPontosRota();
-      }
-    });
+    //   // Calcula a distância entre a última posição e a nova posição
+    //   double distance = Geolocator.distanceBetween(
+    //     userLocation.value.latitude,
+    //     userLocation.value.longitude,
+    //     newPosition.latitude,
+    //     newPosition.longitude,
+    //   );
+    //   // Atualiza somente se a distância for maior que um certo limite (ex: 5 metros)
+    //   if (distance > 10) {
+    //     userLocation.value = newPosition;
+    //     await updateRoute();
+    //     await moveCameraToCurrentPosition();
+    //     //await enviarPontosRota();
+    //   }
+    // });
   }
 
   Future<void> pickImage(ImageSource source) async {
@@ -289,6 +291,55 @@ class MapaDemandaController extends GetxController {
         Get.snackbar(
           'Demanda Finalizada',
           'A demanda foi finalizada com sucesso.',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        await Get.offAllNamed(Routes.DEMANDAS);
+      }
+    }
+  }
+
+  Future<void> desvincularDemanda() async {
+    // Exibe o diálogo de carregamento para bloquear a tela
+
+    try {
+      if (ValidarDistanciaBool) {
+        Get.dialog(
+          const Center(
+            child: CircularProgressIndicator(),
+          ),
+          barrierDismissible: false, // Impede que o usuário feche o diálogo
+        );
+
+        // Chama o método de finalização da demanda
+        await demandasRepository.desvincularDemanda(
+            logAgenteDemandaID, motivoController.text);
+        Finalizado = true;
+      } else {
+        Get.snackbar(
+          'Info',
+          'Você precisa estar próximo ao local da demanda para finalizar.',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        Finalizado = false;
+        return;
+      }
+
+      // Exibe o Snackbar de confirmação
+      Get.snackbar(
+        'Demanda desvinculada',
+        'A demanda foi desvinculada com sucesso.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+
+      // Redireciona para a rota DEMANDAS após finalizar
+      await Get.offAllNamed(Routes.DEMANDAS);
+    } catch (e) {
+      print(e);
+    } finally {
+      if (Finalizado) {
+        Get.snackbar(
+          'Demanda desvinculada',
+          'A demanda foi desvinculada com sucesso.',
           snackPosition: SnackPosition.BOTTOM,
         );
         await Get.offAllNamed(Routes.DEMANDAS);

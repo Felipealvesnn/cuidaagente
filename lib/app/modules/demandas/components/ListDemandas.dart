@@ -1,3 +1,4 @@
+import 'package:cuidaagente/app/data/models/LogAgenteDemanda.dart';
 import 'package:cuidaagente/app/data/models/demandas.dart';
 import 'package:cuidaagente/app/modules/demandas/components/demandasDetalhes.dart';
 import 'package:cuidaagente/app/modules/demandas/controllers/demandas_controller.dart';
@@ -59,8 +60,9 @@ class ListDemandas extends StatelessWidget {
                 element.usuarioId == controller.usuario.usuarioId) ??
         false);
 
-    final isUsuarioBoll = demanda.logAgenteDemanda?.any(
-            (element) => element.usuarioId == controller.usuario.usuarioId) ??
+    final isUsuarioBoll = demanda.logAgenteDemanda?.any((element) =>
+            element.usuarioId == controller.usuario.usuarioId &&
+            element.ativo == true) ??
         false;
     return Card(
       color: isUsuarioBoll ? Colors.green[100] : Colors.white,
@@ -252,6 +254,16 @@ class ListDemandas extends StatelessWidget {
         'longitude': demanda.ocorrencia?.longitude,
         'demanda_id': demanda.demandaId,
         'IniciadaDemanda': IniciadaDemanda,
+        'logAgenteDemandaID': (demanda.logAgenteDemanda != null &&
+                demanda.logAgenteDemanda!.isNotEmpty)
+            ? demanda.logAgenteDemanda!
+                .firstWhere(
+                    (element) =>
+                        element.usuarioId == controller.usuario.usuarioId &&
+                        element.ativo == true,
+                    orElse: () => LogAgenteDemanda())
+                .id
+            : null,
       },
     );
   }

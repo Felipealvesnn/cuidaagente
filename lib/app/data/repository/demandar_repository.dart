@@ -45,11 +45,22 @@ class DemandasRepository {
     }
   }
 
-  Future<void> finalizarDemanda(
-      int idedemanda, String despacho, int usuarioID, List<ImagensMonitoramento> imagensMonitoramento) async {
+  Future<void> finalizarDemanda(int idedemanda, String despacho, int usuarioID,
+      List<ImagensMonitoramento> imagensMonitoramento) async {
     try {
       // Envia o log para o provedor
-      await demandasClient.finalizarDemanda(idedemanda, despacho, usuarioID, imagensMonitoramento);
+      await demandasClient.finalizarDemanda(
+          idedemanda, despacho, usuarioID, imagensMonitoramento);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> desvincularDemanda(
+      int logDemandaId, String despacho) async {
+    try {
+      // Envia o log para o provedor
+      await demandasClient.desvincularDemanda(logDemandaId, despacho,);
     } catch (e) {
       rethrow;
     }

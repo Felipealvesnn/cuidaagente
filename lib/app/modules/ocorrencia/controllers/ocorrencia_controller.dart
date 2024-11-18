@@ -31,8 +31,6 @@ class OcorrenciaController extends GetxController {
   OcorrenciaRepository ocorrenciaRepository = OcorrenciaRepository();
   TextEditingController dataController = TextEditingController();
   TextEditingController horaController = TextEditingController();
-  double latitude = 0.0;
-  double longitude = 0.0;
   List<Map<String, dynamic>> fotosVistoria = [];
   List<ImagensMonitoramento> imagensMonitoramento = [];
 
@@ -97,157 +95,162 @@ class OcorrenciaController extends GetxController {
   }
 
   Future<void> openMapDialog(BuildContext context) async {
-    selectedLocation.value = LatLng(latitude, longitude);
     TextEditingController searchController = TextEditingController();
 
     await showDialog(
       context: context,
       builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          elevation: 8,
-          child: SizedBox(
-            height: 600, // Aumentado para incluir o campo de busca
-            child: Column(
-              children: [
-                // Cabeçalho do diálogo
-                Container(
-                  decoration: BoxDecoration(
-                    color: Get.theme.primaryColor,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16),
-                    ),
-                  ),
-                  padding: const EdgeInsets.all(16.0),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.map, color: Colors.white),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: AutoSizeText(
-                          maxLines: 1,
-                          'Confirme  sua Localização',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: TextField(
-                    controller: searchController,
-                    decoration: InputDecoration(
-                      labelText: 'Buscar endereço',
-                      hintText: 'Digite o nome da rua...',
-                      prefixIcon: IconButton(
-                        icon: const Icon(Icons.search),
-                        onPressed: () async {
-                          List<Location> locations =
-                              await locationFromAddress(searchController.text);
-                          if (locations.isNotEmpty) {
-                            final targetLocation = locations.first;
-                            selectedLocation.value = LatLng(
-                                targetLocation.latitude,
-                                targetLocation.longitude);
-
-                            // Move a câmera para o local buscado
-                            mapController.animateCamera(
-                              CameraUpdate.newLatLng(selectedLocation.value!),
-                            );
-                          } else {
-                            Get.snackbar("Erro", "Endereço não encontrado.");
-                          }
-                        },
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+        return PopScope(
+          canPop: false,
+          child: Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            elevation: 8,
+            child: SizedBox(
+              height: 600, // Aumentado para incluir o campo de busca
+              child: Column(
+                children: [
+                  // Cabeçalho do diálogo
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Get.theme.primaryColor,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(16),
+                        topRight: Radius.circular(16),
                       ),
                     ),
-                    onSubmitted: (query) async {
-                      // Busca o local
-                      List<Location> locations =
-                          await locationFromAddress(query);
-                      if (locations.isNotEmpty) {
-                        final targetLocation = locations.first;
-                        selectedLocation.value = LatLng(
-                            targetLocation.latitude, targetLocation.longitude);
-
-                        // Move a câmera para o local buscado
-                        mapController.animateCamera(
-                          CameraUpdate.newLatLng(selectedLocation.value!),
-                        );
-                      } else {
-                        Get.snackbar("Erro", "Endereço não encontrado.");
-                      }
-                    },
-                  ),
-                ),
-                Expanded(
-                  child: Stack(
-                    children: [
-                      GoogleMap(
-                        initialCameraPosition: CameraPosition(
-                          target: selectedLocation.value!,
-                          zoom: 16,
-                        ),
-                        onMapCreated: (GoogleMapController controller) {
-                          mapController = controller;
-                        },
-                        onCameraMove: (position) {
-                          selectedLocation.value = position.target;
-                        },
-                      ),
-                      const Center(
-                        child: Icon(Icons.location_pin,
-                            size: 50, color: Colors.red),
-                      ),
-                      Positioned(
-                        bottom: 20,
-                        left: 20,
-                        right: 20,
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                    padding: const EdgeInsets.all(16.0),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.map, color: Colors.white),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: AutoSizeText(
+                            maxLines: 1,
+                            'Confirme  sua Localização',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          icon: const Icon(Icons.check_circle,
-                              color: Colors.white),
-                          label: const Text(
-                            'Confirmar Localização',
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                          onPressed: () async {
-                            await PreencherNomeLocalizacao(
-                              selectedLocation.value!.latitude,
-                              selectedLocation.value!.longitude,
-                            );
-                            Get.back();
-                          },
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  height: 14,
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(16),
-                      bottomRight: Radius.circular(16),
+                      ],
                     ),
                   ),
-                )
-              ],
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: TextField(
+                      controller: searchController,
+                      decoration: InputDecoration(
+                        labelText: 'Buscar endereço',
+                        hintText: 'Digite o nome da rua...',
+                        prefixIcon: IconButton(
+                          icon: const Icon(Icons.search),
+                          onPressed: () async {
+                            List<Location> locations =
+                                await locationFromAddress(
+                                    searchController.text);
+                            if (locations.isNotEmpty) {
+                              final targetLocation = locations.first;
+                              selectedLocation.value = LatLng(
+                                  targetLocation.latitude,
+                                  targetLocation.longitude);
+
+                              // Move a câmera para o local buscado
+                              mapController.animateCamera(
+                                CameraUpdate.newLatLng(selectedLocation.value!),
+                              );
+                            } else {
+                              Get.snackbar("Erro", "Endereço não encontrado.");
+                            }
+                          },
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onSubmitted: (query) async {
+                        // Busca o local
+                        List<Location> locations =
+                            await locationFromAddress(query);
+                        if (locations.isNotEmpty) {
+                          final targetLocation = locations.first;
+                          selectedLocation.value = LatLng(
+                              targetLocation.latitude,
+                              targetLocation.longitude);
+
+                          // Move a câmera para o local buscado
+                          mapController.animateCamera(
+                            CameraUpdate.newLatLng(selectedLocation.value!),
+                          );
+                        } else {
+                          Get.snackbar("Erro", "Endereço não encontrado.");
+                        }
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        GoogleMap(
+                          initialCameraPosition: CameraPosition(
+                            target: selectedLocation.value!,
+                            zoom: 16,
+                          ),
+                          onMapCreated: (GoogleMapController controller) {
+                            mapController = controller;
+                          },
+                          onCameraMove: (position) {
+                            selectedLocation.value = position.target;
+                          },
+                        ),
+                        const Center(
+                          child: Icon(Icons.location_pin,
+                              size: 50, color: Colors.red),
+                        ),
+                        Positioned(
+                          bottom: 20,
+                          left: 20,
+                          right: 20,
+                          child: ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            icon: const Icon(Icons.check_circle,
+                                color: Colors.white),
+                            label: const Text(
+                              'Confirmar Localização',
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.white),
+                            ),
+                            onPressed: () async {
+                              await PreencherNomeLocalizacao(
+                                selectedLocation.value!.latitude,
+                                selectedLocation.value!.longitude,
+                              );
+                              Get.back();
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: 14,
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(16),
+                        bottomRight: Radius.circular(16),
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         );
@@ -267,8 +270,8 @@ class OcorrenciaController extends GetxController {
 
     try {
       Position position = await Geolocator.getCurrentPosition();
-      latitude = position.latitude;
-      longitude = position.longitude;
+
+      selectedLocation.value = LatLng(position.latitude, position.longitude);
 
       // Preenche o endereço com a localização obtida
       await PreencherNomeLocalizacao(position.latitude, position.longitude);
@@ -292,6 +295,8 @@ class OcorrenciaController extends GetxController {
       enderecoController.text = placemark.street ?? '';
       numeroController.text = placemark.subThoroughfare ?? '';
       Bairro.text = placemark.subLocality ?? '';
+      latitude = latitude;
+      longitude = longitude;
     }
   }
 
@@ -351,8 +356,8 @@ class OcorrenciaController extends GetxController {
 
     // Criação do objeto Ocorrencia
     OcorrenciaPost ocorrencia = OcorrenciaPost(
-      latitude: latitude,
-      longitude: longitude,
+      latitude: selectedLocation.value!.latitude,
+      longitude: selectedLocation.value!.longitude,
       usuario_id: usuario.usuarioId,
       endereco_ocorrencia: enderecoController.text,
       numero_endereco_ocorrencia: numeroController.text,

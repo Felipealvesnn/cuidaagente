@@ -148,4 +148,50 @@ class DemandasProvider extends GetConnect {
           responseBody['Message'] ?? 'Falha ao finalizar a demanda!');
     }
   }
+  
+   Future<void> desvincularDemanda(int logDemandaId, String despacho
+      ) async {
+    timeout = const Duration(minutes: 10);
+
+    // Lê o token armazenado
+    var token = Storagers.boxToken.read('boxToken') as String;
+
+    // Cabeçalhos da requisição
+    final headers = {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "Authorization": 'Bearer $token'
+    };
+
+    // Monta a URL com os parâmetros como query string
+    // var url =
+    //     "${baseUrlw2e}demandas_ocorrencia/finalizarDemanda?idedemanda=$demandaId&despacho=$despacho&usuarioID=$usuarioID&imagens=$imagensMonitoramento";
+
+    var body = {
+      "idedemanda":  logDemandaId,
+      "despacho":  despacho,
+    };
+    print(jsonEncode(body));
+
+    var url = "${baseUrlw2e}demandas_ocorrencia/desvincularDemanda";
+
+    // Executa a requisição GET para finalizar a demanda com parâmetros na URL
+
+    var response = await request(
+      url,
+      'POST',
+      body: body,
+      headers: headers,
+    );
+
+    // Verifica a resposta para tratar erros
+    if (response.isOk) {
+      print("Demanda desvinculada com sucesso!");
+    } else {
+      final responseBody = json.decode(response.bodyString ?? '{}');
+      throw Exception(
+          responseBody['Message'] ?? 'Falha ao finalizar a demanda!');
+    }
+  }
+
 }

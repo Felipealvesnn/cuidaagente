@@ -65,7 +65,10 @@ class DemandasController extends GetxController {
       // Filtra as demandas em que o usuário já está vinculado
       List<Demanda> filteredDemandas = demandasList.where((demanda) {
         return demanda.logAgenteDemanda?.any(
-              (element) => element.usuarioId == usuario.usuarioId,
+              (element) =>
+                  element.usuarioId == usuario.usuarioId 
+                  &&
+                  element.ativo == true,
             ) ??
             false;
       }).toList();
@@ -168,6 +171,7 @@ class DemandasController extends GetxController {
         longitude: userLocation.longitude, // Longitude do dispositivo
         demandaId: model.demandaId, // ID da demanda
         dataIniciado: DateTime.now(), // Data de início do atendimento
+        ativo: true, // Indica que o atendimento está ativo
       );
 
       // Envia o log para o servidor

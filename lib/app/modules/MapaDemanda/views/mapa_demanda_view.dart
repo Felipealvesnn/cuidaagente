@@ -3,6 +3,7 @@ import 'package:cuidaagente/app/modules/LOGIN/controllers/login_controller.dart'
 import 'package:cuidaagente/app/routes/app_pages.dart';
 import 'package:cuidaagente/app/utils/ultil.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -69,99 +70,149 @@ class MapaDemanda extends GetView<MapaDemandaController> {
   // Constrói os botões flutuantes empilhados
   Widget _buildFloatingButtons(
       BuildContext context, MapaDemandaController controller) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        FloatingActionButton(
-          heroTag: "finalizar_demanda",
-          onPressed: () => _showFinalizarDemandaModal(context, controller),
-          tooltip: 'Finalizar Demanda',
-          child: const Icon(Icons.check),
-        ),
-        const SizedBox(height: 16),
-        FloatingActionButton(
-          heroTag: "AdicionarFotos",
-          onPressed: () => _showImageSourceSelection(context),
-          tooltip: 'Adicionar Fotos',
-          child: const Icon(Icons.photo),
-        ),
-        const SizedBox(height: 16),
-        FloatingActionButton(
-          heroTag: "directions_button",
-          onPressed: () => _openMapSelection(context),
-          tooltip: 'Abrir Mapa',
-          child: const Icon(Icons.directions),
-        ),
-        const SizedBox(height: 16),
-        FloatingActionButton(
-          heroTag: "mover_camera",
-          onPressed: () async => await controller.moveCameraToCurrentPosition(),
-          tooltip: 'Abrir Mapa',
-          child: const Icon(Icons.my_location),
-        ),
-        const SizedBox(height: 16),
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 26.0),
+      child: SpeedDial(
+        animationCurve: Curves.easeInOutCubic,
+        animatedIcon: AnimatedIcons.menu_close, // Ícone animado de menu
+        overlayColor: Colors.black,
+        overlayOpacity: 0.4,
+        spaceBetweenChildren: 16, // Espaço entre os botões
+        children: [
+          SpeedDialChild(
+            child: const Icon(Icons.check, color: Colors.white),
+            backgroundColor: Colors.green,
+            label: 'Finalizar Demanda',
+            labelStyle: const TextStyle(fontSize: 14),
+            onTap: () => _showFinalizarDesvincularModal(context, controller),
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.photo, color: Colors.white),
+            backgroundColor: Colors.orange,
+            label: 'Adicionar Fotos',
+            labelStyle: const TextStyle(fontSize: 14),
+            onTap: () => _showImageSourceSelection(context),
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.directions, color: Colors.white),
+            backgroundColor: Colors.blue,
+            label: 'Abrir Mapa',
+            labelStyle: const TextStyle(fontSize: 14),
+            onTap: () => _openMapSelection(context),
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.my_location, color: Colors.white),
+            backgroundColor: Colors.purple,
+            label: 'Mover Câmera',
+            labelStyle: const TextStyle(fontSize: 14),
+            onTap: () async => await controller.moveCameraToCurrentPosition(),
+          ),
+        ],
+      ),
     );
   }
 
   // Modal para finalizar demanda com motivo
-  Future<void> _showFinalizarDemandaModal(
+  Future<void> _showFinalizarDesvincularModal(
       BuildContext context, MapaDemandaController contrltetext) async {
+    RxBool isFinalizar =
+        true.obs; // Controle para alternar entre finalizar e desvincular
+
     await showModalBottomSheet(
       isScrollControlled: true,
       context: context,
       builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            top: 16.0,
-            left: 16.0,
-            right: 16.0,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 16.0,
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Finalizar Demanda',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: contrltetext.motivoController,
-                  decoration: const InputDecoration(
-                    labelText: 'Motivo da Finalização',
-                  ),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () async {
-                    if (contrltetext.motivoController.text.isEmpty) {
-                      // Exibe uma mensagem de erro se o campo estiver vazio
-                      Get.snackbar(
-                        "Campo obrigatório",
-                        "Por favor, informe o motivo da finalização.",
-                        backgroundColor: Colors.red,
-                        colorText: Colors.white,
-                      );
-                      return; // Interrompe a execução se o campo estiver vazio
-                    }
+        return Obx(() => Padding(
+              padding: EdgeInsets.only(
+                top: 16.0,
+                left: 16.0,
+                right: 16.0,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 16.0,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Alternância entre Finalizar e Desvincular
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ChoiceChip(
+                          label: const Text('Finalizar'),
+                          selected: isFinalizar.value,
+                          onSelected: (selected) {
+                            isFinalizar.value = true;
+                          },
+                        ),
+                        const SizedBox(width: 10),
+                        ChoiceChip(
+                          label: const Text('Desvincular'),
+                          selected: !isFinalizar.value,
+                          onSelected: (selected) {
+                            isFinalizar.value = false;
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      isFinalizar.value
+                          ? 'Finalizar Demanda'
+                          : 'Desvincular da Demanda',
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: contrltetext.motivoController,
+                      decoration: InputDecoration(
+                        labelText: isFinalizar.value
+                            ? 'Motivo da Finalização'
+                            : 'Motivo do Desvínculo',
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (contrltetext.motivoController.text.isEmpty) {
+                          Get.snackbar(
+                            "Campo obrigatório",
+                            "Por favor, informe o motivo.",
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white,
+                          );
+                          return;
+                        }
 
-                    // Validação da distância
-                    bool validarDistancia =
-                        await Get.find<MapaDemandaController>()
-                            .ValidarDistancia();
-                    if (validarDistancia) {
-                      Navigator.of(context).pop();
-                      await _showConfirmationDialog(context, contrltetext);
-                    }
-                  },
-                  child: const Text('Finalizar'),
+                        if (isFinalizar.value) {
+                          // Lógica para Finalizar
+                          bool validarDistancia =
+                              await Get.find<MapaDemandaController>()
+                                  .ValidarDistancia();
+                          if (validarDistancia) {
+                            Navigator.of(context).pop();
+                            await _showConfirmationDialog(
+                                context, contrltetext, true);
+                          }
+                        } else {
+                          bool validarDistancia =
+                              await Get.find<MapaDemandaController>()
+                                  .ValidarDistancia();
+                          // Lógica para Desvincular
+                          if (validarDistancia) {
+                            Navigator.of(context).pop();
+                            await _showConfirmationDialog(
+                                context, contrltetext, false);
+                          }
+                        }
+                      },
+                      child:
+                          Text(isFinalizar.value ? 'Finalizar' : 'Desvincular'),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-        );
+              ),
+            ));
       },
     );
   }
@@ -260,14 +311,17 @@ class MapaDemanda extends GetView<MapaDemandaController> {
   }
 
   // Diálogo de confirmação para finalizar demanda
-  Future<void> _showConfirmationDialog(
-      BuildContext context, MapaDemandaController controler) async {
+  Future<void> _showConfirmationDialog(BuildContext context,
+      MapaDemandaController controller, bool isFinalizar) async {
     await showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Confirmação'),
-          content: const Text('Tem certeza que deseja finalizar a demanda?'),
+          title: Text(
+              isFinalizar ? 'Confirmar Finalização' : 'Confirmar Desvínculo'),
+          content: Text(isFinalizar
+              ? 'Deseja finalizar esta demanda?'
+              : 'Deseja desvincular da demanda?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -276,7 +330,12 @@ class MapaDemanda extends GetView<MapaDemandaController> {
             ElevatedButton(
               onPressed: () async {
                 Navigator.of(context).pop();
-                await controler.finalizarDemanda();
+                if (isFinalizar) {
+                  await controller.finalizarDemanda();
+                } else {
+                  await controller
+                      .desvincularDemanda(); // Implemente este método
+                }
               },
               child: const Text('Sim'),
             ),
