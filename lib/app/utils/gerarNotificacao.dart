@@ -1,7 +1,8 @@
 import 'package:cuidaagente/app/utils/notificationAwesomeNotification.dart';
 
 class NotificacoesGerais {
-  static Future<void> criarNotificacaoAgendado(int? id, String? Body, String? descricao,
+  static Future<void> criarNotificacaoAgendado(
+      int? id, String? Body, String? descricao,
       [Map<String, String>? payload]) async {
     int alerta = 0;
 
@@ -34,28 +35,32 @@ class NotificacoesGerais {
       [Map<String, String>? payload]) async {
     int alerta = 0;
 
+    // Garantindo valores padrão para os campos que não podem ser nulos
+    int notificationId = id ?? DateTime.now().millisecondsSinceEpoch;
+    String notificationTitle = descricao ?? "N O V A D E M A N D A";
+    String notificationBody = Body ?? "";
+    Map<String, String> notificationPayload = payload ?? {'id': notificationId.toString()};
+
     CustomNotification notificationBeforeEnd = CustomNotification(
-      id: id ?? DateTime.now().millisecondsSinceEpoch,
-      title: descricao ?? "N O V A D E M A N D A",
-      body: Body ?? "",
-      payload: payload ?? {},
+      id: notificationId,
+      title: notificationTitle,
+      body: notificationBody,
+      payload: notificationPayload,
     );
 
     try {
-      // Schedule notification for when parking is almost ending.
+      // Schedule notification
       await NotificationAwesomeNotification.showImmediateNotification(
         id: notificationBeforeEnd.id,
         title: notificationBeforeEnd.title,
         body: notificationBeforeEnd.body,
         payload: notificationBeforeEnd.payload,
+        summary: "Nova demanda",
       );
-
-      // Schedule notification for when parking time is up.
     } catch (e) {
-      print(e);
+      print("Erro ao criar notificação: $e");
     }
   }
-
 }
 
 class CustomNotification {

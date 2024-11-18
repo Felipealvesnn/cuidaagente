@@ -156,31 +156,36 @@ class NotificationAwesomeNotification {
     final String? bigPicture,
     final List<NotificationActionButton>? actionButtons,
   }) async {
-    var msg = await AwesomeNotifications().createNotification(
-      content: NotificationContent(
-        id: id ?? DateTime.now().millisecondsSinceEpoch,
-        channelKey: 'high_importance_channel',
-        title: title,
-        body: body,
-        locked: true,
-        wakeUpScreen: true,
-        actionType: actionType,
-        notificationLayout: notificationLayout,
-        summary: summary,
-        category: category,
-        payload: payload,
-        bigPicture: bigPicture,
-        customSound: 'assets/alarm.mp3',
-      ),
-      actionButtons: actionButtons ??
-          [
-            NotificationActionButton(
-              key: 'stop_alarm',
-              label: 'Visto',
-              actionType: ActionType.DismissAction,
-            )
-          ],
-    );
-    print(msg);
+    try {
+      var msg = await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: id ?? DateTime.now().millisecondsSinceEpoch,
+          channelKey: 'high_importance_channel',
+          title: title,
+          body: body,
+          locked: true,
+          wakeUpScreen: true,
+          actionType: actionType,
+          notificationLayout: notificationLayout,
+          summary: summary,
+          category: category,
+          payload: payload,
+          bigPicture: bigPicture,
+          customSound: 'assets/alarm.mp3',
+        ),
+        actionButtons: actionButtons ??
+            [
+              NotificationActionButton(
+                key: 'stop_alarm',
+                label: 'Visto',
+                actionType: ActionType.DismissAction,
+              )
+            ],
+      );
+    } on Exception catch (e) {
+      print(e);
+
+      // TODO
+    }
   }
 }
