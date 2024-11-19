@@ -302,7 +302,7 @@ class MapaDemandaController extends GetxController {
     // Exibe o diálogo de carregamento para bloquear a tela
 
     try {
-      if (ValidarDistanciaBool) {
+   
         Get.dialog(
           const Center(
             child: CircularProgressIndicator(),
@@ -314,15 +314,7 @@ class MapaDemandaController extends GetxController {
         await demandasRepository.desvincularDemanda(
             logAgenteDemandaID, motivoController.text);
         Finalizado = true;
-      } else {
-        Get.snackbar(
-          'Info',
-          'Você precisa estar próximo ao local da demanda para finalizar.',
-          snackPosition: SnackPosition.BOTTOM,
-        );
-        Finalizado = false;
-        return;
-      }
+    
 
       // Exibe o Snackbar de confirmação
       Get.snackbar(

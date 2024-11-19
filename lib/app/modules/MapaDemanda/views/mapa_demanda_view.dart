@@ -195,15 +195,11 @@ class MapaDemanda extends GetView<MapaDemandaController> {
                                 context, contrltetext, true);
                           }
                         } else {
-                          bool validarDistancia =
-                              await Get.find<MapaDemandaController>()
-                                  .ValidarDistancia();
                           // Lógica para Desvincular
-                          if (validarDistancia) {
-                            Navigator.of(context).pop();
-                            await _showConfirmationDialog(
-                                context, contrltetext, false);
-                          }
+
+                          Navigator.of(context).pop();
+                          await _showConfirmationDialog(
+                              context, contrltetext, false);
                         }
                       },
                       child:
