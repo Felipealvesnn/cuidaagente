@@ -216,7 +216,7 @@ class DemandasDetalhes extends StatelessWidget {
 
                 var resultado = await Get.find<DemandasController>()
                     .logDemandaAgente(demanda);
-                if (resultado) {
+                if (resultado.id != null) {
                   _openMap();
                 } else {
                   showSnackbar(

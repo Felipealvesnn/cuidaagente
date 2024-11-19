@@ -51,7 +51,7 @@ class MapaDemandaController extends GetxController {
     destinationLongitude = Get.arguments['longitude'] ?? -38.5267;
     destination = LatLng(destinationLatitude, destinationLongitude);
     demandaId = Get.arguments['demanda_id'];
-    logAgenteDemandaID = Get.arguments['logAgenteDemandaID'];
+    logAgenteDemandaID = Get.arguments['logAgenteDemandaID']?? 0;
     IniciadaDemanda = Get.arguments['IniciadaDemanda'] ?? false;
 
     polylinePoints = PolylinePoints();

@@ -35,11 +35,12 @@ class DemandasRepository {
     }
   }
 
-  Future<bool> sendLogAgenteDemanda(LogAgenteDemanda log) async {
+  Future<LogAgenteDemanda> sendLogAgenteDemanda(LogAgenteDemanda log) async {
     try {
       // Envia o log para o provedor
       final value = await demandasClient.sendLogAgenteDemanda(log);
-      return value;
+     final logdemand =  LogAgenteDemanda.fromMap(value);
+      return logdemand;
     } catch (e) {
       rethrow;
     }

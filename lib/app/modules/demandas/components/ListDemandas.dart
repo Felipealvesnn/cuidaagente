@@ -230,7 +230,12 @@ class ListDemandas extends StatelessWidget {
                 // }
                 var resultado = await Get.find<DemandasController>()
                     .logDemandaAgente(demanda);
-                if (resultado) {
+                if (resultado.id != null) {
+                  demanda.logAgenteDemanda!
+                      .clear(); // Limpa todos os elementos da lista
+                  demanda.logAgenteDemanda!
+                      .add(resultado); // Adiciona apenas o elemento desejado
+
                   await Get.find<DemandasController>()
                       .Refresh(MostrarLogo: false);
                   _openMap(demanda, IniciadaDemanda: true);

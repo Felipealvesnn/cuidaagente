@@ -148,7 +148,7 @@ class DemandasController extends GetxController {
     super.onClose();
   }
 
-  Future<bool> logDemandaAgente(Demanda model) async {
+  Future<LogAgenteDemanda> logDemandaAgente(Demanda model) async {
     // Abre um diálogo de carregamento
     Get.dialog(
       const PopScope(

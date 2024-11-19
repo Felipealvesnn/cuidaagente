@@ -41,7 +41,7 @@ class DemandasProvider extends GetConnect {
     }
   }
 
-  Future<bool> sendLogAgenteDemanda(LogAgenteDemanda log) async {
+  Future<Map<String,dynamic>> sendLogAgenteDemanda(LogAgenteDemanda log) async {
     timeout = const Duration(minutes: 10);
     var token = Storagers.boxToken.read('boxToken') as String;
     timeout = const Duration(minutes: 10);
@@ -64,11 +64,11 @@ class DemandasProvider extends GetConnect {
       // if (responseBody == "Log de demanda já existe para este usuário.") {
       //   return true;
       // }
-      return true;
+      return responseBody;
       print("Log enviado com sucesso!");
     } else {
       final responseBody = json.decode(response.bodyString ?? '{}');
-      return false;
+      return responseBody;
 
       // throw Exception(
       //     responseBody['Message'] ?? 'Falha ao enviar log de agente demanda!');
