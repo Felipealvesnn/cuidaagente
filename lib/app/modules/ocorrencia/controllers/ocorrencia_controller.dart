@@ -361,6 +361,7 @@ class OcorrenciaController extends GetxController {
       usuario_id: usuario.usuarioId,
       endereco_ocorrencia: enderecoController.text,
       numero_endereco_ocorrencia: numeroController.text,
+      bairro_ocorrencia: Bairro.text,
       dia_informado_ocorrencia: dataInformada,
       hora_informada_ocorrencia: horaInformada,
       relato_atendente_ocorrencia: relatoController.text,
