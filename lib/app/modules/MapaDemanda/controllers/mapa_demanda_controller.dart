@@ -51,7 +51,7 @@ class MapaDemandaController extends GetxController {
     destinationLongitude = Get.arguments['longitude'] ?? -38.5267;
     destination = LatLng(destinationLatitude, destinationLongitude);
     demandaId = Get.arguments['demanda_id'];
-    logAgenteDemandaID = Get.arguments['logAgenteDemandaID']?? 0;
+    logAgenteDemandaID = Get.arguments['logAgenteDemandaID'] ?? 0;
     IniciadaDemanda = Get.arguments['IniciadaDemanda'] ?? false;
 
     polylinePoints = PolylinePoints();
@@ -213,6 +213,7 @@ class MapaDemandaController extends GetxController {
   }
 
   Future<bool> ValidarDistancia() async {
+    await getUserLocation();
     double distance = Geolocator.distanceBetween(
       userLocation.value.latitude,
       userLocation.value.longitude,
@@ -302,19 +303,17 @@ class MapaDemandaController extends GetxController {
     // Exibe o diálogo de carregamento para bloquear a tela
 
     try {
-   
-        Get.dialog(
-          const Center(
-            child: CircularProgressIndicator(),
-          ),
-          barrierDismissible: false, // Impede que o usuário feche o diálogo
-        );
+      Get.dialog(
+        const Center(
+          child: CircularProgressIndicator(),
+        ),
+        barrierDismissible: false, // Impede que o usuário feche o diálogo
+      );
 
-        // Chama o método de finalização da demanda
-        await demandasRepository.desvincularDemanda(
-            logAgenteDemandaID, motivoController.text);
-        Finalizado = true;
-    
+      // Chama o método de finalização da demanda
+      await demandasRepository.desvincularDemanda(
+          logAgenteDemandaID, motivoController.text);
+      Finalizado = true;
 
       // Exibe o Snackbar de confirmação
       Get.snackbar(
