@@ -57,7 +57,8 @@ class ListDemandas extends StatelessWidget {
         fsdf.demandaId !=
                 demanda.demandaId && // Verifica se não é a demanda atual
             fsdf.logAgenteDemanda!.any((element) =>
-                element.usuarioId == controller.usuario.usuarioId) ??
+                element.usuarioId == controller.usuario.usuarioId &&
+                element.ativo == true) ??
         false);
 
     final isUsuarioBoll = demanda.logAgenteDemanda?.any((element) =>
