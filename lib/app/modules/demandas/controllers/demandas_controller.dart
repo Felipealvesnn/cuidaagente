@@ -40,8 +40,7 @@ class DemandasController extends GetxController {
 
     // Carrega a primeira página de demandas
     await fetchDemandas();
-
-    // Adiciona o listener para o scrollController para detectar quando atingir o final da lista
+    // AdicionscrollControllera o listener para o scrollController para detectar quando atingir o final da lista
     scrollController.addListener(() {
       if (scrollController.position.pixels >=
               scrollController.position.maxScrollExtent &&

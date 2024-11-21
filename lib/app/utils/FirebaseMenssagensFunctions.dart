@@ -10,8 +10,10 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     if (message.data.containsKey('id') &&
         message.data['id'] != null &&
         message.data['id'] != '') {
-      await NotificacoesGerais.criarNotificacaoNow(int.parse(message.data['id']),
-          message.notification?.body, message.notification?.title);
+      await NotificacoesGerais.criarNotificacaoNow(
+          int.parse(message.data['id']),
+          message.notification?.body,
+          message.notification?.title);
     } else {
       print("ID não encontrado ou vazio. Não será criada uma notificação.");
     }
@@ -21,13 +23,18 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 iniciarFirebasemsg() async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
 
-  await NotificationAwesomeNotification.initializeNotification();
-  //await FirebaseMessaging.instance.subscribeToTopic('todos_usuarios');
+    await NotificationAwesomeNotification.initializeNotification();
+    //await FirebaseMessaging.instance.subscribeToTopic('todos_usuarios');
 
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  FirebaseMessaging.onMessage.listen(_firebaseMessagingBackgroundHandler);
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    FirebaseMessaging.onMessage.listen(_firebaseMessagingBackgroundHandler);
+  } on Exception catch (e) {
+    // TODO
+    print(e);
+  } 
 }

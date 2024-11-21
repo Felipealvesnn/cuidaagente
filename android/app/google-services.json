@@ -9,6 +9,25 @@
       "client_info": {
         "mobilesdk_app_id": "1:976599680188:android:4b8b087bf92c6231f7fcb9",
         "android_client_info": {
+          "package_name": "br.com.w2esolucoes.cuida"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQCvaM6Re3hF0ezW0aZYCuc4U2QN-NIdg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:976599680188:android:854b74fff4b07069f7fcb9",
+        "android_client_info": {
           "package_name": "com.example.cuidaagente"
         }
       },

@@ -7,6 +7,7 @@ import 'package:cuidaagente/app/data/models/Usuario.dart';
 import 'package:cuidaagente/app/data/models/adicionarPontos.dart';
 import 'package:cuidaagente/app/data/models/ocorrenciaPost.dart';
 import 'package:cuidaagente/app/data/repository/demandar_repository.dart';
+import 'package:cuidaagente/app/modules/demandas/controllers/demandas_controller.dart';
 import 'package:cuidaagente/app/routes/app_pages.dart';
 import 'package:cuidaagente/app/utils/getstorages.dart';
 import 'package:cuidaagente/app/utils/ultil.dart';
@@ -294,7 +295,7 @@ class MapaDemandaController extends GetxController {
           'A demanda foi finalizada com sucesso.',
           snackPosition: SnackPosition.BOTTOM,
         );
-        await Get.offAllNamed(Routes.DEMANDAS);
+        await Get.offAllNamed(Routes.HOME);
       }
     }
   }
@@ -323,7 +324,7 @@ class MapaDemandaController extends GetxController {
       );
 
       // Redireciona para a rota DEMANDAS após finalizar
-      await Get.offAllNamed(Routes.DEMANDAS);
+      //await Get.offAllNamed(Routes.DEMANDAS);
     } catch (e) {
       print(e);
     } finally {
@@ -333,7 +334,8 @@ class MapaDemandaController extends GetxController {
           'A demanda foi desvinculada com sucesso.',
           snackPosition: SnackPosition.BOTTOM,
         );
-        await Get.offAllNamed(Routes.DEMANDAS);
+
+        await Get.offAllNamed(Routes.HOME);
       }
     }
   }
