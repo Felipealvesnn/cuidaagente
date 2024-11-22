@@ -1,32 +1,13 @@
 {
   "project_info": {
-    "project_number": "976599680188",
-    "project_id": "cuida-820ab",
-    "storage_bucket": "cuida-820ab.firebasestorage.app"
+    "project_number": "463065207176",
+    "project_id": "cuidaagente-21571",
+    "storage_bucket": "cuidaagente-21571.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:976599680188:android:4b8b087bf92c6231f7fcb9",
-        "android_client_info": {
-          "package_name": "br.com.w2esolucoes.cuida"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDQCvaM6Re3hF0ezW0aZYCuc4U2QN-NIdg"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:976599680188:android:854b74fff4b07069f7fcb9",
+        "mobilesdk_app_id": "1:463065207176:android:45b814353337cd41cdaa3d",
         "android_client_info": {
           "package_name": "com.example.cuidaagente"
         }
@@ -34,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDQCvaM6Re3hF0ezW0aZYCuc4U2QN-NIdg"
+          "current_key": "AIzaSyD511gi6UJldSx3x92B-9hKLb2Qlyp2zRA"
         }
       ],
       "services": {

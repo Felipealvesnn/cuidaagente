@@ -41,48 +41,48 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCzTERTIe6nL0NFus9-O6S3aX6ceEk4O_s',
-    appId: '1:976599680188:web:5ea4e97dafff7ea8f7fcb9',
-    messagingSenderId: '976599680188',
-    projectId: 'cuida-820ab',
-    authDomain: 'cuida-820ab.firebaseapp.com',
-    storageBucket: 'cuida-820ab.appspot.com',
-    measurementId: 'G-4FHTE26P0R',
+    apiKey: 'AIzaSyAMvYU58OEJQyZWGzxt5obQ7-QQ9CUUmhw',
+    appId: '1:463065207176:web:79b3d24fb8477d4dcdaa3d',
+    messagingSenderId: '463065207176',
+    projectId: 'cuidaagente-21571',
+    authDomain: 'cuidaagente-21571.firebaseapp.com',
+    storageBucket: 'cuidaagente-21571.firebasestorage.app',
+    measurementId: 'G-R85Y10KDVE',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDQCvaM6Re3hF0ezW0aZYCuc4U2QN-NIdg',
-    appId: '1:976599680188:android:4b8b087bf92c6231f7fcb9',
-    messagingSenderId: '976599680188',
-    projectId: 'cuida-820ab',
-    storageBucket: 'cuida-820ab.appspot.com',
+    apiKey: 'AIzaSyD511gi6UJldSx3x92B-9hKLb2Qlyp2zRA',
+    appId: '1:463065207176:android:45b814353337cd41cdaa3d',
+    messagingSenderId: '463065207176',
+    projectId: 'cuidaagente-21571',
+    storageBucket: 'cuidaagente-21571.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyC05aKyzXsScHm5KHznrgmjBiVqvP7U19U',
-    appId: '1:976599680188:ios:a14ef71741c3cbb6f7fcb9',
-    messagingSenderId: '976599680188',
-    projectId: 'cuida-820ab',
-    storageBucket: 'cuida-820ab.appspot.com',
-    iosBundleId: 'br.com.w2esolucoes.cuida',
+    apiKey: 'AIzaSyCoNTfkf8tA8CnxPCFSVqU-rQYEbbne3bs',
+    appId: '1:463065207176:ios:e37a30ceabf1ac70cdaa3d',
+    messagingSenderId: '463065207176',
+    projectId: 'cuidaagente-21571',
+    storageBucket: 'cuidaagente-21571.firebasestorage.app',
+    iosBundleId: 'com.example.cuidaagente',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyC05aKyzXsScHm5KHznrgmjBiVqvP7U19U',
-    appId: '1:976599680188:ios:a14ef71741c3cbb6f7fcb9',
-    messagingSenderId: '976599680188',
-    projectId: 'cuida-820ab',
-    storageBucket: 'cuida-820ab.appspot.com',
-    iosBundleId: 'br.com.w2esolucoes.cuida',
+    apiKey: 'AIzaSyCoNTfkf8tA8CnxPCFSVqU-rQYEbbne3bs',
+    appId: '1:463065207176:ios:e37a30ceabf1ac70cdaa3d',
+    messagingSenderId: '463065207176',
+    projectId: 'cuidaagente-21571',
+    storageBucket: 'cuidaagente-21571.firebasestorage.app',
+    iosBundleId: 'com.example.cuidaagente',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyCzTERTIe6nL0NFus9-O6S3aX6ceEk4O_s',
-    appId: '1:976599680188:web:a51d9be871615450f7fcb9',
-    messagingSenderId: '976599680188',
-    projectId: 'cuida-820ab',
-    authDomain: 'cuida-820ab.firebaseapp.com',
-    storageBucket: 'cuida-820ab.appspot.com',
-    measurementId: 'G-V5D3THZ71G',
+    apiKey: 'AIzaSyAMvYU58OEJQyZWGzxt5obQ7-QQ9CUUmhw',
+    appId: '1:463065207176:web:af4b07effad4b5b9cdaa3d',
+    messagingSenderId: '463065207176',
+    projectId: 'cuidaagente-21571',
+    authDomain: 'cuidaagente-21571.firebaseapp.com',
+    storageBucket: 'cuidaagente-21571.firebasestorage.app',
+    measurementId: 'G-TDHQQJF4KB',
   );
 }

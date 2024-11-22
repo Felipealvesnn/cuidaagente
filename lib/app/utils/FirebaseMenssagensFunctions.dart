@@ -1,6 +1,6 @@
-import 'package:cuidaagente/app/firebase_options.dart';
 import 'package:cuidaagente/app/utils/gerarNotificacao.dart';
 import 'package:cuidaagente/app/utils/notificationAwesomeNotification.dart';
+import 'package:cuidaagente/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
