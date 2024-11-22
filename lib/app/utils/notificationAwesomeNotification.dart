@@ -171,7 +171,7 @@ class NotificationAwesomeNotification {
           category: category,
           payload: payload,
           bigPicture: bigPicture,
-          customSound: 'assets/alarm.mp3',
+          //customSound: 'assets/alarm.mp3',
         ),
         actionButtons: actionButtons ??
             [
