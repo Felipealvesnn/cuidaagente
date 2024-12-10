@@ -93,10 +93,7 @@ class LocationCallbackHandler {
   static Future<void> sendLocationToApi(LatLng location) async {
     UsuarioRepository repository = UsuarioRepository();
 
-    // Exemplo de feedback para depuração
-    showSnackbar('Localização Atualizada',
-        'Latitude: ${location.latitude}, Longitude: ${location.longitude}');
-
+ 
     await GetStorage.init("boxUserLogado");
     final boxUserLogado = GetStorage('boxUserLogado');
     final usuario = boxUserLogado.read('user');

@@ -1,5 +1,6 @@
 import 'package:cuidaagente/app/data/models/LogAgenteDemanda.dart';
 import 'package:cuidaagente/app/data/models/demandas.dart';
+import 'package:cuidaagente/app/modules/demandas/components/WidgetFotoDetalhes.dart';
 import 'package:cuidaagente/app/modules/demandas/components/demandasDetalhes.dart';
 import 'package:cuidaagente/app/modules/demandas/controllers/demandas_controller.dart';
 import 'package:cuidaagente/app/routes/app_pages.dart';
@@ -155,6 +156,19 @@ class ListDemandas extends StatelessWidget {
           _buildRichText('Relato do Atendente: ',
               demanda.ocorrencia?.relatoAtendenteOcorrencia?.toUpperCase()),
           // const Divider(),
+          Obx(() {
+            // Verifica se a lista de logVideoMonitoramento não é nula ou vazia
+            final logVideo = demanda.ocorrencia?.logVideoMonitoramento;
+            if (logVideo != null && logVideo.isNotEmpty) {
+              final imagens = logVideo.first.imagensMonitoramento;
+              if (imagens != null && imagens.isNotEmpty) {
+                return WidgetFotoDetalhes(imagens_monitoramento: imagens);
+              }
+            }
+
+            // Retorna um widget vazio caso não haja imagens
+            return const SizedBox.shrink();
+          }),
 
           _buildOpenMapButton(
               context, isFinalizado, isusuarioBoll, demanda, isUsuarioBolllist),

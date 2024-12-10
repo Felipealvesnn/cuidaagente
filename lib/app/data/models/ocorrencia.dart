@@ -1,32 +1,37 @@
 import 'dart:convert';
 
+import 'package:cuidaagente/app/data/models/log_VideoMonitoramento.dart';
+
+
+
 class Ocorrencia {
-   int? ocorrenciaId;
-   String? cpfUsuarioAbertura;
-   DateTime? dataAberturaOcorrencia;
-   String? protocoloOcorrencia;
-   int? origemOcorrenciaId;
-   int? naturezaOcorrenciaId;
-   int? statusOcorrenciaId;
-   int? tipoOcorrenciaId;
-   DateTime? diaInformadoOcorrencia;
-   String? horaInformadaOcorrencia;
-   String? relatoAutorRegistroOcorrencia;
-   String? relatoAtendenteOcorrencia;
-   String? observacoesFinaisOcorrencia;
-   String? enderecoOcorrencia;
-   String? numeroEnderecoOcorrencia;
-   String? complementoEnderecoOcorrencia;
-   String? bairroOcorrencia;
-   String? cidadeOcorrencia;
-   String? ufOcorrencia;
-   String? cepOcorrencia;
-   int? usuarioId;
-   int? pessoaId;
-   int? classificacaoGravidadeId;
-   double? latitude;
-   double? longitude;
-   bool? visualizado;
+  int? ocorrenciaId;
+  String? cpfUsuarioAbertura;
+  DateTime? dataAberturaOcorrencia;
+  String? protocoloOcorrencia;
+  int? origemOcorrenciaId;
+  int? naturezaOcorrenciaId;
+  int? statusOcorrenciaId;
+  int? tipoOcorrenciaId;
+  DateTime? diaInformadoOcorrencia;
+  String? horaInformadaOcorrencia;
+  String? relatoAutorRegistroOcorrencia;
+  String? relatoAtendenteOcorrencia;
+  String? observacoesFinaisOcorrencia;
+  String? enderecoOcorrencia;
+  String? numeroEnderecoOcorrencia;
+  String? complementoEnderecoOcorrencia;
+  String? bairroOcorrencia;
+  String? cidadeOcorrencia;
+  String? ufOcorrencia;
+  String? cepOcorrencia;
+  int? usuarioId;
+  int? pessoaId;
+  int? classificacaoGravidadeId;
+  double? latitude;
+  double? longitude;
+  bool? visualizado;
+  List<LogVideoMonitoramento>? logVideoMonitoramento;
 
   Ocorrencia({
     this.ocorrenciaId,
@@ -55,6 +60,7 @@ class Ocorrencia {
     this.latitude,
     this.longitude,
     this.visualizado,
+    this.logVideoMonitoramento,
   });
 
   // Converter para Map
@@ -122,6 +128,10 @@ class Ocorrencia {
       latitude: map['latitude']?.toDouble(),
       longitude: map['longitude']?.toDouble(),
       visualizado: map['Vizualizado'],
+      logVideoMonitoramento: map['log_VideoMonitoramento'] != null
+          ? List<LogVideoMonitoramento>.from(
+              map['log_VideoMonitoramento']?.map((x) => LogVideoMonitoramento.fromJson(x)))
+          : null,
     );
   }
 
