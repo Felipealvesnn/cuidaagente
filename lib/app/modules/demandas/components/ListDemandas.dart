@@ -112,65 +112,61 @@ class ListDemandas extends StatelessWidget {
   }
 
   Widget _buildDetalhesOcorrencia(Demanda demanda, BuildContext context,
-      bool isusuarioBoll, bool isUsuarioBolllist) {
+      bool isUsuarioBoll, bool isUsuarioBolllist) {
+    // Variável reativa para verificar se há imagens
+    final hasImages = false.obs;
+
+    // Obtém as imagens monitoramento, se existirem
+    final imagens = demanda
+        .ocorrencia?.logVideoMonitoramento?.firstOrNull?.imagensMonitoramento;
+
+    // Atualiza a variável reativa com base na presença de imagens
+    hasImages.value = imagens != null && imagens.isNotEmpty;
+
+    // Verifica se a demanda está finalizada
     final isFinalizado =
         demanda.statusDemanda?.descricaoStatusDemanda.toUpperCase() ==
             "FINALIZADO";
+
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-                child: Text(
-                  'Detalhes da ocorrência ',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+          const Center(
+            child: Padding(
+              padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+              child: Text(
+                'Detalhes da Ocorrência',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            ],
+            ),
           ),
           _buildRichText('Local: ',
               '${demanda.ocorrencia?.enderecoOcorrencia?.toUpperCase()} - ${demanda.ocorrencia?.numeroEnderecoOcorrencia}'),
-          //const Divider(),
           _buildRichText(
               'Bairro: ', demanda.ocorrencia?.bairroOcorrencia?.toUpperCase()),
-          // const Divider(),
-
-          // const Divider(),
           _buildRichText(
             'Data da Ocorrência: ',
             DateFormat('dd/MM/yyyy HH:mm')
                 .format(demanda.ocorrencia!.dataAberturaOcorrencia!),
           ),
-          // const Divider(),
           _buildRichText('Relato do Autor: ',
               demanda.ocorrencia?.relatoAutorRegistroOcorrencia?.toUpperCase()),
-          // const Divider(),
           _buildRichText('Relato do Atendente: ',
               demanda.ocorrencia?.relatoAtendenteOcorrencia?.toUpperCase()),
-          // const Divider(),
           Obx(() {
-            // Verifica se a lista de logVideoMonitoramento não é nula ou vazia
-            final logVideo = demanda.ocorrencia?.logVideoMonitoramento;
-            final imagens = logVideo?.first.imagensMonitoramento;
-
-            if (imagens != null && imagens.isNotEmpty) {
-              return WidgetFotoDetalhes(imagens_monitoramento: imagens);
-            }
-            // Retorna um widget vazio caso não haja imagens
-            return const SizedBox.shrink();
+            // Exibe as imagens, se disponíveis
+            return hasImages.value
+                ? WidgetFotoDetalhes(imagens_monitoramento: imagens!)
+                : const SizedBox.shrink();
           }),
-
           _buildOpenMapButton(
-              context, isFinalizado, isusuarioBoll, demanda, isUsuarioBolllist),
+              context, isFinalizado, isUsuarioBoll, demanda, isUsuarioBolllist),
         ],
       ),
     );
