@@ -101,10 +101,11 @@ class ListDemandas extends StatelessWidget {
           _buildDetalhesOcorrencia(
               demanda, context, isUsuarioBoll, isUsuarioBolllist),
         ],
-        onExpansionChanged: (expanded) {
-          if (expanded) {
-            // Ação ao expandir, se necessário
-          }
+        onExpansionChanged: (value) async {
+          // var imagens =
+          //     await controller.carregarimagens(solicitacao.solicitacoes_id!);
+          //demanda.ocorrencia?.logVideoMonitoramento?.first.imagensMonitoramento?.clear();
+          //  demanda.ocorrencia?.logVideoMonitoramento?.first.imagensMonitoramento?.addAll(imagens);
         },
       ),
     );
@@ -159,13 +160,11 @@ class ListDemandas extends StatelessWidget {
           Obx(() {
             // Verifica se a lista de logVideoMonitoramento não é nula ou vazia
             final logVideo = demanda.ocorrencia?.logVideoMonitoramento;
-            if (logVideo != null && logVideo.isNotEmpty) {
-              final imagens = logVideo.first.imagensMonitoramento;
-              if (imagens != null && imagens.isNotEmpty) {
-                return WidgetFotoDetalhes(imagens_monitoramento: imagens);
-              }
-            }
+            final imagens = logVideo?.first.imagensMonitoramento;
 
+            if (imagens != null && imagens.isNotEmpty) {
+              return WidgetFotoDetalhes(imagens_monitoramento: imagens);
+            }
             // Retorna um widget vazio caso não haja imagens
             return const SizedBox.shrink();
           }),
