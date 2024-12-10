@@ -107,6 +107,7 @@ class OcorrenciaController extends GetxController {
             ),
             elevation: 8,
             child: SizedBox(
+              width: double.infinity,
               height: 600, // Aumentado para incluir o campo de busca
               child: Column(
                 children: [
@@ -145,6 +146,8 @@ class OcorrenciaController extends GetxController {
                       decoration: InputDecoration(
                         labelText: 'Buscar endereço',
                         hintText: 'Digite o nome da rua...',
+                        helperText:
+                            'Exemplo: "Rua ABC, Cidade", "Avenida XYZ, Bairro"',
                         prefixIcon: IconButton(
                           icon: const Icon(Icons.search),
                           onPressed: () async {
@@ -164,7 +167,11 @@ class OcorrenciaController extends GetxController {
                                 CameraUpdate.newLatLng(selectedLocation.value!),
                               );
                             } catch (e) {
-                              Get.snackbar("info", "endereço não encontrado.");
+                              Get.snackbar(
+                                "info",
+                                "Endereço não encontrado.\nExemplo:\n- Rua ABC,\n- Cidade\n- Avenida XYZ,\n- Bairro",
+                                duration: const Duration(seconds: 5),
+                              );
                             }
                           },
                         ),
