@@ -204,7 +204,6 @@ class OcorrenciaView extends GetView<OcorrenciaController> {
                                   ),
                                   const SizedBox(height: 10),
                                   TextFormField(
-                                    enabled: false,
                                     controller: controller.numeroController,
                                     decoration: const InputDecoration(
                                       labelText: 'Número',
