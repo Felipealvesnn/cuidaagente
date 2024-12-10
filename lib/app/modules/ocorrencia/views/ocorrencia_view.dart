@@ -164,33 +164,37 @@ class OcorrenciaView extends GetView<OcorrenciaController> {
                               return Column(
                                 children: [
                                   const SizedBox(height: 20),
-                                  TextFormField(
-                                    controller: controller.enderecoController,
-                                    decoration: InputDecoration(
-                                      labelText: 'Endereço',
-                                      prefixIcon: IconButton(
-                                        icon: const Icon(Icons.location_on),
-                                        onPressed: () async {
-                                          await controller.getLocation();
-                                          await controller
-                                              .openMapDialog(context);
-                                        },
-                                      ),
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Campo obrigatório';
-                                      }
-                                      return null;
+                                  GestureDetector(
+                                    onTap: () async {
+                                      await controller.getLocation();
+                                      await controller.openMapDialog(context);
                                     },
+                                    child: TextFormField(
+                                      enabled: false,
+                                      controller: controller.enderecoController,
+                                      decoration: InputDecoration(
+                                        labelText: 'Endereço',
+                                        prefixIcon: IconButton(
+                                          icon: const Icon(Icons.location_on),
+                                          onPressed: () async {},
+                                        ),
+                                      ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Campo obrigatório';
+                                        }
+                                        return null;
+                                      },
+                                    ),
                                   ),
                                   const SizedBox(height: 10),
                                   TextFormField(
+                                    enabled: false,
                                     controller: controller.Bairro,
                                     decoration: const InputDecoration(
                                       labelText: 'Bairro',
                                     ),
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.text,
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
                                         return 'Campo obrigatório';
@@ -200,6 +204,7 @@ class OcorrenciaView extends GetView<OcorrenciaController> {
                                   ),
                                   const SizedBox(height: 10),
                                   TextFormField(
+                                    enabled: false,
                                     controller: controller.numeroController,
                                     decoration: const InputDecoration(
                                       labelText: 'Número',

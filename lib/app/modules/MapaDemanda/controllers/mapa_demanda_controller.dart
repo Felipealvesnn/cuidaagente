@@ -221,7 +221,7 @@ class MapaDemandaController extends GetxController {
       destinationLatitude,
       destinationLongitude,
     );
-    if (distance < 50) {
+    if (distance < 150) {
       ValidarDistanciaBool = true;
       return ValidarDistanciaBool;
     } else {

@@ -6,7 +6,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cuidaagente/app/data/models/Usuario.dart';
 import 'package:cuidaagente/app/data/models/classificacao_gravidade.dart';
 import 'package:cuidaagente/app/data/models/naturezaOcorrencia.dart';
-import 'package:cuidaagente/app/data/models/ocorrencia.dart';
 import 'package:cuidaagente/app/data/models/ocorrenciaPost.dart';
 import 'package:cuidaagente/app/data/models/tipoOcorrencia.dart';
 import 'package:cuidaagente/app/data/repository/ocorrencia_repository.dart';
@@ -149,10 +148,12 @@ class OcorrenciaController extends GetxController {
                         prefixIcon: IconButton(
                           icon: const Icon(Icons.search),
                           onPressed: () async {
-                            List<Location> locations =
-                                await locationFromAddress(
-                                    searchController.text);
-                            if (locations.isNotEmpty) {
+                            try {
+                              // Busca o local
+                              List<Location> locations =
+                                  await locationFromAddress(
+                                      searchController.text);
+
                               final targetLocation = locations.first;
                               selectedLocation.value = LatLng(
                                   targetLocation.latitude,
@@ -162,8 +163,8 @@ class OcorrenciaController extends GetxController {
                               mapController.animateCamera(
                                 CameraUpdate.newLatLng(selectedLocation.value!),
                               );
-                            } else {
-                              Get.snackbar("Erro", "Endereço não encontrado.");
+                            } catch (e) {
+                              Get.snackbar("info", "endereço não encontrado.");
                             }
                           },
                         ),
@@ -327,7 +328,7 @@ class OcorrenciaController extends GetxController {
     return Duration(hours: hours, minutes: minutes);
   }
 
-  void enviarOcorrencia() async {
+  Future<void> enviarOcorrencia() async {
     var usuario = await Storagers.boxUserLogado.read('user') as Usuario;
 
     // Verifica e realiza parsing apenas se os campos não estiverem vazios
@@ -379,19 +380,23 @@ class OcorrenciaController extends GetxController {
     }
     //ocorrencia.log_VideoMonitoramento  =[LogVideoMonitoramento()];
 
-    print(jsonEncode(ocorrencia.toMap()));
-    var s = jsonEncode(ocorrencia.toMap());
-
+    Get.dialog(
+      const Center(
+        child: CircularProgressIndicator(),
+      ),
+      barrierDismissible: false, // Impede que o usuário feche o diálogo
+    );
     // Enviar a ocorrência usando o repositório
     ocorrenciaRepository.postOcorrencia(ocorrencia).then((response) async {
       if (response != null) {
         Get.snackbar("Sucesso", "Ocorrência enviada com sucesso!");
         limparCampos();
-        await Get.offAllNamed(Routes.DEMANDAS);
+        await Get.offAllNamed(Routes.HOME);
       } else {
         Get.snackbar("Erro", "Falha ao enviar a ocorrência.");
       }
     }).catchError((error) {
+      Get.back();
       Get.snackbar("Erro", "Ocorreu um erro: $error");
     });
   }
