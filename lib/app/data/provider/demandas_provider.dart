@@ -7,6 +7,32 @@ import 'package:cuidaagente/app/utils/getstorages.dart';
 import 'package:get/get_connect/connect.dart';
 
 class DemandasProvider extends GetConnect {
+  Future getDemandasFiltradas(Map<String, Object?> model) async {
+    timeout = const Duration(minutes: 10);
+    var token = Storagers.boxToken.read('boxToken') as String;
+    timeout = const Duration(minutes: 10);
+    final headers = {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "Authorization": 'Bearer $token' // Ajuste o token conforme necessário
+    };
+
+    var url = "${baseUrlw2e}demandas_ocorrencia/demandasFiltradas";
+
+    var response = await request(
+      url,
+      'POST',
+      body: model,
+      headers: headers,
+    );
+
+    if (response.isOk) {
+      return response.body;
+    } else {
+      throw Exception('Failed to fetch demandas!');
+    }
+  }
+
   Future getDemandas({int pageNumber = 1, int pageSize = 10}) async {
     timeout = const Duration(minutes: 10);
     var token = Storagers.boxToken.read('boxToken') as String;
@@ -41,7 +67,8 @@ class DemandasProvider extends GetConnect {
     }
   }
 
-  Future<Map<String,dynamic>> sendLogAgenteDemanda(LogAgenteDemanda log) async {
+  Future<Map<String, dynamic>> sendLogAgenteDemanda(
+      LogAgenteDemanda log) async {
     timeout = const Duration(minutes: 10);
     var token = Storagers.boxToken.read('boxToken') as String;
     timeout = const Duration(minutes: 10);
@@ -73,6 +100,22 @@ class DemandasProvider extends GetConnect {
       // throw Exception(
       //     responseBody['Message'] ?? 'Falha ao enviar log de agente demanda!');
     }
+  }
+
+  Future getImagens(int id) async {
+    var token = Storagers.boxToken.read('boxToken') as String;
+
+    final headers = {"Authorization": 'Bearer $token'};
+    timeout = const Duration(minutes: 10);
+
+    var response = await get("${baseUrlw2e}ocorrenciaAgente/Getmagem?id=$id",
+        contentType: 'application/json', headers: headers);
+
+    if (response.statusCode == 200) {
+      return response.body;
+    } else {}
+
+    return response.body;
   }
 
   Future<void> EnviarRotaAgente(adicionarPontos adicionarPontos) async {
@@ -148,9 +191,8 @@ class DemandasProvider extends GetConnect {
           responseBody['Message'] ?? 'Falha ao finalizar a demanda!');
     }
   }
-  
-   Future<void> desvincularDemanda(int logDemandaId, String despacho
-      ) async {
+
+  Future<void> desvincularDemanda(int logDemandaId, String despacho) async {
     timeout = const Duration(minutes: 10);
 
     // Lê o token armazenado
@@ -168,8 +210,8 @@ class DemandasProvider extends GetConnect {
     //     "${baseUrlw2e}demandas_ocorrencia/finalizarDemanda?idedemanda=$demandaId&despacho=$despacho&usuarioID=$usuarioID&imagens=$imagensMonitoramento";
 
     var body = {
-      "idedemanda":  logDemandaId,
-      "despacho":  despacho,
+      "idedemanda": logDemandaId,
+      "despacho": despacho,
     };
     print(jsonEncode(body));
 
@@ -193,5 +235,4 @@ class DemandasProvider extends GetConnect {
           responseBody['Message'] ?? 'Falha ao finalizar a demanda!');
     }
   }
-
 }

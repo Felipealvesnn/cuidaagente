@@ -1,5 +1,6 @@
 import 'package:cuidaagente/app/data/models/LogAgenteDemanda.dart';
 import 'package:cuidaagente/app/data/models/demandas.dart';
+import 'package:cuidaagente/app/data/models/log_VideoMonitoramento.dart';
 import 'package:cuidaagente/app/modules/demandas/components/WidgetFotoDetalhes.dart';
 import 'package:cuidaagente/app/modules/demandas/components/demandasDetalhes.dart';
 import 'package:cuidaagente/app/modules/demandas/controllers/demandas_controller.dart';
@@ -98,30 +99,53 @@ class ListDemandas extends StatelessWidget {
           ],
         ),
         children: [
-          _buildDetalhesOcorrencia(
-              demanda, context, isUsuarioBoll, isUsuarioBolllist),
+          Obx(() => _buildDetalhesOcorrencia(
+                demanda,
+                context,
+                isUsuarioBoll,
+                isUsuarioBolllist,
+                controller.hasImages.value,
+              ))
         ],
         onExpansionChanged: (value) async {
-          // var imagens =
-          //     await controller.carregarimagens(solicitacao.solicitacoes_id!);
-          //demanda.ocorrencia?.logVideoMonitoramento?.first.imagensMonitoramento?.clear();
-          //  demanda.ocorrencia?.logVideoMonitoramento?.first.imagensMonitoramento?.addAll(imagens);
+          controller.hasImages.value = false;
+
+          if (value &&
+              (demanda.ocorrencia?.logVideoMonitoramento?.first
+                          .imagensMonitoramento?.isNotEmpty ==
+                      true &&
+                  demanda.ocorrencia?.logVideoMonitoramento?.first
+                          .imagensMonitoramento?.first.fotoBase64 ==
+                      null)) {
+            var imagens =
+                await controller.carregarimagens(demanda.ocorrenciaId!);
+            if (imagens.isNotEmpty) {
+              demanda
+                  .ocorrencia?.logVideoMonitoramento?.first.imagensMonitoramento
+                  ?.clear();
+              demanda
+                  .ocorrencia?.logVideoMonitoramento?.first.imagensMonitoramento
+                  ?.addAll(imagens);
+              controller.hasImages.value = true;
+            } else {
+              controller.hasImages.value = false;
+            }
+          }
         },
       ),
     );
   }
 
   Widget _buildDetalhesOcorrencia(Demanda demanda, BuildContext context,
-      bool isUsuarioBoll, bool isUsuarioBolllist) {
+      bool isUsuarioBoll, bool isUsuarioBolllist, bool hasImages) {
     // Variável reativa para verificar se há imagens
-    final hasImages = false.obs;
 
     // Obtém as imagens monitoramento, se existirem
-    final imagens = demanda
+    RxList<ImagensMonitoramento>? imagens = demanda
         .ocorrencia?.logVideoMonitoramento?.firstOrNull?.imagensMonitoramento;
 
     // Atualiza a variável reativa com base na presença de imagens
-    hasImages.value = imagens != null && imagens.isNotEmpty;
+    // hasImages.value = imagens != null && imagens.isNotEmpty;
 
     // Verifica se a demanda está finalizada
     final isFinalizado =
@@ -159,12 +183,12 @@ class ListDemandas extends StatelessWidget {
               demanda.ocorrencia?.relatoAutorRegistroOcorrencia?.toUpperCase()),
           _buildRichText('Relato do Atendente: ',
               demanda.ocorrencia?.relatoAtendenteOcorrencia?.toUpperCase()),
-          Obx(() {
-            // Exibe as imagens, se disponíveis
-            return hasImages.value
-                ? WidgetFotoDetalhes(imagens_monitoramento: imagens!)
-                : const SizedBox.shrink();
-          }),
+
+          // Exibe as imagens, se disponíveis
+          (hasImages || imagens != null)
+              ? WidgetFotoDetalhes(imagens_monitoramento: imagens!)
+              : const SizedBox.shrink(),
+
           _buildOpenMapButton(
               context, isFinalizado, isUsuarioBoll, demanda, isUsuarioBolllist),
         ],

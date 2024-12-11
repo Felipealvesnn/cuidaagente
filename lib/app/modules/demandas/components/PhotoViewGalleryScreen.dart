@@ -26,7 +26,7 @@ class PhotoViewGalleryScreen extends StatelessWidget {
         pageController: PageController(initialPage: initialIndex),
         builder: (context, index) {
           final foto = fotosVistoria[index];
-          final imageBytes = const Base64Decoder().convert(foto.nomeImagem!);
+          final imageBytes = const Base64Decoder().convert(foto.fotoBase64!);
 
           return PhotoViewGalleryPageOptions(
             imageProvider: MemoryImage(imageBytes),

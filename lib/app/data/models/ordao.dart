@@ -44,7 +44,7 @@ class Orgao {
       orgaoId: map['orgao_id']?.toInt() ?? 0,
       nomeAbreviadoOrgao: map['nome_abreviado_orgao'] ?? '',
       dataDesativacaoOrgao: map['data_desativacao_orgao'] != null ? DateTime.parse(map['data_desativacao_orgao']) : null,
-      dataAtivacaoOrgao: DateTime.parse(map['data_ativacao_orgao']),
+      dataAtivacaoOrgao: map['data_ativacao_orgao'] != null ? DateTime.parse(map['data_ativacao_orgao']) : DateTime.now(),
     );
   }
 

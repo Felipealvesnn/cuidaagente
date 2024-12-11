@@ -98,7 +98,7 @@ class Ocorrencia {
   // Converter de Map
   factory Ocorrencia.fromMap(Map<String, dynamic> map) {
     return Ocorrencia(
-      ocorrenciaId: map['ocorrenciaId']?.toInt(),
+      ocorrenciaId: map['ocorrencia_id']?.toInt(),
       cpfUsuarioAbertura: map['cpfUsuarioAbertura'],
       dataAberturaOcorrencia: map['data_abertura_ocorrencia'] != null
           ? DateTime.parse(map['data_abertura_ocorrencia'])

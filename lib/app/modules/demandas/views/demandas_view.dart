@@ -1,9 +1,12 @@
+import 'package:cuidaagente/app/data/models/StatusDemanda.dart';
 import 'package:cuidaagente/app/modules/demandas/components/BottomNavigationvarDemanda.dart';
 import 'package:cuidaagente/app/modules/demandas/components/ListDemandas.dart';
 import 'package:cuidaagente/app/modules/demandas/components/MyDrawer.dart';
 import 'package:cuidaagente/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:dropdown_search/dropdown_search.dart';
+import 'package:intl/intl.dart';
 import '../controllers/demandas_controller.dart';
 
 class DemandasView extends GetView<DemandasController> {
@@ -26,6 +29,12 @@ class DemandasView extends GetView<DemandasController> {
           child: SizedBox(
             height: tamanho, // Ajusta a altura do AppBar
             child: AppBar(
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.filter_list),
+                  onPressed: () => showFilterModal(context),
+                ),
+              ],
               title: const Text(
                 'Demandas',
                 textAlign: TextAlign.center,
@@ -44,13 +53,16 @@ class DemandasView extends GetView<DemandasController> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-           Get.toNamed(Routes.OCORRENCIA);
+          Get.toNamed(Routes.OCORRENCIA);
         },
         shape: RoundedRectangleBorder(
           borderRadius:
               BorderRadius.circular(28.0), // Ajuste o valor se necessário
         ),
-        child: const Icon(Icons.add, color: Colors.white,),
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
         //params
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -96,6 +108,185 @@ class DemandasView extends GetView<DemandasController> {
           // Exibe a lista de vistorias
           return ListDemandas(controller: controller);
         }),
+      ),
+    );
+  }
+
+  void showFilterModal(BuildContext context) {
+    Get.bottomSheet(
+      backgroundColor: Colors.white,
+      Padding(
+        padding: MediaQuery.of(context).viewInsets,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: GetBuilder<DemandasController>(
+            builder: (controller) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Filtros',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: controller.idOcorrenciaController,
+                    decoration: const InputDecoration(
+                      labelText: 'Id da ocorrencia',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Campo para selecionar data inicial
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: controller.dataInicioController,
+                          decoration: const InputDecoration(
+                            labelText: 'Data Inicial',
+                            border: OutlineInputBorder(),
+                          ),
+                          readOnly: true, // Impede edição manual
+                          onTap: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime.now(),
+                            );
+                            if (pickedDate != null) {
+                              controller.dataInicioController.text =
+                                  DateFormat('dd/MM/yyyy').format(pickedDate);
+                            }
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+
+                      // Campo para selecionar data final
+                      Expanded(
+                        child: TextFormField(
+                          controller: controller.dataFimController,
+                          decoration: const InputDecoration(
+                            labelText: 'Data Final',
+                            border: OutlineInputBorder(),
+                          ),
+                          readOnly: true, // Impede edição manual
+                          onTap: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime.now(),
+                            );
+                            if (pickedDate != null) {
+                              controller.dataFimController.text =
+                                  DateFormat('dd/MM/yyyy').format(pickedDate);
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Obx(
+                    () => DropdownSearch<StatusDemanda>(
+                      selectedItem: controller.selectestatus.value,
+                      items: (String filter, dynamic infiniteScrollProps) {
+                        return controller.status
+                            .where((status) => status.descricaoStatusDemanda
+                                .toLowerCase()
+                                .contains(filter.toLowerCase()))
+                            .toList(); // Retorna a lista de NaturezaSolicitacoes
+                      },
+                      autoValidateMode: AutovalidateMode.onUserInteraction,
+                      compareFn: (StatusDemanda? a, StatusDemanda? b) =>
+                          a?.statusDemandaId ==
+                          b?.statusDemandaId, // Compara os itens pelo ID
+                      itemAsString: (StatusDemanda? status) =>
+                          status?.descricaoStatusDemanda ?? '',
+                      decoratorProps: const DropDownDecoratorProps(
+                        decoration: InputDecoration(
+                          labelText: "status da Solicitação",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                      onChanged: (value) {
+                        controller.selectestatus.value = value;
+                        // controller
+                        //     .atualizarTiposSolicitacoes(); // Atualiza os tipos de solicitação
+                      },
+                      validator: (value) =>
+                          value == null ? "Selecione um status" : null,
+                      popupProps: const PopupProps.dialog(
+                        showSearchBox: true,
+                        searchFieldProps: TextFieldProps(
+                          decoration: InputDecoration(
+                            labelText: 'Pesquisar',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Botão para aplicar os filtros
+                  OverflowBar(
+                    spacing: 16,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          // Lógica para resetar os filtros aqui
+                          //controller.reseteFiltroSolicitacoes();
+                          // Fechar o modal após resetar os filtros
+                          Get.back();
+                        },
+                        child: const Text('Resetar Filtros'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          // Validação dos campos
+                          String dataInicioText =
+                              controller.dataInicioController.text.trim();
+                          String dataFimText =
+                              controller.dataFimController.text.trim();
+
+                          if (dataInicioText.isEmpty && dataFimText.isEmpty && controller.idOcorrenciaController.text.isEmpty && controller.selectestatus.value == null) {
+                            Get.snackbar(
+                              'Erro',
+                              'Preencha pelo menos um campo para aplicar o filtro.',
+                            );
+                            return;
+                          }
+
+                          await controller.aplicarFiltroSolicitacoes();
+
+                          Get.back();
+                        },
+                        child: const Text('Aplicar Filtros'),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
       ),
     );
   }

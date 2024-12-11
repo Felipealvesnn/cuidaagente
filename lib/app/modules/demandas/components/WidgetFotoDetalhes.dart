@@ -32,7 +32,7 @@ class WidgetFotoDetalhes extends StatelessWidget {
           final fotoVistoria = imagens_monitoramento![index];
     
           // Verifica se a extensão do arquivo é ".jpg"
-          bool isJpgFile = (fotoVistoria.nomeImagem! == "NomeIMagem");
+          bool isJpgFile = (fotoVistoria.fotoBase64 == null);
     
           // Se a extensão for .jpg, mostrar o CircularProgressIndicator
           if (isJpgFile) {
@@ -43,7 +43,7 @@ class WidgetFotoDetalhes extends StatelessWidget {
     
           // Decodifica a string Base64 para bytes
           final imageBytes =
-              const Base64Decoder().convert(fotoVistoria.nomeImagem!);
+              const Base64Decoder().convert(fotoVistoria.fotoBase64!);
     
           return GestureDetector(
             onTap: () {

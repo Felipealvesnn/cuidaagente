@@ -32,12 +32,16 @@ class LogVideoMonitoramento {
     return LogVideoMonitoramento(
       logVideoMonitoramentoId: json['log_VideoMonitoramento_id'],
       placa: json['placa'],
-      dataEvento: DateTime.parse(json['data_evento']),
-      dataCadastro: DateTime.parse(json['data_cadastro']),
+      dataEvento: json['data_evento'] != null
+          ? DateTime.parse(json['data_evento'])
+          : DateTime.now(),
+      dataCadastro: json['data_cadastro'] != null
+          ? DateTime.parse(json['data_cadastro'])
+          : DateTime.now(),
       latitude: json['latitude'],
       longitude: json['longitude'],
       codEquipamento: json['codEquipamento'],
-      ocorrenciaId: json['ocorrencia_id'],
+      ocorrenciaId: json['ocorrencia_id'] ?? 0,
       endereco: json['endereco'],
       imagensMonitoramento: json['imagens_monitoramento'] != null
           ? RxList<ImagensMonitoramento>(

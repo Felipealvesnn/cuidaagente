@@ -1,8 +1,11 @@
 import 'dart:isolate';
 
 import 'package:cuidaagente/app/data/models/LogAgenteDemanda.dart';
+import 'package:cuidaagente/app/data/models/StatusDemanda.dart';
 import 'package:cuidaagente/app/data/models/Usuario.dart';
 import 'package:cuidaagente/app/data/models/demandas.dart';
+import 'package:cuidaagente/app/data/models/log_VideoMonitoramento.dart';
+import 'package:cuidaagente/app/data/models/ocorrencia.dart';
 import 'package:cuidaagente/app/data/repository/demandar_repository.dart';
 import 'package:cuidaagente/app/routes/app_pages.dart';
 import 'package:cuidaagente/app/utils/getstorages.dart';
@@ -10,14 +13,26 @@ import 'package:cuidaagente/app/utils/ultil.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class DemandasController extends GetxController {
   final DemandasRepository demandasRepository = DemandasRepository();
   final ScrollController scrollController = ScrollController();
+  TextEditingController dataInicioController = TextEditingController();
+  TextEditingController dataFimController = TextEditingController();
+  TextEditingController idOcorrenciaController = TextEditingController();
+
+  var selectestatus = Rxn<StatusDemanda>();
+  var status = <StatusDemanda>[].obs;
+  var FiltroPesquisado = false.obs; // Estado de carregamento
+
   var isLoadingDemandaInicial = true.obs;
   var demandasList = <Demanda>[].obs;
+  var demandasTela = <Demanda>[].obs;
   var hasMoreDemandas = true.obs;
   var isLoadingMore = false.obs;
+  final hasImages = false.obs;
+
   static const String _isolateName = "LocatorIsolate";
   ReceivePort port = ReceivePort();
 
@@ -51,6 +66,39 @@ class DemandasController extends GetxController {
     });
   }
 
+  Future<List<ImagensMonitoramento>> carregarimagens(int ocorrenciaId) async {
+    List<ImagensMonitoramento> imagens =
+        await demandasRepository.getImagens(ocorrenciaId);
+    return imagens;
+  }
+
+  Future<void> aplicarFiltroSolicitacoes() async {
+    String dataInicioText = dataInicioController.text.trim();
+    String dataFimText = dataFimController.text.trim();
+    final filtro = {
+      "dataInicio": dataInicioText.isNotEmpty
+          ? DateFormat('dd/MM/yyyy') // Formato compatível com a entrada
+              .parse(dataInicioText)
+              .toIso8601String()
+          : null,
+      "dataFim": dataFimText.isNotEmpty
+          ? DateFormat('dd/MM/yyyy') // Formato compatível com a entrada
+              .parse(dataFimText)
+              .toIso8601String()
+          : null,
+      "statusId": selectestatus.value?.statusDemandaId,
+      "Ocorrencia_id": idOcorrenciaController.text.isNotEmpty
+          ? int.parse(idOcorrenciaController.text)
+          : null,
+    };
+
+    var solicitacoesFiltro = await demandasRepository.getDemandasFiltradas(
+      filtro,
+    );
+    demandasTela.assignAll(solicitacoesFiltro);
+    FiltroPesquisado.value = true;
+  }
+
   Future<void> fetchDemandas({bool MostrarLogo = true}) async {
     isLoadingDemandaInicial.value = true;
     List<Demanda> demandas = await demandasRepository.getDemandas(
@@ -65,8 +113,7 @@ class DemandasController extends GetxController {
       List<Demanda> filteredDemandas = demandasList.where((demanda) {
         return demanda.logAgenteDemanda?.any(
               (element) =>
-                  element.usuarioId == usuario.usuarioId 
-                  &&
+                  element.usuarioId == usuario.usuarioId &&
                   element.ativo == true,
             ) ??
             false;
