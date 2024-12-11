@@ -75,6 +75,9 @@ class DemandasController extends GetxController {
   Future<void> aplicarFiltroSolicitacoes() async {
     String dataInicioText = dataInicioController.text.trim();
     String dataFimText = dataFimController.text.trim();
+     List<int> parametros =
+        (await Storagers.boxUserLogado.read('boxOrgaoIds') as List<dynamic>)
+            .cast<int>();
     final filtro = {
       "dataInicio": dataInicioText.isNotEmpty
           ? DateFormat('dd/MM/yyyy') // Formato compatível com a entrada
@@ -90,6 +93,7 @@ class DemandasController extends GetxController {
       "Ocorrencia_id": idOcorrenciaController.text.isNotEmpty
           ? int.parse(idOcorrenciaController.text)
           : null,
+       "orgaoIds": parametros
     };
 
     var solicitacoesFiltro = await demandasRepository.getDemandasFiltradas(
@@ -97,6 +101,13 @@ class DemandasController extends GetxController {
     );
     demandasTela.assignAll(solicitacoesFiltro);
     FiltroPesquisado.value = true;
+  }
+  void reseteFiltroSolicitacoes() {
+    dataInicioController.clear();
+    dataFimController.clear();
+    idOcorrenciaController.clear();
+    selectestatus.value = null;
+  
   }
 
   Future<void> fetchDemandas({bool MostrarLogo = true}) async {
