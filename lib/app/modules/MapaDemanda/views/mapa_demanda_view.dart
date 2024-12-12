@@ -185,10 +185,47 @@ class MapaDemanda extends GetView<MapaDemandaController> {
                         }
 
                         if (isFinalizar.value) {
-                          // Lógica para Finalizar
+                          final dialogKey = GlobalKey();
+
+                          showDialog(
+                            context: Get.context!,
+                            barrierDismissible:
+                                false, // Impede fechamento ao clicar fora
+                            builder: (context) {
+                              return PopScope(
+                                canPop:
+                                    false, // Impede o fechamento com botão back
+                                child: Center(
+                                  key: dialogKey,
+                                  child: const Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      CircularProgressIndicator(),
+                                      SizedBox(height: 16),
+                                      Text(
+                                        'Carregando sua posição...',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                          decoration: TextDecoration
+                                              .none, // Remove o sublinhado
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+
                           bool validarDistancia =
                               await Get.find<MapaDemandaController>()
                                   .ValidarDistancia();
+
+                          if (dialogKey.currentContext != null) {
+                            Navigator.of(dialogKey.currentContext!).pop();
+                          }
+
                           if (validarDistancia) {
                             Navigator.of(context).pop();
                             await _showConfirmationDialog(
