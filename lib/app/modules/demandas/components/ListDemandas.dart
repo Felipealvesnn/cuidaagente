@@ -21,9 +21,9 @@ class ListDemandas extends StatelessWidget {
       return ListView.builder(
         controller: controller.scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
-        itemCount: controller.demandasList.length + 1,
+        itemCount: controller.demandasTela.length + 1,
         itemBuilder: (context, index) {
-          if (index == controller.demandasList.length) {
+          if (index == controller.demandasTela.length) {
             return _buildLoadingOrEndMessage();
           }
           return _buildDemandasCard(index, context);
@@ -54,8 +54,8 @@ class ListDemandas extends StatelessWidget {
   }
 
   Widget _buildDemandasCard(int index, BuildContext context) {
-    var demanda = controller.demandasList[index];
-    var isUsuarioBolllist = controller.demandasList.any((fsdf) =>
+    var demanda = controller.demandasTela[index];
+    var isUsuarioBolllist = controller.demandasTela.any((fsdf) =>
         fsdf.demandaId !=
                 demanda.demandaId && // Verifica se não é a demanda atual
             fsdf.logAgenteDemanda!.any((element) =>

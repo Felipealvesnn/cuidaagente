@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 
+import '../../main.dart';
+
 class NotificationAwesomeNotification {
   static Future<void> initializeNotification() async {
-    await AwesomeNotifications().initialize(
+    var certo = await AwesomeNotifications().initialize(
       null,
       [
         NotificationChannel(
@@ -19,9 +21,10 @@ class NotificationAwesomeNotification {
           importance: NotificationImportance.Max,
           channelShowBadge: true,
           onlyAlertOnce: false,
-          playSound: true,
+          playSound: false,
           criticalAlerts: true,
           enableVibration: true,
+          // soundSource: 'resource://raw/alerta', // Referência ao som no Android
           // locked: false,
           // defaultRingtoneType: DefaultRingtoneType.Alarm,
           //  soundSource: 'assets/alarm.mp3',
@@ -61,8 +64,10 @@ class NotificationAwesomeNotification {
   /// Use this method to detect every time that a new notification is displayed
   static Future<void> onNotificationDisplayedMethod(
       ReceivedNotification receivedNotification) async {
-    // Schemes: (https: | file: | asset: )
-    //  await playerMain.play();
+    await playerMain.seek(Duration.zero);
+
+    await playerMain.play();
+
     debugPrint(' notitifacao recebida no alô');
     //await Get.find<HomeController>().gerarNotificacao();
   }
@@ -71,7 +76,7 @@ class NotificationAwesomeNotification {
   static Future<void> onDismissActionReceivedMethod(
       ReceivedAction receivedAction) async {
     // await Get.find<HomeController>().EviarMsglidaById(receivedAction.id!);
-
+    await playerMain.stop();
     debugPrint('notifação descartada');
   }
 
@@ -80,7 +85,8 @@ class NotificationAwesomeNotification {
       ReceivedAction receivedAction) async {
     debugPrint('onActionReceivedMethod');
 
-    await Get.offAllNamed(Routes.DEMANDAS);
+    await playerMain.stop();
+    await Get.offAllNamed(Routes.HOME);
 
     // await playerMain.stop();
     final payload = receivedAction.payload ?? {};

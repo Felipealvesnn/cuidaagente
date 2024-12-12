@@ -246,7 +246,7 @@ class DemandasView extends GetView<DemandasController> {
                       TextButton(
                         onPressed: () {
                           // Lógica para resetar os filtros aqui
-                          //controller.reseteFiltroSolicitacoes();
+                          controller.reseteFiltroSolicitacoes();
                           // Fechar o modal após resetar os filtros
                           Get.back();
                         },

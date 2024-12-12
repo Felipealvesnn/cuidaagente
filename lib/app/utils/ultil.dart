@@ -108,8 +108,7 @@ class LocationCallbackHandler {
     );
 
     await repository.sendLogAgenteDemanda(posicao);
-    showSnackbar('Localização Enviada',
-        'Latitude: ${location.latitude}, Longitude: ${location.longitude}');
+ 
   }
 }
 

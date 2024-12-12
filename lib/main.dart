@@ -1,3 +1,4 @@
+import 'package:just_audio/just_audio.dart';
 import 'package:cuidaagente/app/utils/FirebaseMenssagensFunctions.dart';
 import 'package:cuidaagente/app/utils/getstorages.dart';
 import 'package:cuidaagente/app/utils/tema.dart';
@@ -8,8 +9,11 @@ import 'package:get/get.dart';
 
 import 'app/routes/app_pages.dart';
 
+final playerMain = AudioPlayer();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final audio = await playerMain.setAsset('assets/sons/alerta.mp3');
 
   await iniciarFirebasemsg();
 

@@ -64,6 +64,7 @@ dependencies:
   flutter_speed_dial: ^7.0.0
   photo_view: ^0.15.0
   dropdown_search: ^6.0.1
+  just_audio: ^0.9.42
   #google_navigation_flutter: ^0.3.0
 
 
@@ -105,6 +106,7 @@ flutter:
     - assets/logo001.png
     - assets/cuida.png
     - assets/ic_launcher_round.png
+    - assets/sons/alerta.mp3
 
   # To add assets to your application, add an assets section, like this:
   # assets:

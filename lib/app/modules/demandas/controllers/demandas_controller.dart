@@ -27,13 +27,12 @@ class DemandasController extends GetxController {
   var FiltroPesquisado = false.obs; // Estado de carregamento
 
   var isLoadingDemandaInicial = true.obs;
-  var demandasList = <Demanda>[].obs;
+  var demandasList = <Demanda>[];
   var demandasTela = <Demanda>[].obs;
   var hasMoreDemandas = true.obs;
   var isLoadingMore = false.obs;
   final hasImages = false.obs;
 
-  static const String _isolateName = "LocatorIsolate";
   ReceivePort port = ReceivePort();
 
   var currentPage = 1.obs;
@@ -75,7 +74,7 @@ class DemandasController extends GetxController {
   Future<void> aplicarFiltroSolicitacoes() async {
     String dataInicioText = dataInicioController.text.trim();
     String dataFimText = dataFimController.text.trim();
-     List<int> parametros =
+    List<int> parametros =
         (await Storagers.boxUserLogado.read('boxOrgaoIds') as List<dynamic>)
             .cast<int>();
     final filtro = {
@@ -93,21 +92,26 @@ class DemandasController extends GetxController {
       "Ocorrencia_id": idOcorrenciaController.text.isNotEmpty
           ? int.parse(idOcorrenciaController.text)
           : null,
-       "orgaoIds": parametros
+      "orgaoIds": parametros
     };
 
     var solicitacoesFiltro = await demandasRepository.getDemandasFiltradas(
       filtro,
     );
+
     demandasTela.assignAll(solicitacoesFiltro);
+    hasMoreDemandas.value = false;
     FiltroPesquisado.value = true;
   }
+
   void reseteFiltroSolicitacoes() {
     dataInicioController.clear();
     dataFimController.clear();
     idOcorrenciaController.clear();
     selectestatus.value = null;
-  
+
+    demandasTela.assignAll(demandasList);
+    hasMoreDemandas.value = true;
   }
 
   Future<void> fetchDemandas({bool MostrarLogo = true}) async {
@@ -119,6 +123,7 @@ class DemandasController extends GetxController {
       hasMoreDemandas.value = false;
     } else {
       demandasList.addAll(demandas);
+      demandasTela.addAll(demandasList);
 
       // Filtra as demandas em que o usuário já está vinculado
       List<Demanda> filteredDemandas = demandasList.where((demanda) {
@@ -171,6 +176,7 @@ class DemandasController extends GetxController {
     hasMoreDemandas.value = true;
     isLoadingDemandaInicial.value = true;
     demandasList.clear();
+    demandasTela.clear();
     await fetchDemandas(MostrarLogo: MostrarLogo);
   }
 
@@ -194,6 +200,7 @@ class DemandasController extends GetxController {
       hasMoreDemandas.value = false;
     } else {
       demandasList.addAll(demandas);
+      demandasTela.addAll(demandasList);
       currentPage.value++;
     }
     isLoadingMore.value = false;
