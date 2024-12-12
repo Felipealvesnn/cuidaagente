@@ -12,6 +12,11 @@ ThemeData ThemaApp() {
     primaryColor: colorVerde,
     primarySwatch: customGreen,
     scaffoldBackgroundColor: Colors.grey[200],
+    chipTheme: ChipThemeData(
+      side: const BorderSide(color: Colors.grey, width: 0.5),
+      elevation: 4,
+      shadowColor: Colors.black.withOpacity(0.3), // Cor da sombra
+    ),
     dividerTheme: const DividerThemeData(
       space: 0,
       thickness: 1,

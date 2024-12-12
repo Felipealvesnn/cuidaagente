@@ -190,7 +190,7 @@ class DemandasController extends GetxController {
       hasMoreDemandas.value = false;
     } else {
       demandasList.addAll(demandas);
-      demandasTela.addAll(demandasList);
+      demandasTela.assignAll(demandasList);
 
       // Filtra as demandas em que o usuário já está vinculado
       List<Demanda> filteredDemandas = demandasList.where((demanda) {
@@ -268,7 +268,8 @@ class DemandasController extends GetxController {
       hasMoreDemandas.value = false;
     } else {
       demandasList.addAll(demandas);
-      demandasTela.addAll(demandasList);
+      demandasTela.assignAll(demandasList);
+
       currentPage.value++;
     }
     isLoadingMore.value = false;

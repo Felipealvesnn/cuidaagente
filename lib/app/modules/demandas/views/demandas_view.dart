@@ -145,6 +145,7 @@ class DemandasView extends GetView<DemandasController> {
           // Verifica e exibe o filtro de status
           if (controller.selectestatus.value != null)
             Chip(
+             
               label:
                   Text(controller.selectestatus.value!.descricaoStatusDemanda),
               deleteIcon: const Icon(Icons.clear),
