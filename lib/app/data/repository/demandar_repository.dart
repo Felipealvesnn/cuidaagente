@@ -1,4 +1,5 @@
 import 'package:cuidaagente/app/data/models/LogAgenteDemanda.dart';
+import 'package:cuidaagente/app/data/models/StatusDemanda.dart';
 import 'package:cuidaagente/app/data/models/adicionarPontos.dart';
 import 'package:cuidaagente/app/data/models/demandas.dart';
 import 'package:cuidaagente/app/data/models/ocorrenciaPost.dart';
@@ -35,10 +36,8 @@ class DemandasRepository {
     } catch (e) {}
     return listOcorrencias;
   }
-  
 
-   Future<List<Demanda>> getDemandasFiltradas(Map<String, Object?> model
-      ) async {
+  Future<List<Demanda>> getDemandasFiltradas(Map<String, Object?> model) async {
     try {
       // Obtém a resposta do provedor (assumindo que é uma lista de JSON)
       dynamic response = await demandasClient.getDemandasFiltradas(model);
@@ -56,7 +55,24 @@ class DemandasRepository {
     }
   }
 
+  Future<List<StatusDemanda>> getStatusDemandas() async {
+    try {
+      // Obtém a resposta do provedor (assumindo que é uma lista de JSON)
+      dynamic response = await demandasClient.getStatusDemandas();
 
+      // Força o cast para List<dynamic> e converte cada item em Map<String, dynamic>
+      if (response is List) {
+        List<StatusDemanda> demandasList = response
+            .map((json) => StatusDemanda.fromMap(json as Map<String, dynamic>))
+            .toList();
+        return demandasList;
+      } else {
+        throw Exception("Tipo inesperado de resposta: ${response.runtimeType}");
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   Future<List<Demanda>> getDemandas(
       {int pageNumber = 1, int pageSize = 10}) async {

@@ -25,7 +25,6 @@ class DemandasController extends GetxController {
   var selectestatus = Rxn<StatusDemanda>();
   var status = <StatusDemanda>[].obs;
   var FiltroPesquisado = false.obs; // Estado de carregamento
-
   var isLoadingDemandaInicial = true.obs;
   var demandasList = <Demanda>[];
   var demandasTela = <Demanda>[].obs;
@@ -52,6 +51,10 @@ class DemandasController extends GetxController {
     super.onInit();
     await initializeBackgroundService();
 
+    demandasRepository.getStatusDemandas().then((value) {
+      status.assignAll(value);
+    });
+
     // Carrega a primeira página de demandas
     await fetchDemandas();
     // AdicionscrollControllera o listener para o scrollController para detectar quando atingir o final da lista
@@ -71,37 +74,100 @@ class DemandasController extends GetxController {
     return imagens;
   }
 
-  Future<void> aplicarFiltroSolicitacoes() async {
-    String dataInicioText = dataInicioController.text.trim();
-    String dataFimText = dataFimController.text.trim();
-    List<int> parametros =
-        (await Storagers.boxUserLogado.read('boxOrgaoIds') as List<dynamic>)
-            .cast<int>();
-    final filtro = {
-      "dataInicio": dataInicioText.isNotEmpty
-          ? DateFormat('dd/MM/yyyy') // Formato compatível com a entrada
-              .parse(dataInicioText)
-              .toIso8601String()
-          : null,
-      "dataFim": dataFimText.isNotEmpty
-          ? DateFormat('dd/MM/yyyy') // Formato compatível com a entrada
-              .parse(dataFimText)
-              .toIso8601String()
-          : null,
-      "statusId": selectestatus.value?.statusDemandaId,
-      "Ocorrencia_id": idOcorrenciaController.text.isNotEmpty
-          ? int.parse(idOcorrenciaController.text)
-          : null,
-      "orgaoIds": parametros
-    };
+  // Limpa os filtros
 
-    var solicitacoesFiltro = await demandasRepository.getDemandasFiltradas(
-      filtro,
+  void clearIdDemanda() async {
+    idOcorrenciaController.clear();
+    await aplicarFiltroSolicitacoes();
+  }
+
+  void clearSelectedStatus() async {
+    selectestatus.value = null;
+    await aplicarFiltroSolicitacoes();
+  }
+
+  void clearDataInicio() async {
+    dataInicioController.clear();
+    await aplicarFiltroSolicitacoes();
+  }
+
+  void clearDataFim() async {
+    dataFimController.clear();
+    await aplicarFiltroSolicitacoes();
+  }
+
+  bool hasFiltersApplied() {
+    return selectestatus.value != null ||
+        dataInicioController.text.isNotEmpty ||
+        dataFimController.text.isNotEmpty ||
+        idOcorrenciaController.text.isNotEmpty;
+  }
+
+  Future<void> aplicarFiltroSolicitacoes() async {
+    // Define uma chave GlobalKey para o diálogo
+    final dialogKey = GlobalKey();
+
+    // Exibe o diálogo de carregamento com o Navigator
+    showDialog(
+      context: Get.context!,
+      barrierDismissible: false, // Impede fechamento ao clicar fora
+      builder: (context) {
+        return PopScope(
+          canPop: false, // Impede o fechamento com botão back
+          child: Center(
+            key: dialogKey,
+            child: const CircularProgressIndicator(),
+          ),
+        );
+      },
     );
 
-    demandasTela.assignAll(solicitacoesFiltro);
-    hasMoreDemandas.value = false;
-    FiltroPesquisado.value = true;
+    try {
+      // Realiza as operações do filtro
+      String dataInicioText = dataInicioController.text.trim();
+      String dataFimText = dataFimController.text.trim();
+      List<int> parametros =
+          (await Storagers.boxUserLogado.read('boxOrgaoIds') as List<dynamic>)
+              .cast<int>();
+
+      final filtro = {
+        "dataInicio": dataInicioText.isNotEmpty
+            ? DateFormat('dd/MM/yyyy').parse(dataInicioText).toIso8601String()
+            : null,
+        "dataFim": dataFimText.isNotEmpty
+            ? DateFormat('dd/MM/yyyy').parse(dataFimText).toIso8601String()
+            : null,
+        "statusId": selectestatus.value?.statusDemandaId,
+        "Ocorrencia_id": idOcorrenciaController.text.isNotEmpty
+            ? int.parse(idOcorrenciaController.text)
+            : null,
+        "orgaoIds": parametros,
+      };
+      if (hasFiltersApplied()) {
+        var solicitacoesFiltro =
+            await demandasRepository.getDemandasFiltradas(filtro);
+
+        FiltroPesquisado.value = true;
+        demandasTela.assignAll(solicitacoesFiltro);
+        hasMoreDemandas.value = false;
+      } else {
+        reseteFiltroSolicitacoes();
+      }
+    } catch (e) {
+      // Exibe mensagem de erro
+      Get.snackbar(
+        "Erro",
+        "Não foi possível aplicar o filtro: ${e.toString()}",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      // Fecha especificamente o diálogo associado
+      Future.delayed(const Duration(seconds: 1), () {
+        if (dialogKey.currentContext != null) {
+          Navigator.of(dialogKey.currentContext!).pop();
+        }
+      });
+    }
   }
 
   void reseteFiltroSolicitacoes() {
@@ -112,6 +178,7 @@ class DemandasController extends GetxController {
 
     demandasTela.assignAll(demandasList);
     hasMoreDemandas.value = true;
+    FiltroPesquisado.value = false;
   }
 
   Future<void> fetchDemandas({bool MostrarLogo = true}) async {
@@ -178,6 +245,7 @@ class DemandasController extends GetxController {
     demandasList.clear();
     demandasTela.clear();
     await fetchDemandas(MostrarLogo: MostrarLogo);
+    reseteFiltroSolicitacoes();
   }
 
   void _openMap(Demanda demanda) {

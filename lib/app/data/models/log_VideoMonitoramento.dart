@@ -97,7 +97,7 @@ class ImagensMonitoramento {
       nomeImagem: json['nome_imagem'],
       fotoBase64: json['foto_base64'],
       logVideoMonitoramentoId: json['log_VideoMonitoramento_id'],
-      enderecoImagem: json['endereco_imagem'],
+      enderecoImagem: json['endereco_imagem'] ?? "",
     );
   }
 

@@ -30,7 +30,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.DEMANDAS,
-      page: () => const DemandasView(),
+      page: () =>  DemandasView(),
       binding: DemandasBinding(),
     ),
     GetPage(

@@ -4,13 +4,14 @@ import 'package:cuidaagente/app/modules/demandas/components/ListDemandas.dart';
 import 'package:cuidaagente/app/modules/demandas/components/MyDrawer.dart';
 import 'package:cuidaagente/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:intl/intl.dart';
 import '../controllers/demandas_controller.dart';
 
 class DemandasView extends GetView<DemandasController> {
-  const DemandasView({super.key});
+  DemandasView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -87,18 +88,27 @@ class DemandasView extends GetView<DemandasController> {
             );
           }
 
-          if (controller.demandasList.isEmpty) {
+          if (controller.demandasTela.isEmpty) {
             // Mostra a mensagem somente após o carregamento estar completo
-            return ListView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              children: const [
-                Center(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 20.0),
-                    child: Text(
-                      'Nenhuma demanda encontrada.',
-                      style: TextStyle(fontSize: 20),
-                    ),
+            return Column(
+              children: [
+                Obx(() => (controller.FiltroPesquisado.value)
+                    ? _buildSelectedFilters()
+                    : const SizedBox.shrink()),
+                Expanded(
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: const [
+                      Center(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 20.0),
+                          child: Text(
+                            'Nenhuma demanda encontrada.',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -106,16 +116,68 @@ class DemandasView extends GetView<DemandasController> {
           }
 
           // Exibe a lista de vistorias
-          return ListDemandas(controller: controller);
+          return Column(
+            children: [
+              Obx(() => (controller.FiltroPesquisado.value)
+                  ? _buildSelectedFilters()
+                  : const SizedBox.shrink()),
+              Expanded(child: ListDemandas(controller: controller)),
+            ],
+          );
         }),
       ),
     );
   }
 
+  Widget _buildSelectedFilters() {
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      child: Wrap(
+        spacing: 8.0,
+        runSpacing: 4.0,
+        children: [
+          if (controller.idOcorrenciaController.text.isNotEmpty)
+            Chip(
+              label: Text(controller.idOcorrenciaController.text),
+              deleteIcon: const Icon(Icons.clear),
+              onDeleted: () => controller.clearIdDemanda(),
+            ),
+          // Verifica e exibe o filtro de status
+          if (controller.selectestatus.value != null)
+            Chip(
+              label:
+                  Text(controller.selectestatus.value!.descricaoStatusDemanda),
+              deleteIcon: const Icon(Icons.clear),
+              onDeleted: () => controller.clearSelectedStatus(),
+            ),
+
+          // Verifica e exibe o filtro de data inicial
+          if (controller.dataInicioController.text.isNotEmpty)
+            Chip(
+              label: Text('Início: ${controller.dataInicioController.text}'),
+              deleteIcon: const Icon(Icons.clear),
+              onDeleted: () => controller.clearDataInicio(),
+            ),
+
+          // Verifica e exibe o filtro de data final
+          if (controller.dataFimController.text.isNotEmpty)
+            Chip(
+              label: Text('Fim: ${controller.dataFimController.text}'),
+              deleteIcon: const Icon(Icons.clear),
+              onDeleted: () => controller.clearDataFim(),
+            ),
+        ],
+      ),
+    );
+  }
+
+  final modalKey = GlobalKey();
+
   void showFilterModal(BuildContext context) {
     Get.bottomSheet(
       backgroundColor: Colors.white,
       Padding(
+        key: modalKey,
         padding: MediaQuery.of(context).viewInsets,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -133,9 +195,15 @@ class DemandasView extends GetView<DemandasController> {
                   TextFormField(
                     controller: controller.idOcorrenciaController,
                     decoration: const InputDecoration(
-                      labelText: 'Id da ocorrencia',
+                      labelText: 'Id da ocorrência',
                       border: OutlineInputBorder(),
                     ),
+                    keyboardType:
+                        TextInputType.number, // Mostra o teclado numérico
+                    inputFormatters: [
+                      FilteringTextInputFormatter
+                          .digitsOnly, // Permite apenas números
+                    ],
                   ),
 
                   const SizedBox(height: 16),
@@ -260,7 +328,10 @@ class DemandasView extends GetView<DemandasController> {
                           String dataFimText =
                               controller.dataFimController.text.trim();
 
-                          if (dataInicioText.isEmpty && dataFimText.isEmpty && controller.idOcorrenciaController.text.isEmpty && controller.selectestatus.value == null) {
+                          if (dataInicioText.isEmpty &&
+                              dataFimText.isEmpty &&
+                              controller.idOcorrenciaController.text.isEmpty &&
+                              controller.selectestatus.value == null) {
                             Get.snackbar(
                               'Erro',
                               'Preencha pelo menos um campo para aplicar o filtro.',
@@ -270,6 +341,11 @@ class DemandasView extends GetView<DemandasController> {
 
                           await controller.aplicarFiltroSolicitacoes();
 
+                          Future.delayed(const Duration(milliseconds: 500), () {
+                            if (modalKey.currentContext != null) {
+                              Navigator.of(modalKey.currentContext!).pop();
+                            }
+                          });
                           Get.back();
                         },
                         child: const Text('Aplicar Filtros'),

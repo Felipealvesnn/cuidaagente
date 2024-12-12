@@ -102,6 +102,29 @@ class DemandasProvider extends GetConnect {
     }
   }
 
+  Future<List<dynamic>> getStatusDemandas() async {
+    timeout = const Duration(minutes: 10);
+    var token = Storagers.boxToken.read('boxToken') as String;
+    final headers = {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "Authorization": 'Bearer $token',
+    };
+    var url = "${baseUrlw2e}ocorrenciaAgente/GetstatusDemandas";
+
+    var response = await get(
+      url,
+      headers: headers,
+    );
+
+    if (response.isOk) {
+      final responseBody = json.decode(response.bodyString ?? '[]');
+      return responseBody; // Supondo que a API retorne uma lista
+    } else {
+      throw Exception("Erro ao buscar status de demandas: ${response.body}");
+    }
+  }
+
   Future getImagens(int id) async {
     var token = Storagers.boxToken.read('boxToken') as String;
 
