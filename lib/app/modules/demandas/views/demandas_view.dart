@@ -145,7 +145,6 @@ class DemandasView extends GetView<DemandasController> {
           // Verifica e exibe o filtro de status
           if (controller.selectestatus.value != null)
             Chip(
-             
               label:
                   Text(controller.selectestatus.value!.descricaoStatusDemanda),
               deleteIcon: const Icon(Icons.clear),
@@ -215,9 +214,14 @@ class DemandasView extends GetView<DemandasController> {
                       Expanded(
                         child: TextFormField(
                           controller: controller.dataInicioController,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              enableFeedback: false,
+                              icon: const Icon(Icons.calendar_today),
+                              onPressed: () {},
+                            ),
                             labelText: 'Data Inicial',
-                            border: OutlineInputBorder(),
+                            border: const OutlineInputBorder(),
                           ),
                           readOnly: true, // Impede edição manual
                           onTap: () async {
@@ -240,9 +244,14 @@ class DemandasView extends GetView<DemandasController> {
                       Expanded(
                         child: TextFormField(
                           controller: controller.dataFimController,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              enableFeedback: false,
+                              icon: const Icon(Icons.calendar_today),
+                              onPressed: () {},
+                            ),
                             labelText: 'Data Final',
-                            border: OutlineInputBorder(),
+                            border: const OutlineInputBorder(),
                           ),
                           readOnly: true, // Impede edição manual
                           onTap: () async {
