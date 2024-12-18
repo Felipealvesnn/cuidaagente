@@ -6,6 +6,7 @@ class LogAgenteDemanda {
   int? demandaId;
   DateTime? dataIniciado;
   bool? ativo;
+  String? nomeUsuario;
 
   LogAgenteDemanda({
     this.id,
@@ -15,6 +16,7 @@ class LogAgenteDemanda {
     this.demandaId,
     this.dataIniciado,
     this.ativo,
+    this.nomeUsuario,
   });
 
   // Método para converter um Map (ex: JSON) para uma instância de LogAgenteDemanda
@@ -23,6 +25,7 @@ class LogAgenteDemanda {
       id: map['id'],
       usuarioId: map['usuario_id'],
       latitude: map['latitude'],
+      nomeUsuario: map['usuario_sistema']['nome'],
       longitude: map['longitude'],
       demandaId: map['demanda_id'],
       dataIniciado: map['dataIniciado'] != null ? DateTime.parse(map['dataIniciado']) : null,

@@ -72,42 +72,59 @@ class MapaDemanda extends GetView<MapaDemandaController> {
       BuildContext context, MapaDemandaController controller) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 26.0),
-      child: SpeedDial(
-        animationCurve: Curves.easeInOutCubic,
-        animatedIcon: AnimatedIcons.menu_close, // Ícone animado de menu
-        overlayColor: Colors.black,
-        overlayOpacity: 0.4,
-        spaceBetweenChildren: 16, // Espaço entre os botões
-        children: [
-          SpeedDialChild(
-            child: const Icon(Icons.check, color: Colors.white),
-            backgroundColor: Colors.green,
-            label: 'Finalizar Demanda',
-            labelStyle: const TextStyle(fontSize: 14),
-            onTap: () => _showFinalizarDesvincularModal(context, controller),
-          ),
-          SpeedDialChild(
-            child: const Icon(Icons.photo, color: Colors.white),
-            backgroundColor: Colors.orange,
-            label: 'Adicionar Fotos',
-            labelStyle: const TextStyle(fontSize: 14),
-            onTap: () => _showImageSourceSelection(context),
-          ),
-          SpeedDialChild(
-            child: const Icon(Icons.directions, color: Colors.white),
-            backgroundColor: Colors.blue,
-            label: 'Abrir Mapa',
-            labelStyle: const TextStyle(fontSize: 14),
-            onTap: () => _openMapSelection(context),
-          ),
-          SpeedDialChild(
-            child: const Icon(Icons.my_location, color: Colors.white),
-            backgroundColor: Colors.purple,
-            label: 'Mover Câmera',
-            labelStyle: const TextStyle(fontSize: 14),
-            onTap: () async => await controller.moveCameraToCurrentPosition(),
-          ),
-        ],
+      child: Obx(
+        () => SpeedDial(
+          animationCurve: Curves.easeInOutCubic,
+          animatedIcon: AnimatedIcons.menu_close, // Ícone animado de menu
+          overlayColor: Colors.black,
+          overlayOpacity: 0.4,
+          spaceBetweenChildren: 16, // Espaço entre os botões
+          children: [
+            if (controller.isUsuarioDemandaBoll.value)
+              SpeedDialChild(
+                child: const Icon(Icons.check, color: Colors.white),
+                backgroundColor: Colors.green,
+                label: 'Finalizar Demanda',
+                labelStyle: const TextStyle(fontSize: 14),
+                onTap: () =>
+                    _showFinalizarDesvincularModal(context, controller),
+              ),
+            SpeedDialChild(
+              child: const Icon(Icons.photo, color: Colors.white),
+              backgroundColor: Colors.orange,
+              label: 'Adicionar Fotos',
+              labelStyle: const TextStyle(fontSize: 14),
+              onTap: () => _showImageSourceSelection(context),
+            ),
+            SpeedDialChild(
+              child: const Icon(Icons.directions, color: Colors.white),
+              backgroundColor: Colors.blue,
+              label: 'Abrir Mapa',
+              labelStyle: const TextStyle(fontSize: 14),
+              onTap: () => _openMapSelection(context),
+            ),
+            SpeedDialChild(
+              child: const Icon(Icons.my_location, color: Colors.white),
+              backgroundColor: Colors.purple,
+              label: 'Mover Câmera',
+              labelStyle: const TextStyle(fontSize: 14),
+              onTap: () async => await controller.moveCameraToCurrentPosition(),
+            ),
+            // Botão condicional dentro do Obx
+            if (!controller.isUsuarioDemandaBoll.value &&
+                !controller.isUsuarioBolllist && !controller.isFinalizado)
+              SpeedDialChild(
+                child: const Icon(Icons.link, color: Colors.white),
+                backgroundColor: Colors.teal,
+                label: 'Vincular a Demanda',
+                labelStyle: const TextStyle(fontSize: 14),
+                onTap: () async => await controller.showConfirmationDialog(
+                  Get.context!,
+                  Get.arguments['demanda'],
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

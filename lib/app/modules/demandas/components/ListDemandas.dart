@@ -55,6 +55,7 @@ class ListDemandas extends StatelessWidget {
 
   Widget _buildDemandasCard(int index, BuildContext context) {
     var demanda = controller.demandasTela[index];
+    // Verifica se ele está ligado a alguma demanda e se nao é essa demanda aqui
     var isUsuarioBolllist = controller.demandasTela.any((fsdf) =>
         fsdf.demandaId !=
                 demanda.demandaId && // Verifica se não é a demanda atual
@@ -62,16 +63,17 @@ class ListDemandas extends StatelessWidget {
                 element.usuarioId == controller.usuario.usuarioId &&
                 element.ativo == true) ??
         false);
-
-    final isUsuarioBoll = demanda.logAgenteDemanda?.any((element) =>
+    // aqui diz se a demanda é do usuario
+    final isUsuarioDemandaBoll = demanda.logAgenteDemanda?.any((element) =>
             element.usuarioId == controller.usuario.usuarioId &&
             element.ativo == true) ??
         false;
     return Card(
-      color: isUsuarioBoll ? Colors.green[100] : Colors.white,
+      color: isUsuarioDemandaBoll ? Colors.green[100] : Colors.white,
       elevation: 2,
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: ExpansionTile(
+        initiallyExpanded: false,
         shape: const Border(),
         leading: const Icon(Icons.assignment),
         title: Row(
@@ -102,7 +104,7 @@ class ListDemandas extends StatelessWidget {
           Obx(() => _buildDetalhesOcorrencia(
                 demanda,
                 context,
-                isUsuarioBoll,
+                isUsuarioDemandaBoll,
                 isUsuarioBolllist,
                 controller.hasImages.value,
               ))
@@ -183,6 +185,17 @@ class ListDemandas extends StatelessWidget {
               demanda.ocorrencia?.relatoAutorRegistroOcorrencia?.toUpperCase()),
           _buildRichText('Relato do Atendente: ',
               demanda.ocorrencia?.relatoAtendenteOcorrencia?.toUpperCase()),
+          if (demanda.logAgenteDemanda != null &&
+              demanda.logAgenteDemanda!.isNotEmpty)
+            _buildRichText(
+              'Vinculados: ',
+              demanda.logAgenteDemanda!
+                  .where((element) =>
+                      element.ativo ==
+                      true) // Filtra os itens onde ativo é true
+                  .map((element) => element.nomeUsuario) // Mapeia para os nomes
+                  .join(' - '), // Junta com hífen
+            ),
 
           // Exibe as imagens, se disponíveis
           (hasImages || imagens != null)
@@ -224,22 +237,26 @@ class ListDemandas extends StatelessWidget {
             context, isFinalizado, isusuarioBoll, demanda, isUsuarioBolllist),
         child: isusuarioBoll
             ? const Text('Continuar Rota')
-            : const Text('Visualizar Demanda'),
+            : const Text('Visualizar Ocorrencia'),
       ),
     );
   }
 
   void _handleOpenMap(BuildContext context, bool isFinalizado,
       bool isusuarioBoll, Demanda demanda, bool isUsuarioBolllist) {
-     if (isusuarioBoll) {
-      _openMap(demanda, isusuarioBoll: isusuarioBoll, isUsuarioBolllist: isUsuarioBolllist);
+    if (isusuarioBoll) {
+      _openMap(demanda,
+          isusuarioBoll: isusuarioBoll, isUsuarioBolllist: isUsuarioBolllist, isFinalizado: isFinalizado);
     } else {
-      _openMap(demanda, isusuarioBoll: false,isUsuarioBolllist: isUsuarioBolllist);
+      _openMap(demanda,
+          isusuarioBoll: false, isUsuarioBolllist: isUsuarioBolllist, isFinalizado: isFinalizado);
     }
   }
 
   void _openMap(Demanda demanda,
-      {bool IniciadaDemanda = false, bool isusuarioBoll = false, bool isUsuarioBolllist = false}) {
+      {bool IniciadaDemanda = false,
+      bool isusuarioBoll = false,
+      bool isUsuarioBolllist = false, bool isFinalizado = false}) {
     Get.toNamed(
       Routes.MAPA_DEMANDA,
       arguments: {
@@ -248,6 +265,7 @@ class ListDemandas extends StatelessWidget {
         'demanda_id': demanda.demandaId,
         'isusuarioBoll': isusuarioBoll,
         'demanda': demanda,
+        'isFinalizado': isFinalizado,
         'isUsuarioBolllist': isUsuarioBolllist,
         'IniciadaDemanda': IniciadaDemanda,
         'logAgenteDemandaID': (demanda.logAgenteDemanda != null &&

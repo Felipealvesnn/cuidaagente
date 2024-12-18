@@ -39,8 +39,9 @@ class MapaDemandaController extends GetxController {
   var userLocation = const LatLng(0.0, 0.0).obs; // Localização inicial padrão
   final keymaps = 'AIzaSyAsinfHRMZKKrM5CH7L0IoDpQSIJ2dWios';
   bool IniciadaDemanda = false;
-  bool isusuarioBoll = false;
+  RxBool isUsuarioDemandaBoll = false.obs;
   bool isUsuarioBolllist = false;
+  bool isFinalizado = false;
 
   bool ValidarDistanciaBool = false;
   var selectedImages = RxList<File>([]);
@@ -58,25 +59,24 @@ class MapaDemandaController extends GetxController {
     demandaId = Get.arguments['demanda_id'];
     logAgenteDemandaID = Get.arguments['logAgenteDemandaID'] ?? 0;
     IniciadaDemanda = Get.arguments['IniciadaDemanda'] ?? false;
-    isusuarioBoll = Get.arguments['isusuarioBoll'] ?? true;
+    isUsuarioDemandaBoll.value = Get.arguments['isusuarioBoll'] ?? true;
     isUsuarioBolllist = Get.arguments['isUsuarioBolllist'] ?? false;
+    isFinalizado = Get.arguments['isFinalizado'] ?? false;
 
     polylinePoints = PolylinePoints();
     await getUserLocation();
-    await createRoute();
 
-    if (!isusuarioBoll && !isUsuarioBolllist) {
-      // é importante deixar isso auqi por ultimo, okay?
-      _showConfirmationDialog(
-          Get.context!, Get.arguments['demanda'], isusuarioBoll);
+    if (isUsuarioDemandaBoll.value && !isFinalizado) {
+      await createRoute();
     }
+
     if (isUsuarioBolllist) {
       showSnackbar("info", "Você já está vinculado a outra demanda");
     }
   }
 
-  Future<void> _showConfirmationDialog(
-      BuildContext context, Demanda demanda, bool isusuarioBoll) {
+  Future<void> showConfirmationDialog(
+      BuildContext context, Demanda demanda) {
     context = Get.context!;
     return showDialog(
       context: context,
@@ -103,6 +103,7 @@ class MapaDemandaController extends GetxController {
 
                   await Get.find<DemandasController>()
                       .Refresh(MostrarLogo: false);
+                  await createRoute();
                 } else {
                   showSnackbar(
                       "info", "Você já está vinculado a outra demanda");
@@ -212,6 +213,8 @@ class MapaDemandaController extends GetxController {
         points: polylineCoordinates,
       ));
     }
+    isUsuarioDemandaBoll.value = true;
+    await moveCameraToCurrentPosition();
   }
 
   Future<void> updateRoute() async {
@@ -243,7 +246,8 @@ class MapaDemandaController extends GetxController {
 
   Future<void> moveCameraToCurrentPosition() async {
     await mapController.animateCamera(
-      CameraUpdate.newLatLngZoom(userLocation.value, 20),
+      CameraUpdate.newLatLngZoom(
+          isUsuarioDemandaBoll.value ? userLocation.value : destination, 20),
     );
   }
 
