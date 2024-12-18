@@ -105,22 +105,10 @@ class DemandasController extends GetxController {
 
   Future<void> aplicarFiltroSolicitacoes() async {
     // Define uma chave GlobalKey para o diálogo
-    final dialogKey = GlobalKey();
-
+    
+    isLoadingDemandaInicial.value = true;
     // Exibe o diálogo de carregamento com o Navigator
-    showDialog(
-      context: Get.context!,
-      barrierDismissible: false, // Impede fechamento ao clicar fora
-      builder: (context) {
-        return PopScope(
-          canPop: false, // Impede o fechamento com botão back
-          child: Center(
-            key: dialogKey,
-            child: const CircularProgressIndicator(),
-          ),
-        );
-      },
-    );
+   
 
     try {
       // Realiza as operações do filtro
@@ -161,11 +149,12 @@ class DemandasController extends GetxController {
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {
-      // Fecha especificamente o diálogo associado
+      // Fecha especificamente o diálogo as
+      // sociado
+
       Future.delayed(const Duration(seconds: 1), () {
-        if (dialogKey.currentContext != null) {
-          Navigator.of(dialogKey.currentContext!).pop();
-        }
+        isLoadingDemandaInicial.value = false;
+       
       });
     }
   }
