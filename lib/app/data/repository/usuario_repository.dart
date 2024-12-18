@@ -16,6 +16,18 @@ class UsuarioRepository {
     }
   }
 
+  Future<bool> ResetarSenha(
+      String username, String password, int usuario_id) async {
+    Map<String, dynamic>? json =
+        await apiclient.resetarSenha(username, password, usuario_id);
+
+    if (json == null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   Future<void> sendLogAgenteDemanda(PosicaoAgente log) async {
     try {
       await apiclient.sendLogAgenteDemanda(log);

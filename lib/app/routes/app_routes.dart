@@ -10,6 +10,7 @@ abstract class Routes {
   static const CONFIGURACOES = _Paths.CONFIGURACOES;
   static const MAPA_DEMANDA = _Paths.MAPA_DEMANDA;
   static const OCORRENCIA = _Paths.OCORRENCIA;
+  static const MUDAR_SENHA = _Paths.MUDAR_SENHA;
 }
 
 abstract class _Paths {
@@ -21,4 +22,5 @@ abstract class _Paths {
   static const CONFIGURACOES = '/configuracoes';
   static const MAPA_DEMANDA = '/mapa-demanda';
   static const OCORRENCIA = '/ocorrencia';
+  static const MUDAR_SENHA = '/mudar-senha';
 }

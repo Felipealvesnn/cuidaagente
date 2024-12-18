@@ -12,6 +12,8 @@ import '../modules/demandas/bindings/demandas_binding.dart';
 import '../modules/demandas/views/demandas_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
+import '../modules/mudar_senha/bindings/mudar_senha_binding.dart';
+import '../modules/mudar_senha/views/mudar_senha_view.dart';
 import '../modules/ocorrencia/bindings/ocorrencia_binding.dart';
 import '../modules/ocorrencia/views/ocorrencia_view.dart';
 
@@ -30,7 +32,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.DEMANDAS,
-      page: () =>  DemandasView(),
+      page: () => DemandasView(),
       binding: DemandasBinding(),
     ),
     GetPage(
@@ -55,8 +57,13 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.OCORRENCIA,
-      page: () =>  OcorrenciaView(),
+      page: () => OcorrenciaView(),
       binding: OcorrenciaBinding(),
+    ),
+    GetPage(
+      name: _Paths.MUDAR_SENHA,
+      page: () => const MudarSenhaView(),
+      binding: MudarSenhaBinding(),
     ),
   ];
 }

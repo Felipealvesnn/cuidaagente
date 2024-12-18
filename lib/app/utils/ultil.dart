@@ -16,6 +16,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart' as ph;
 import 'package:background_locator_2/location_dto.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 
 void showSnackbar(String title, String message) {
   Get.snackbar(
@@ -93,7 +95,6 @@ class LocationCallbackHandler {
   static Future<void> sendLocationToApi(LatLng location) async {
     UsuarioRepository repository = UsuarioRepository();
 
- 
     await GetStorage.init("boxUserLogado");
     final boxUserLogado = GetStorage('boxUserLogado');
     final usuario = boxUserLogado.read('user');
@@ -108,7 +109,6 @@ class LocationCallbackHandler {
     );
 
     await repository.sendLogAgenteDemanda(posicao);
- 
   }
 }
 
@@ -183,6 +183,28 @@ class LocationService {
       ),
     );
   }
+}
+
+String cripTografaMD5Hash(String input, {String? chave}) {
+  // Converte o texto para bytes
+  List<int> inputBytes = utf8.encode(input);
+
+  // Calcula o hash MD5
+  Digest hash = md5.convert(inputBytes);
+
+  // Formata a saída como uma string com base na chave (padrão: hexadecimal base 16)
+  StringBuffer sb = StringBuffer();
+  int base =  16; // Garantindo que a base seja válida
+
+  if (base < 2 || base > 36) {
+    throw ArgumentError("A base deve estar entre 2 e 36. Base fornecida: $base");
+  }
+
+  for (var byte in hash.bytes) {
+    sb.write(byte.toRadixString(base).padLeft(2, '0'));
+  }
+   var rese =  sb.toString().toUpperCase();
+  return rese;
 }
 
 Future<bool> requestLocationPermissions() async {

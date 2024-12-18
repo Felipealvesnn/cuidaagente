@@ -125,19 +125,19 @@ class LoginPageView extends GetView<LoginPageController> {
                               ),
                             ),
                             const SizedBox(height: 15),
-                            Container(
-                              margin: const EdgeInsets.fromLTRB(10, 0, 10, 15),
-                              alignment: Alignment.topRight,
-                              child: GestureDetector(
-                                onTap: () {},
-                                child: const Text(
-                                  "Esqueceu a senha?",
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ),
-                            ),
+                            // Container(
+                            //   margin: const EdgeInsets.fromLTRB(10, 0, 10, 15),
+                            //   alignment: Alignment.topRight,
+                            //   child: GestureDetector(
+                            //     onTap: () {},
+                            //     child: const Text(
+                            //       "Esqueceu a senha?",
+                            //       style: TextStyle(
+                            //         color: Colors.grey,
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
                             Obx(
                               () => Visibility(
                                 visible: !controller.loading.value,
@@ -193,24 +193,24 @@ class LoginPageView extends GetView<LoginPageController> {
                                 },
                               ),
                             ),
-                            Container(
-                              margin: const EdgeInsets.fromLTRB(10, 20, 10, 20),
-                              child: Text.rich(TextSpan(children: [
-                                const TextSpan(text: "Não tem uma conta? "),
-                                TextSpan(
-                                  text: 'Criar',
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () {
-                                      // Get.toNamed(Routes.CADASTRO_USUARIO);
-                                    },
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary),
-                                ),
-                              ])),
-                            ),
+                            // Container(
+                            //   margin: const EdgeInsets.fromLTRB(10, 20, 10, 20),
+                            //   child: Text.rich(TextSpan(children: [
+                            //     const TextSpan(text: "Não tem uma conta? "),
+                            //     TextSpan(
+                            //       text: 'Criar',
+                            //       recognizer: TapGestureRecognizer()
+                            //         ..onTap = () {
+                            //           // Get.toNamed(Routes.CADASTRO_USUARIO);
+                            //         },
+                            //       style: TextStyle(
+                            //           fontWeight: FontWeight.bold,
+                            //           color: Theme.of(context)
+                            //               .colorScheme
+                            //               .secondary),
+                            //     ),
+                            //   ])),
+                            // ),
 
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 20),

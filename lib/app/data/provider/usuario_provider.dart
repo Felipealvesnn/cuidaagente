@@ -21,7 +21,51 @@ class UsuarioProvider extends GetConnect {
     String? tokenFcm = await FirebaseMessaging.instance.getToken();
     var url = "${baseUrlw2e}UsuarioSistema/LoginUsuario/";
     late Response<dynamic> response;
-    var model = json.encode({"login_usuario": email, "senha_usuario": senha, "tokenFirebase": tokenFcm});
+    var model = json.encode({
+      "login_usuario": email,
+      "senha_usuario": senha,
+      "tokenFirebase": tokenFcm
+    });
+    // , "tokenFirebase": tokenFcm});
+    response = await retry(() async => await post(url, model), retryIf: (e) {
+      return e is SocketException ||
+          e is TimeoutException ||
+          response.statusCode != 200;
+    });
+
+    if (response.statusCode == 200) {
+      return response.body;
+    } else if (response.statusCode == 404) {
+      Get.snackbar("Erro ${response.statusCode}",
+          "Usuario não encontrado, verifique login e senha",
+          colorText: Colors.white,
+          backgroundColor: errorColor,
+          duration: const Duration(seconds: 10),
+          snackPosition: SnackPosition.TOP);
+      return response.body;
+    } else {
+      Get.snackbar("Erro", response.statusCode.toString(),
+          colorText: Colors.white,
+          backgroundColor: errorColor,
+          duration: const Duration(seconds: 10),
+          snackPosition: SnackPosition.TOP);
+      return response.body;
+    }
+  }
+
+  Future<Map<String, dynamic>?> resetarSenha(
+      String email, String senha, int usuario_id) async {
+    timeout = const Duration(minutes: 10);
+    //String? tokenFcm = "sdfsdf";
+    String? tokenFcm = await FirebaseMessaging.instance.getToken();
+    var url = "${baseUrlw2e}UsuarioSistema/ResetarSenha/";
+    late Response<dynamic> response;
+    var model = json.encode({
+      "login_usuario": email,
+      "senha_usuario": senha,
+      "usuario_id": usuario_id,
+      "tokenFirebase": tokenFcm
+    });
     // , "tokenFirebase": tokenFcm});
     response = await retry(() async => await post(url, model), retryIf: (e) {
       return e is SocketException ||

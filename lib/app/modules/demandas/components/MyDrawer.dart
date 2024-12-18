@@ -62,6 +62,14 @@ class MyDrawer extends StatelessWidget {
                Get.toNamed(Routes.CONFIGURACOES);
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.password),
+            title: const Text('Mudar Senha'),
+            onTap: () {
+              // Navegar para a tela de configurações
+               Get.toNamed(Routes.MUDAR_SENHA);
+            },
+          ),
 
           const Spacer(),
 
