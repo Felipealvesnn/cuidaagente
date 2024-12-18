@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:cuidaagente/app/data/models/LogAgenteDemanda.dart';
 import 'package:cuidaagente/app/data/models/Usuario.dart';
 import 'package:cuidaagente/app/data/models/adicionarPontos.dart';
+import 'package:cuidaagente/app/data/models/demandas.dart';
 import 'package:cuidaagente/app/data/models/ocorrenciaPost.dart';
 import 'package:cuidaagente/app/data/repository/demandar_repository.dart';
 import 'package:cuidaagente/app/modules/demandas/controllers/demandas_controller.dart';
@@ -38,6 +39,9 @@ class MapaDemandaController extends GetxController {
   var userLocation = const LatLng(0.0, 0.0).obs; // Localização inicial padrão
   final keymaps = 'AIzaSyAsinfHRMZKKrM5CH7L0IoDpQSIJ2dWios';
   bool IniciadaDemanda = false;
+  bool isusuarioBoll = false;
+  bool isUsuarioBolllist = false;
+
   bool ValidarDistanciaBool = false;
   var selectedImages = RxList<File>([]);
   List<ImagensMonitoramento> imagensMonitoramento = [];
@@ -54,32 +58,62 @@ class MapaDemandaController extends GetxController {
     demandaId = Get.arguments['demanda_id'];
     logAgenteDemandaID = Get.arguments['logAgenteDemandaID'] ?? 0;
     IniciadaDemanda = Get.arguments['IniciadaDemanda'] ?? false;
+    isusuarioBoll = Get.arguments['isusuarioBoll'] ?? true;
+    isUsuarioBolllist = Get.arguments['isUsuarioBolllist'] ?? false;
 
     polylinePoints = PolylinePoints();
     await getUserLocation();
     await createRoute();
-    //await logDemandaAgente();
 
-    // Inicia o monitoramento da posição
-    // positionStream =
-    //     Geolocator.getPositionStream().listen((Position position) async {
-    //   LatLng newPosition = LatLng(position.latitude, position.longitude);
+    if (!isusuarioBoll && !isUsuarioBolllist) {
+      // é importante deixar isso auqi por ultimo, okay?
+      _showConfirmationDialog(
+          Get.context!, Get.arguments['demanda'], isusuarioBoll);
+    }
+    if (isUsuarioBolllist) {
+      showSnackbar("info", "Você já está vinculado a outra demanda");
+    }
+  }
 
-    //   // Calcula a distância entre a última posição e a nova posição
-    //   double distance = Geolocator.distanceBetween(
-    //     userLocation.value.latitude,
-    //     userLocation.value.longitude,
-    //     newPosition.latitude,
-    //     newPosition.longitude,
-    //   );
-    //   // Atualiza somente se a distância for maior que um certo limite (ex: 5 metros)
-    //   if (distance > 10) {
-    //     userLocation.value = newPosition;
-    //     await updateRoute();
-    //     await moveCameraToCurrentPosition();
-    //     //await enviarPontosRota();
-    //   }
-    // });
+  Future<void> _showConfirmationDialog(
+      BuildContext context, Demanda demanda, bool isusuarioBoll) {
+    context = Get.context!;
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Iniciar Demanda'),
+          content: const Text('Você deseja se vincular a essa demanda?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Não'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+
+                var resultado = await Get.find<DemandasController>()
+                    .logDemandaAgente(demanda);
+                if (resultado.id != null) {
+                  demanda.logAgenteDemanda!
+                      .clear(); // Limpa todos os elementos da lista
+                  demanda.logAgenteDemanda!
+                      .add(resultado); // Adiciona apenas o elemento desejado
+
+                  await Get.find<DemandasController>()
+                      .Refresh(MostrarLogo: false);
+                } else {
+                  showSnackbar(
+                      "info", "Você já está vinculado a outra demanda");
+                }
+              },
+              child: const Text('Sim'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> pickImage(ImageSource source) async {

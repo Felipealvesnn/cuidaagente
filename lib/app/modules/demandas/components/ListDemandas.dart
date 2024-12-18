@@ -224,74 +224,31 @@ class ListDemandas extends StatelessWidget {
             context, isFinalizado, isusuarioBoll, demanda, isUsuarioBolllist),
         child: isusuarioBoll
             ? const Text('Continuar Rota')
-            : const Text('Iniciar Demanda'),
+            : const Text('Visualizar Demanda'),
       ),
     );
   }
 
   void _handleOpenMap(BuildContext context, bool isFinalizado,
       bool isusuarioBoll, Demanda demanda, bool isUsuarioBolllist) {
-    if (isUsuarioBolllist) {
-      showSnackbar("info", "Você já está vinculado a outra demanda");
-    } else if (isusuarioBoll) {
-      _openMap(demanda);
+     if (isusuarioBoll) {
+      _openMap(demanda, isusuarioBoll: isusuarioBoll, isUsuarioBolllist: isUsuarioBolllist);
     } else {
-      _showConfirmationDialog(context, demanda, isusuarioBoll);
+      _openMap(demanda, isusuarioBoll: false,isUsuarioBolllist: isUsuarioBolllist);
     }
   }
 
-  void _showConfirmationDialog(
-      BuildContext context, Demanda demanda, bool isusuarioBoll) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Iniciar Demanda'),
-          content: const Text('Você deseja se vincular a essa demanda?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Não'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                // if (!isusuarioBoll) {
-                //   showSnackbar(
-                //       "info", "Você já está vinculado a outra demanda");
-                //   return;
-                // }
-                var resultado = await Get.find<DemandasController>()
-                    .logDemandaAgente(demanda);
-                if (resultado.id != null) {
-                  demanda.logAgenteDemanda!
-                      .clear(); // Limpa todos os elementos da lista
-                  demanda.logAgenteDemanda!
-                      .add(resultado); // Adiciona apenas o elemento desejado
-
-                  await Get.find<DemandasController>()
-                      .Refresh(MostrarLogo: false);
-                  _openMap(demanda, IniciadaDemanda: true);
-                } else {
-                  showSnackbar(
-                      "info", "Você já está vinculado a outra demanda");
-                }
-              },
-              child: const Text('Sim'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _openMap(Demanda demanda, {bool IniciadaDemanda = false}) {
+  void _openMap(Demanda demanda,
+      {bool IniciadaDemanda = false, bool isusuarioBoll = false, bool isUsuarioBolllist = false}) {
     Get.toNamed(
       Routes.MAPA_DEMANDA,
       arguments: {
         'latitude': demanda.ocorrencia?.latitude,
         'longitude': demanda.ocorrencia?.longitude,
         'demanda_id': demanda.demandaId,
+        'isusuarioBoll': isusuarioBoll,
+        'demanda': demanda,
+        'isUsuarioBolllist': isUsuarioBolllist,
         'IniciadaDemanda': IniciadaDemanda,
         'logAgenteDemandaID': (demanda.logAgenteDemanda != null &&
                 demanda.logAgenteDemanda!.isNotEmpty)

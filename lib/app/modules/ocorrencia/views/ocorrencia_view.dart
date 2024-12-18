@@ -189,16 +189,15 @@ class OcorrenciaView extends GetView<OcorrenciaController> {
                                   ),
                                   const SizedBox(height: 10),
                                   TextFormField(
-                                    enabled: false,
                                     controller: controller.Bairro,
                                     decoration: const InputDecoration(
                                       labelText: 'Bairro',
                                     ),
                                     keyboardType: TextInputType.text,
                                     validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Campo obrigatório';
-                                      }
+                                      // if (value == null || value.isEmpty) {
+                                      //   return 'Campo obrigatório';
+                                      // }
                                       return null;
                                     },
                                   ),
