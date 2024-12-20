@@ -220,27 +220,27 @@ class OcorrenciaView extends GetView<OcorrenciaController> {
                                     children: [
                                       Expanded(
                                         child: TextFormField(
+                                          onTap: () async {
+                                            DateTime? pickedDate =
+                                                await showDatePicker(
+                                              context: context,
+                                              initialDate: DateTime.now(),
+                                              firstDate: DateTime(2000),
+                                              lastDate: DateTime(2101),
+                                            );
+                                            if (pickedDate != null) {
+                                              controller.dataController.text =
+                                                  DateFormat('dd/MM/yy')
+                                                      .format(pickedDate);
+                                            }
+                                          },
                                           controller: controller.dataController,
                                           decoration: InputDecoration(
                                             labelText: 'Data (DD/MM/AA)',
                                             suffixIcon: IconButton(
                                               icon: const Icon(
                                                   Icons.calendar_today),
-                                              onPressed: () async {
-                                                DateTime? pickedDate =
-                                                    await showDatePicker(
-                                                  context: context,
-                                                  initialDate: DateTime.now(),
-                                                  firstDate: DateTime(2000),
-                                                  lastDate: DateTime(2101),
-                                                );
-                                                if (pickedDate != null) {
-                                                  controller
-                                                          .dataController.text =
-                                                      DateFormat('dd/MM/yy')
-                                                          .format(pickedDate);
-                                                }
-                                              },
+                                              onPressed: () async {},
                                             ),
                                           ),
                                         ),
@@ -248,6 +248,26 @@ class OcorrenciaView extends GetView<OcorrenciaController> {
                                       const SizedBox(width: 10),
                                       Expanded(
                                         child: TextFormField(
+                                          onTap: () async {
+                                            TimeOfDay? pickedTime =
+                                                await showTimePicker(
+                                              context: context,
+                                              initialTime: TimeOfDay.now(),
+                                            );
+                                            if (pickedTime != null) {
+                                              final now = DateTime.now();
+                                              final selectedTime = DateTime(
+                                                now.year,
+                                                now.month,
+                                                now.day,
+                                                pickedTime.hour,
+                                                pickedTime.minute,
+                                              );
+                                              controller.horaController.text =
+                                                  DateFormat('HH:mm')
+                                                      .format(selectedTime);
+                                            }
+                                          },
                                           controller: controller.horaController,
                                           decoration: InputDecoration(
                                             labelText: 'Hora (HH:MM)',
