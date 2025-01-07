@@ -482,4 +482,6 @@ class OcorrenciaController extends GetxController {
       print('Nome da foto: $fileName'); // Exibe o nome da foto
     }
   }
+
+
 }

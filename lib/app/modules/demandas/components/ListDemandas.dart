@@ -92,8 +92,10 @@ class ListDemandas extends StatelessWidget {
               'Aberta: ${DateFormat('dd/MM/yyyy HH:mm').format(demanda.dataCriacaoDemanda!)}',
             ),
             Text(
-              'Tipo : ${(demanda.despachoAcao != null ? demanda.despachoAcao!.toUpperCase() : "")}',
+              'Tipo : ${(demanda.ocorrencia!.TipoOcorrencia != null ? demanda.ocorrencia!.TipoOcorrencia!.toUpperCase() : "")}',
             ),
+            if (demanda.despachoAcao != null)
+              Text('Despacho: ${demanda.despachoAcao!.toUpperCase()}'),
             Text('Orgao: ${demanda.orgao?.nomeAbreviadoOrgao}'),
             Text(
               'Status: ${(demanda.statusDemanda != null ? demanda.statusDemanda!.descricaoStatusDemanda.toUpperCase() : "NAO APROVADO")}',
@@ -246,17 +248,22 @@ class ListDemandas extends StatelessWidget {
       bool isusuarioBoll, Demanda demanda, bool isUsuarioBolllist) {
     if (isusuarioBoll) {
       _openMap(demanda,
-          isusuarioBoll: isusuarioBoll, isUsuarioBolllist: isUsuarioBolllist, isFinalizado: isFinalizado);
+          isusuarioBoll: isusuarioBoll,
+          isUsuarioBolllist: isUsuarioBolllist,
+          isFinalizado: isFinalizado);
     } else {
       _openMap(demanda,
-          isusuarioBoll: false, isUsuarioBolllist: isUsuarioBolllist, isFinalizado: isFinalizado);
+          isusuarioBoll: false,
+          isUsuarioBolllist: isUsuarioBolllist,
+          isFinalizado: isFinalizado);
     }
   }
 
   void _openMap(Demanda demanda,
       {bool IniciadaDemanda = false,
       bool isusuarioBoll = false,
-      bool isUsuarioBolllist = false, bool isFinalizado = false}) {
+      bool isUsuarioBolllist = false,
+      bool isFinalizado = false}) {
     Get.toNamed(
       Routes.MAPA_DEMANDA,
       arguments: {

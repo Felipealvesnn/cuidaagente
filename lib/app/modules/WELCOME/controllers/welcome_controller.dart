@@ -1,6 +1,7 @@
 import 'package:background_locator_2/background_locator.dart';
 import 'package:cuidaagente/app/routes/app_pages.dart';
 import 'package:cuidaagente/app/utils/getstorages.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 
 class WelcomeController extends GetxController {
@@ -22,13 +23,32 @@ class WelcomeController extends GetxController {
     super.onClose();
   }
 
-  static void logout() async {
+  static Future<void> logout() async {
+  try {
+    // Cancelar inscrição de tópicos (se necessário)
+    await FirebaseMessaging.instance.unsubscribeFromTopic('todos_usuarios');
+
+    // Apagar o token do dispositivo
+    await FirebaseMessaging.instance.deleteToken();
+
+    // Parar listeners de mensagens
+    FirebaseMessaging.onMessage.listen((_) {}).cancel();
+
+    // Limpar dados do Storage
     Storagers.boxUserLogado.erase();
     Storagers.boxCpf.erase();
     Storagers.boxToken.erase();
+
+    // Parar o rastreamento de localização (se usado)
     await BackgroundLocator.unRegisterLocationUpdate();
+
+    // Redirecionar para a tela de login
     await Get.offAllNamed(Routes.LOGIN);
+  } catch (e) {
+    print('Erro ao desativar notificações: $e');
   }
+}
+
 
   void increment() => count.value++;
 }

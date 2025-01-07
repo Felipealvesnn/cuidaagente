@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:cuidaagente/app/data/global/constants.dart';
 import 'package:cuidaagente/app/data/models/LogAgenteDemanda.dart';
+import 'package:cuidaagente/app/data/models/Usuario.dart';
 import 'package:cuidaagente/app/data/models/adicionarPontos.dart';
 import 'package:cuidaagente/app/data/models/ocorrenciaPost.dart';
 import 'package:cuidaagente/app/utils/getstorages.dart';
@@ -37,6 +38,7 @@ class DemandasProvider extends GetConnect {
     timeout = const Duration(minutes: 10);
     var token = Storagers.boxToken.read('boxToken') as String;
     timeout = const Duration(minutes: 10);
+    var  usuario = await Storagers.boxUserLogado.read('user') as Usuario;
     final headers = {
       "Content-Type": "application/json",
       "Accept": "application/json",
@@ -47,7 +49,7 @@ class DemandasProvider extends GetConnect {
             .cast<int>();
 
     var url =
-        "${baseUrlw2e}demandas_ocorrencia/Getdemandas_ocorrencia?pageNumber=$pageNumber&pageSize=$pageSize";
+        "${baseUrlw2e}demandas_ocorrencia/Getdemandas_ocorrencia?pageNumber=$pageNumber&pageSize=$pageSize&usuarioId=${usuario.usuarioId}";
 
     var response = await request(
       url,

@@ -105,10 +105,9 @@ class DemandasController extends GetxController {
 
   Future<void> aplicarFiltroSolicitacoes() async {
     // Define uma chave GlobalKey para o diálogo
-    
+
     isLoadingDemandaInicial.value = true;
     // Exibe o diálogo de carregamento com o Navigator
-   
 
     try {
       // Realiza as operações do filtro
@@ -154,7 +153,6 @@ class DemandasController extends GetxController {
 
       Future.delayed(const Duration(seconds: 1), () {
         isLoadingDemandaInicial.value = false;
-       
       });
     }
   }
@@ -244,6 +242,17 @@ class DemandasController extends GetxController {
         'latitude': demanda.ocorrencia?.latitude,
         'longitude': demanda.ocorrencia?.longitude,
         'demanda_id': demanda.demandaId,
+        'demanda': demanda,
+        'logAgenteDemandaID': (demanda.logAgenteDemanda != null &&
+                demanda.logAgenteDemanda!.isNotEmpty)
+            ? demanda.logAgenteDemanda!
+                .firstWhere(
+                    (element) =>
+                        element.usuarioId == usuario.usuarioId &&
+                        element.ativo == true,
+                    orElse: () => LogAgenteDemanda())
+                .id
+            : null,
       },
     );
   }

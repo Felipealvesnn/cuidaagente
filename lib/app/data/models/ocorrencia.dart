@@ -2,8 +2,6 @@ import 'dart:convert';
 
 import 'package:cuidaagente/app/data/models/log_VideoMonitoramento.dart';
 
-
-
 class Ocorrencia {
   int? ocorrenciaId;
   String? cpfUsuarioAbertura;
@@ -31,6 +29,7 @@ class Ocorrencia {
   double? latitude;
   double? longitude;
   bool? visualizado;
+  String? TipoOcorrencia;
   List<LogVideoMonitoramento>? logVideoMonitoramento;
 
   Ocorrencia({
@@ -61,6 +60,7 @@ class Ocorrencia {
     this.longitude,
     this.visualizado,
     this.logVideoMonitoramento,
+    this.TipoOcorrencia,
   });
 
   // Converter para Map
@@ -103,6 +103,7 @@ class Ocorrencia {
       dataAberturaOcorrencia: map['data_abertura_ocorrencia'] != null
           ? DateTime.parse(map['data_abertura_ocorrencia'])
           : null,
+      TipoOcorrencia: map['tipo_ocorrencia']['descricao_tipo_ocorrencia'],
       protocoloOcorrencia: map['protocolo_ocorrencia'],
       origemOcorrenciaId: map['origem_ocorrencia_id']?.toInt(),
       naturezaOcorrenciaId: map['natureza_ocorrencia_id']?.toInt(),
@@ -129,8 +130,8 @@ class Ocorrencia {
       longitude: map['longitude']?.toDouble(),
       visualizado: map['Vizualizado'],
       logVideoMonitoramento: map['log_VideoMonitoramento'] != null
-          ? List<LogVideoMonitoramento>.from(
-              map['log_VideoMonitoramento']?.map((x) => LogVideoMonitoramento.fromJson(x)))
+          ? List<LogVideoMonitoramento>.from(map['log_VideoMonitoramento']
+              ?.map((x) => LogVideoMonitoramento.fromJson(x)))
           : null,
     );
   }
