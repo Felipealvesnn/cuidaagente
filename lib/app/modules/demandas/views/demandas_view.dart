@@ -376,4 +376,5 @@ class DemandasView extends GetView<DemandasController> {
       ),
     );
   }
+
 }
