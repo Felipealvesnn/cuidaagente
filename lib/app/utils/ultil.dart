@@ -40,7 +40,7 @@ Future<void> initializeBackgroundService() async {
     androidSettings: const AndroidSettings(
       accuracy: LocationAccuracy.NAVIGATION,
       interval: 40, // 1 minuto em segundos
-      distanceFilter: 100,
+      //distanceFilter: 100,
       androidNotificationSettings: AndroidNotificationSettings(
         notificationChannelName: 'Rastreamento de Localização',
         notificationTitle: 'Iniciar Rastreamento de Localização',

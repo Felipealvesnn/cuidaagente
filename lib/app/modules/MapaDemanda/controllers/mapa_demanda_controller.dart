@@ -75,8 +75,7 @@ class MapaDemandaController extends GetxController {
     }
   }
 
-  Future<void> showConfirmationDialog(
-      BuildContext context, Demanda demanda) {
+  Future<void> showConfirmationDialog(BuildContext context, Demanda demanda) {
     context = Get.context!;
     return showDialog(
       context: context,
@@ -100,6 +99,7 @@ class MapaDemandaController extends GetxController {
                       .clear(); // Limpa todos os elementos da lista
                   demanda.logAgenteDemanda!
                       .add(resultado); // Adiciona apenas o elemento desejado
+                  logAgenteDemandaID = resultado.id ?? 0;
 
                   await Get.find<DemandasController>()
                       .Refresh(MostrarLogo: false);

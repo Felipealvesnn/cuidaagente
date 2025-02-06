@@ -422,4 +422,6 @@ class OcorrenciaView extends GetView<OcorrenciaController> {
       },
     );
   }
+
+  
 }
