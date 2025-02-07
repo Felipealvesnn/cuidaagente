@@ -67,6 +67,7 @@ dependencies:
   just_audio: ^0.9.42
   audio_service:
   crypto:
+  just_audio_background: ^0.0.1-beta.15
   #google_navigation_flutter: ^0.3.0
 
 

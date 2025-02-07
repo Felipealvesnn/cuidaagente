@@ -3,6 +3,7 @@ import 'package:cuidaagente/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:just_audio/just_audio.dart';
 
 import '../../main.dart';
 
@@ -64,6 +65,7 @@ class NotificationAwesomeNotification {
   /// Use this method to detect every time that a new notification is displayed
   static Future<void> onNotificationDisplayedMethod(
       ReceivedNotification receivedNotification) async {
+    await playerMain.setLoopMode(LoopMode.one);
     await playerMain.seek(Duration.zero);
 
     await playerMain.play();
@@ -77,6 +79,7 @@ class NotificationAwesomeNotification {
       ReceivedAction receivedAction) async {
     // await Get.find<HomeController>().EviarMsglidaById(receivedAction.id!);
     await playerMain.stop();
+     await playerMain.setLoopMode(LoopMode.off);
     debugPrint('notifação descartada');
   }
 
@@ -86,6 +89,7 @@ class NotificationAwesomeNotification {
     debugPrint('onActionReceivedMethod');
 
     await playerMain.stop();
+     await playerMain.setLoopMode(LoopMode.off);
     await Get.offAllNamed(Routes.HOME);
 
     // await playerMain.stop();

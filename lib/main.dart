@@ -7,6 +7,7 @@ import 'package:cuidaagente/app/utils/ultil.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 
 import 'app/routes/app_pages.dart';
 
@@ -15,6 +16,11 @@ final playerMain = AudioPlayer();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final audio = await playerMain.setAsset('assets/sons/alerta.mp3');
+
+  await JustAudioBackground.init(
+    androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
+    androidNotificationOngoing: false,
+  );
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     systemNavigationBarColor: colorVerde, // navigation bar color
