@@ -33,7 +33,7 @@ class NotificationAwesomeNotification {
           criticalAlerts: true,
           enableVibration: true,
           soundSource: _soundPath,
-          defaultRingtoneType: DefaultRingtoneType.Alarm,
+         // defaultRingtoneType: DefaultRingtoneType.Alarm,
         )
       ],
       channelGroups: [
@@ -133,7 +133,7 @@ class NotificationAwesomeNotification {
           actionType: actionType,
           notificationLayout: notificationLayout,
           summary: summary,
-          category: category,
+          category: NotificationCategory.Alarm,
           payload: payload,
           customSound: _soundPath,
           bigPicture: bigPicture,

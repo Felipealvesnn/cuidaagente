@@ -125,19 +125,7 @@ class LoginPageView extends GetView<LoginPageController> {
                               ),
                             ),
                             const SizedBox(height: 15),
-                            // Container(
-                            //   margin: const EdgeInsets.fromLTRB(10, 0, 10, 15),
-                            //   alignment: Alignment.topRight,
-                            //   child: GestureDetector(
-                            //     onTap: () {},
-                            //     child: const Text(
-                            //       "Esqueceu a senha?",
-                            //       style: TextStyle(
-                            //         color: Colors.grey,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
+                           
                             Obx(
                               () => Visibility(
                                 visible: !controller.loading.value,
