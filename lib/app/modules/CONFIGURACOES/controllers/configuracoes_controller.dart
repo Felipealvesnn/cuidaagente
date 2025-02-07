@@ -23,8 +23,8 @@ class ConfiguracoesController extends GetxController {
     super.onClose();
   }
 
-  mudarBiometria() {
-    Storagers.boxInicial.write('biometria', isBiometriaEnabled.value);
+  mudarBiometria() async {
+    await Storagers.boxInicial.write('biometria', isBiometriaEnabled.value);
   }
 
   void increment() => count.value++;

@@ -24,31 +24,31 @@ class WelcomeController extends GetxController {
   }
 
   static Future<void> logout() async {
-  try {
-    // Cancelar inscrição de tópicos (se necessário)
-    await FirebaseMessaging.instance.unsubscribeFromTopic('todos_usuarios');
+    try {
+      Storagers.boxUserLogado.erase();
+      Storagers.boxCpf.erase();
+      Storagers.boxToken.erase();
+      await Get.offAllNamed(Routes.LOGIN);
 
-    // Apagar o token do dispositivo
-    await FirebaseMessaging.instance.deleteToken();
+      // Cancelar inscrição de tópicos (se necessário)
+      // await FirebaseMessaging.instance.unsubscribeFromTopic('todos_usuarios');
 
-    // Parar listeners de mensagens
-    FirebaseMessaging.onMessage.listen((_) {}).cancel();
+      // Apagar o token do dispositivo
+      await FirebaseMessaging.instance.deleteToken();
 
-    // Limpar dados do Storage
-    Storagers.boxUserLogado.erase();
-    Storagers.boxCpf.erase();
-    Storagers.boxToken.erase();
+      // Parar listeners de mensagens
+      FirebaseMessaging.onMessage.listen((_) {}).cancel();
 
-    // Parar o rastreamento de localização (se usado)
-    await BackgroundLocator.unRegisterLocationUpdate();
+      // Limpar dados do Storage
 
-    // Redirecionar para a tela de login
-    await Get.offAllNamed(Routes.LOGIN);
-  } catch (e) {
-    print('Erro ao desativar notificações: $e');
+      // Parar o rastreamento de localização (se usado)
+      await BackgroundLocator.unRegisterLocationUpdate();
+
+      // Redirecionar para a tela de login
+    } catch (e) {
+      print('Erro ao desativar notificações: $e');
+    }
   }
-}
-
 
   void increment() => count.value++;
 }

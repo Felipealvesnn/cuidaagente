@@ -20,13 +20,13 @@ class HomeController extends GetxController {
     //
     if (user.cpf != null) {
       // ADICONA O AGENTE AO GRUPO DE MENSAGENS DO ORGAO DELE
-      List<int> parametros =
-          (await Storagers.boxUserLogado.read('boxOrgaoIds') as List<dynamic>)
-              .cast<int>();
-      for (int orgaoId in parametros) {
-        FirebaseMessaging.instance
-            .subscribeToTopic('orgao_$orgaoId$nomeCliente');
-      }
+      // List<int> parametros =
+      //     (await Storagers.boxUserLogado.read('boxOrgaoIds') as List<dynamic>)
+      //         .cast<int>();
+      // for (int orgaoId in parametros) {
+      //   FirebaseMessaging.instance
+      //       .subscribeToTopic('orgao_$orgaoId$nomeCliente');
+      // }
 
       if (biometria ?? false) {
         await Get.offAllNamed(Routes.WELCOME);

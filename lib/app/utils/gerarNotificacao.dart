@@ -50,7 +50,7 @@ class NotificacoesGerais {
 
     try {
       // Schedule notification
-      await NotificationAwesomeNotification.showImmediateNotification(
+      await NotificationAwesomeNotification.showNotification(
         id: notificationBeforeEnd.id,
         title: notificationBeforeEnd.title,
         body: notificationBeforeEnd.body,

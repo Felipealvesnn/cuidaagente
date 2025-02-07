@@ -1,26 +1,19 @@
 import 'package:flutter/services.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:cuidaagente/app/utils/FirebaseMenssagensFunctions.dart';
 import 'package:cuidaagente/app/utils/getstorages.dart';
 import 'package:cuidaagente/app/utils/tema.dart';
-import 'package:cuidaagente/app/utils/ultil.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 
 import 'app/routes/app_pages.dart';
 
-final playerMain = AudioPlayer();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final audio = await playerMain.setAsset('assets/sons/alerta.mp3');
 
-  await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
-    androidNotificationOngoing: false,
-  );
+
+  // Carregue o audio source no player
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     systemNavigationBarColor: colorVerde, // navigation bar color

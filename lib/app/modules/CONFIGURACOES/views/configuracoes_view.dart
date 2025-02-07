@@ -6,25 +6,22 @@ class ConfiguracoesView extends GetView<ConfiguracoesController> {
   const ConfiguracoesView({super.key});
 
   @override
-    Widget build(BuildContext context) {
-    bool showAppBar = Get.arguments ?? true;
-   
+  Widget build(BuildContext context) {
+    bool showAppBar = Get.arguments ?? false;
+     controller.isBiometriaEnabled.value = showAppBar;
 
     return SafeArea(
       child: Scaffold(
-        appBar: showAppBar
-            ? AppBar(
-                title: const Text('Configurações '),
-                centerTitle: true,
-              )
-            : null,
+        appBar: AppBar(
+          title: const Text('Configurações '),
+          centerTitle: true,
+        ),
         body: Obx(
           () => ListView(
             children: [
-            
               buildListTile(
                 title: "Exibir Biometria?",
-                value: controller.isBiometriaEnabled.value, 
+                value: controller.isBiometriaEnabled.value,
                 onChanged: (value) {
                   controller.isBiometriaEnabled.value = value;
                   controller.mudarBiometria();
@@ -50,8 +47,4 @@ class ConfiguracoesView extends GetView<ConfiguracoesController> {
       ),
     );
   }
-
-  
-
-  
 }

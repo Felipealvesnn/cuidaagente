@@ -57,9 +57,10 @@ class MyDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('Configurações'),
-            onTap: () {
+            onTap: () async{
+              var teste = await Storagers.boxInicial.read('biometria');
               // Navegar para a tela de configurações
-               Get.toNamed(Routes.CONFIGURACOES);
+               Get.toNamed(Routes.CONFIGURACOES, arguments: teste);
             },
           ),
           ListTile(
