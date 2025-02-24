@@ -31,27 +31,32 @@ void showSnackbar(String title, String message) {
 
 @pragma('vm:entry-point')
 Future<void> initializeBackgroundService() async {
-  await BackgroundLocator.initialize();
+  try {
+    await BackgroundLocator.initialize();
 
-  BackgroundLocator.registerLocationUpdate(
-    LocationCallbackHandler.locationCallback,
-    initCallback: LocationCallbackHandler.initCallback,
-    disposeCallback: LocationCallbackHandler.disposeCallback,
-    androidSettings: const AndroidSettings(
-      accuracy: LocationAccuracy.NAVIGATION,
-      interval: 40, // 1 minuto em segundos
-      //distanceFilter: 100,
-      androidNotificationSettings: AndroidNotificationSettings(
-        notificationChannelName: 'Rastreamento de Localização',
-        notificationTitle: 'Iniciar Rastreamento de Localização',
-        notificationMsg: 'Rastrear localização em segundo plano',
-        notificationBigMsg:
-            'A localização em segundo plano está ativada para manter o aplicativo atualizado com a sua localização. Isso é necessário para que as principais funcionalidades funcionem corretamente quando o aplicativo não está em execução.',
-        notificationIcon: '',
-        notificationIconColor: Colors.grey,
+    BackgroundLocator.registerLocationUpdate(
+      LocationCallbackHandler.locationCallback,
+      initCallback: LocationCallbackHandler.initCallback,
+      disposeCallback: LocationCallbackHandler.disposeCallback,
+      androidSettings: const AndroidSettings(
+        accuracy: LocationAccuracy.NAVIGATION,
+        interval: 40, // 1 minuto em segundos
+        //distanceFilter: 100,
+        androidNotificationSettings: AndroidNotificationSettings(
+          notificationChannelName: 'Rastreamento de Localização',
+          notificationTitle: 'Iniciar Rastreamento de Localização',
+          notificationMsg: 'Rastrear localização em segundo plano',
+          notificationBigMsg:
+              'A localização em segundo plano está ativada para manter o aplicativo atualizado com a sua localização. Isso é necessário para que as principais funcionalidades funcionem corretamente quando o aplicativo não está em execução.',
+          notificationIcon: '',
+          notificationIconColor: Colors.grey,
+        ),
       ),
-    ),
-  );
+    );
+  } on Exception catch (e) {
+    print("Erro ao inicializar o serviço de localização: $e");
+    // TODO
+  }
 }
 
 // Função chamada quando @pragma('vm:entry-point')o serviço de localização é iniciado
@@ -194,16 +199,17 @@ String cripTografaMD5Hash(String input, {String? chave}) {
 
   // Formata a saída como uma string com base na chave (padrão: hexadecimal base 16)
   StringBuffer sb = StringBuffer();
-  int base =  16; // Garantindo que a base seja válida
+  int base = 16; // Garantindo que a base seja válida
 
   if (base < 2 || base > 36) {
-    throw ArgumentError("A base deve estar entre 2 e 36. Base fornecida: $base");
+    throw ArgumentError(
+        "A base deve estar entre 2 e 36. Base fornecida: $base");
   }
 
   for (var byte in hash.bytes) {
     sb.write(byte.toRadixString(base).padLeft(2, '0'));
   }
-   var rese =  sb.toString().toUpperCase();
+  var rese = sb.toString().toUpperCase();
   return rese;
 }
 
